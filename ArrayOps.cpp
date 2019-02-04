@@ -1,54 +1,43 @@
-#include <iosream>
+#include <iostream>
 
-public class ArrayOps{
-	
-	sdcd
+using namespace std;
+
+ArrayOps::ArrayOps(){
+
+}
+
+ArrayOps::~ArrayOps(){
 	
 }
 
-int main(int argc, char **argv){
-    
-    int input_args = 6;
-    if(argc < input_args){
-        printf("Not enough input arguments!\n");
-        return 99;
-    }else if(argc > input_args){
-        printf("Too many input arguments!\n");
-        return 99;
-    }
-    char file_name[255];
-    sprintf(file_name, "%s", argv[1]);
-    int min_win = atoi(argv[2]);
-    int ord = atoi(argv[3]);
-    int rev_seg = atoi(argv[4]);
-    char path_tot[255];
-    sprintf(path_tot, "%s/dfa.txt", argv[5]);
-
-
-
-    
-}
-
-//FUNCTIONS
-
-void slice_vec(double *all_vec, double *sliced_vec, int start, int end){
+void ArrayOps::slice_vec(double *all_vec, double *sliced_vec, int start, int end){
     for(int i = 0; i <= (end - start); i++)
         *(sliced_vec + i) = *(all_vec + start + i);
 }
 
-void concatenate(double *vec_to, double *vec_from1, double *vec_from2, int L){
+void ArrayOps::concatenate(double *vec_to, double *vec_from1, double *vec_from2, int L){
     for(int i = 0; i < L; i++){
-        vec_to[i] = vec_from1[i];
-        vec_to[i + L] = vec_from2[i];
+        *(vec_to + i) = *(vec_from1 + i);
+        *(vec_to + i + L) = *(vec_from2 + i);
     }
 }
 
-void vec_copy(double *vec_to, double *vec_from, int L){
+void ArrayOps::vec_copy(double *vec_to, double *vec_from, int L){
     for(int i = 0; i < L; i++)
         *(vec_to + i) = *(vec_from + i);
 }
 
-void zero_vec(double *vec, int L){
+void ArrayOps::zero_vec(double *vec, int L){
     for(int i = 0; i < L; i++)
         *(vec + i) = 0.0;
+}
+
+void ArrayOps::double_range(double *vec, int L, double start, double step=1.0){
+	for(int i = 0; i < L; i++)
+        *(vec + i) = (double)(i * step + start);
+}
+
+void ArrayOps::int_range(double *vec, int L, int start, int step=1){
+	for(int i = 0; i < L; i++)
+        *(vec + i) = i * step + start;
 }
