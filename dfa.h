@@ -1,24 +1,11 @@
 #ifndef DFA
 #define DFA
 
-class dfa
+class DFA : public FA
 {
 public:
-    dfa(String, int, int, int);
-	~dfa();
-private:
-	string file_name;
-	int N;
-	int min_win;
-	int max_win;
-	int ord;
-	int rev_seg;
-	int end_dfa;
-	int dfa_range;
-	double *t;
-	double *y;
-	int *s;
-	int *F;
+    DFA(string, int, int, int, int);
+	~DFA();
 };
 
 #endif

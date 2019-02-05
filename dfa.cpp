@@ -7,35 +7,35 @@
 
 using namespace std;
 
-dfa::dfa(string FileName, int MinWin, int PolOrd, int RevSeg){
-	SetConstVar(FileName, MinWin, PolOrd, RevSeg);
-}
+DFA::DFA(string FileName, int MinWin, int MaxWin int PolOrd, int RevSeg)
+		: FA(FileName, MinWin, MaxWin, PolOrd, RevSeg) {}
 
-dfa::~dfa(){
+DFA::~DFA(){
 	delete[] t;
 	delete[] y;
 	delete[] s;
 	delete[] F;
 }
 
-void dfa::SetConstVar(string FileName, int MinWin, int PolOrd, int RevSeg){
-	// constants
-	file_name = FileName;
-	N = rows_number(file_name);
-	min_win = MinWin;
-	max_win = 5;
-	ord = PolOrd;
-	rev_seg = RevSeg;
-	end_dfa = N / max_win;
-    range_dfa = end_dfa - min_win + 1;
+void DFA::SetConstVar(string FileName, int MinWin, int MaxWin, int PolOrd, int RevSeg){
 	// variables
 	t = new double [N];
 	y = new double [N];
-	s = new int [range_dfa];
-	F = new double [range_dfa];
+	s = new int [range_DFA];
+	F = new double [range_DFA];
 }
 
-void dfa::CreateVectors(){
+int DFA::GetTsLength(){
+	//N
+	return rows_number(file_name);
+}
+
+int DFA::GetNumScales(){
+	//range_DFA
+	return max_win - min_win + 1;
+}
+
+void DFA::CreateVectors(){
 	//time series vector
 	double *pn;
 	pn = new double [N];
@@ -56,26 +56,26 @@ void dfa::CreateVectors(){
 	delete[] pn_nomean;
 }
     
-void dfa::WinFlucComp(){
-	int_range(s, range_dfa, min_win);
+void DFA::WinFlucComp(){
+	int_range(s, range_DFA, min_win);
 	int F_len = N / min_win;
     double *F_nu1, *F_nu2, *t_fit, *y_fit, *diff_vec;
     F_nu1 = new double [F_len];
     F_nu2 = new double [F_len];
-    t_fit = new double [end_dfa];
-    y_fit = new double [end_dfa];
-    diff_vec = new double [end_dfa];
+    t_fit = new double [max_win];
+    y_fit = new double [max_win];
+    diff_vec = new double [max_win];
     //computation
     int N_s;
     int start_lim, end_lim;
     double ang_coeff, intercept;
-    for(int i = 0; i < range_dfa; i++){
+    for(int i = 0; i < range_DFA; i++){
         N_s = N / s[i];
         zero_vec(F_nu1, F_len);
         for(int v = 0; v < N_s; v++){
-            zero_vec(t_fit, end_dfa);
-            zero_vec(y_fit, end_dfa);
-            zero_vec(diff_vec, end_dfa);
+            zero_vec(t_fit, max_win);
+            zero_vec(y_fit, max_win);
+            zero_vec(diff_vec, max_win);
             start_lim = v * s[i];
             end_lim = (v + 1) * s[i];
             slice_vec(t, t_fit, start_lim, end_lim);
@@ -88,9 +88,9 @@ void dfa::WinFlucComp(){
         if(rev_seg == 1){
             zero_vec(F_nu2, F_len);
             for(int v = 0; v < N_s; v++){
-                zero_vec(t_fit, end_dfa);
-                zero_vec(y_fit, end_dfa);
-                zero_vec(diff_vec, end_dfa);
+                zero_vec(t_fit, max_win);
+                zero_vec(y_fit, max_win);
+                zero_vec(diff_vec, max_win);
                 start_lim = v * s[i] + (N - N_s * s[i]);
                 end_lim = (v + 1) * s[i] + (N - N_s * s[i]);
                 slice_vec(t, t_fit, start_lim, end_lim);
@@ -114,15 +114,15 @@ void dfa::WinFlucComp(){
 
 double H_loglogFit(double *H, double *H_intercept){
     double *log_s, *log_F;
-    log_s = new double [range_dfa];
-    log_F = new double [range_dfa];
-    for(int i = 0; i < range_dfa; i++){
+    log_s = new double [range_DFA];
+    log_F = new double [range_DFA];
+    for(int i = 0; i < range_DFA; i++){
         *(log_s + i) = log(s[i]);
         *(log_F + i) = log(F[i]);
     }
-    lin_fit(range_dfa, log_s, log_F, &H, &H_intercept);
+    lin_fit(range_DFA, log_s, log_F, &H, &H_intercept);
     f = fopen(path_tot, "w");
-    for(int i = 0; i < range_dfa; i++)
+    for(int i = 0; i < range_DFA; i++)
         fprintf(f, "%d %lf %lf %lf\n", s[i], F[i], H_intercept + log_s[i] * H, H);
     fclose(f);
 	delete[] log_s;
