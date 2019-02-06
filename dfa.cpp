@@ -7,7 +7,7 @@
 
 using namespace std;
 
-DFA::DFA(string FileName, int MinWin, int MaxWin int PolOrd, int RevSeg)
+DFA::DFA(double *pn, int MinWin, int MaxWin int PolOrd, int RevSeg)
 		: FA(FileName, MinWin, MaxWin, PolOrd, RevSeg) {}
 
 DFA::~DFA(){
