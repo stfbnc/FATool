@@ -6,15 +6,17 @@ using namespace std;
 class FA
 {
 public:
-    FA(double *pn_, int min_win_, int max_win_ int ord_, int rev_seg_)
-	  : min_win(min_win_), max_win(max_win_), ord(ord_), rev_seg(rev_seg_) {}
+    FA(string file_name_, int min_win_, int max_win_ int ord_, int rev_seg_)
+	  : file_name(file_name_), min_win(min_win_), max_win(max_win_), ord(ord_), rev_seg(rev_seg_) {}
 	virtual ~FA() {}
-	virtual void SetConstVar(string, int, int, int) = 0;
-	virtual void CreateVectors() = 0;
+	virtual int GetTsLength() = 0;
+	virtual int GetNumScales(int, int) = 0;
+	virtual void SetFlucVectors() = 0;
 	virtual void WinFlucComp() = 0;
-	virtual double H_loglogFit(double *, double *) = 0;
+	virtual double H_loglogFit(int, int) = 0;
+	virtual void SaveFile(string) = 0;
 protected:
-	int N;
+	string file_name;
 	int min_win;
 	int max_win;
 	int ord;

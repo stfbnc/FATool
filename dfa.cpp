@@ -7,7 +7,7 @@
 
 using namespace std;
 
-DFA::DFA(double *pn, int MinWin, int MaxWin int PolOrd, int RevSeg)
+DFA::DFA(string FileName, int MinWin, int MaxWin int PolOrd, int RevSeg)
 		: FA(FileName, MinWin, MaxWin, PolOrd, RevSeg) {}
 
 DFA::~DFA(){
@@ -17,25 +17,19 @@ DFA::~DFA(){
 	delete[] F;
 }
 
-void DFA::SetConstVar(string FileName, int MinWin, int MaxWin, int PolOrd, int RevSeg){
-	// variables
-	t = new double [N];
-	y = new double [N];
-	s = new int [range_DFA];
-	F = new double [range_DFA];
-}
-
 int DFA::GetTsLength(){
 	//N
 	return rows_number(file_name);
 }
 
-int DFA::GetNumScales(){
-	//range_DFA
-	return max_win - min_win + 1;
+int DFA::GetNumScales(int start, int end){
+	//range
+	//if ! end > start -> error
+	return end - start + 1;
 }
 
-void DFA::CreateVectors(){
+void DFA::SetFlucVectors(){
+	N = GetTsLength();
 	//time series vector
 	double *pn;
 	pn = new double [N];
@@ -45,19 +39,25 @@ void DFA::CreateVectors(){
         fscanf(f, "%lf", pn + i);
     fclose(f);
 	//time vector
+	t = new double [N];
     double_range(t, N, 1.0);
     //time series minus its mean
 	double *pn_nomean;
     pn_nomean = new double [N];
 	subtract_mean(pn, N, pn_nomean);
     //cumulative sum
+	y = new double [N];
     cumsum(pn_nomean, y, N);
 	delete[] pn;
 	delete[] pn_nomean;
 }
     
 void DFA::WinFlucComp(){
-	int_range(s, range_DFA, min_win);
+	N = GetTsLength();
+	int range = GetNumScales(min_win, max_win);
+	int_range(s, range, min_win);
+	s = new int [range];
+	F = new double [range];
 	int F_len = N / min_win;
     double *F_nu1, *F_nu2, *t_fit, *y_fit, *diff_vec;
     F_nu1 = new double [F_len];
@@ -69,7 +69,7 @@ void DFA::WinFlucComp(){
     int N_s;
     int start_lim, end_lim;
     double ang_coeff, intercept;
-    for(int i = 0; i < range_DFA; i++){
+    for(int i = 0; i < range; i++){
         N_s = N / s[i];
         zero_vec(F_nu1, F_len);
         for(int v = 0; v < N_s; v++){
@@ -111,20 +111,28 @@ void DFA::WinFlucComp(){
     delete[] y_fit;
     delete[] diff_vec;
 }
-
-double H_loglogFit(double *H, double *H_intercept){
+// l'interfaccia puo' clcolare H facendo un fit in un untervallo qualsiasi, anche dopo aver fatto l'analisi
+double H_loglogFit(int start, int end){
+	//if start < min_win || end > max_win -> error
+	int range = GetNumScales(start, end);
+	double H, H_intercept;
     double *log_s, *log_F;
-    log_s = new double [range_DFA];
-    log_F = new double [range_DFA];
-    for(int i = 0; i < range_DFA; i++){
+    log_s = new double [range];
+    log_F = new double [range];
+    for(int i = start - min_win; i <= end - min_win; i++){
         *(log_s + i) = log(s[i]);
         *(log_F + i) = log(F[i]);
     }
-    lin_fit(range_DFA, log_s, log_F, &H, &H_intercept);
-    f = fopen(path_tot, "w");
-    for(int i = 0; i < range_DFA; i++)
-        fprintf(f, "%d %lf %lf %lf\n", s[i], F[i], H_intercept + log_s[i] * H, H);
-    fclose(f);
+    lin_fit(range, log_s, log_F, &H, &H_intercept);
 	delete[] log_s;
 	delete[] log_F;
+	return H;
+}
+// posso salvare il file di tutto il range per poi eventualmente ricaricarlo per rifare e salvare il grafico in un altro range
+void SaveFile(string path_tot){
+	int range = GetNumScales(min_win, max_win);
+    f = fopen(path_tot, "w");
+    for(int i = 0; i < range; i++)
+        fprintf(f, "%d %lf\n", s[i], F[i]);
+    fclose(f);
 }
