@@ -1,12 +1,15 @@
-#ifndef FA
-#define FA
+#ifndef FA_H
+#define FA_H
+
+#include <iostream>
+#include <cstring>
 
 using namespace std;
 
 class FA
 {
 public:
-    FA(string file_name_, int min_win_, int max_win_ int ord_, int rev_seg_)
+    FA(string file_name_, int min_win_, int max_win_, int ord_, int rev_seg_)
 	  : file_name(file_name_), min_win(min_win_), max_win(max_win_), ord(ord_), rev_seg(rev_seg_) {}
 	virtual ~FA() {}
 	virtual int GetTsLength() = 0;
@@ -24,7 +27,7 @@ protected:
 	double *t;
 	double *y;
 	int *s;
-	int *F;
+	double *F;
 };
 
 #endif

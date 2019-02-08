@@ -1,15 +1,12 @@
 #include <iostream>
 #include <cmath>
+#include "MathOps.h"
 
 using namespace std;
 
-MathOps::MathOps(){
-	
-}
+MathOps::MathOps() {}
 
-MathOps::~MathOps(){
-	
-}
+MathOps::~MathOps() {}
 
 double MathOps::mean(double *vec, int L){
     double avg = 0.0;

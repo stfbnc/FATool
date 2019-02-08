@@ -1,5 +1,5 @@
-#ifndef ARRAY_OPS
-#define ARRAY_OPS
+#ifndef ARRAY_OPS_H
+#define ARRAY_OPS_H
 
 class ArrayOps
 {

@@ -1,14 +1,11 @@
 #include <iostream>
+#include "ArrayOps.h"
 
 using namespace std;
 
-ArrayOps::ArrayOps(){
+ArrayOps::ArrayOps() {}
 
-}
-
-ArrayOps::~ArrayOps(){
-	
-}
+ArrayOps::~ArrayOps() {}
 
 void ArrayOps::slice_vec(double *all_vec, double *sliced_vec, int start, int end){
     for(int i = 0; i <= (end - start); i++)

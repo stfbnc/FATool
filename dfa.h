@@ -1,11 +1,13 @@
-#ifndef DFA
-#define DFA
+#ifndef DFA_H
+#define DFA_H
+
+#include "FA.h"
 
 class DFA : public FA
 {
 public:
     DFA(string, int, int, int, int);
-	~DFA()
+	~DFA();
 	int GetTsLength();
 	int GetNumScales(int, int);
 	void SetFlucVectors();

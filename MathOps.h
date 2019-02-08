@@ -1,5 +1,5 @@
-#ifndef MATH_OPS
-#define MATH_OPS
+#ifndef MATH_OPS_H
+#define MATH_OPS_H
 
 class MathOps
 {

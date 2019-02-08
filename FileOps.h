@@ -1,12 +1,16 @@
-#ifndef FILE_OPS
-#define FILE_OPS
+#ifndef FILE_OPS_H
+#define FILE_OPS_H
+
+#include <cstring>
+
+using namespace std;
 
 class FileOps
 {
 public:
     FileOps();
 	~FileOps();
-	int rows_number(char *);
+	int rows_number(string);
 };
 
 #endif
