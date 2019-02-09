@@ -36,7 +36,7 @@ void DFA::SetFlucVectors(){
 	double *pn;
 	pn = new double [N];
     FILE *f;
-    f = fopen(file_name, "r");
+    FileOps().open_file(f, file_name, "r");
     for(int i = 0; i < N; i++)
         fscanf(f, "%lf", pn + i);
     fclose(f);
@@ -134,7 +134,7 @@ double DFA::H_loglogFit(int start, int end){
 void DFA::SaveFile(string path_tot){
 	int range = GetNumScales(min_win, max_win);
 	FILE *f;
-    f = fopen(path_tot, "w");
+    FileOps().open_file(f, path_tot, "w");
     for(int i = 0; i < range; i++)
         fprintf(f, "%d %lf\n", s[i], F[i]);
     fclose(f);
