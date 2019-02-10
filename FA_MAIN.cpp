@@ -22,5 +22,11 @@ int main(int argc, char **argv){
 	int rv_sg = 1;
 
 	DFA *a = new DFA(fn, mw, Mw, po, rv_sg);
-
+    printf("%d\n", a->GetTsLength());
+    printf("%d\n", a->GetNumScales(mw, Mw));
+    a->SetFlucVectors();
+    a->WinFlucComp();
+    printf("%lf\n", a->H_loglogFit(mw, Mw));
+    
+    return 0;
 }

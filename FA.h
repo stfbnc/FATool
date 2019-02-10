@@ -3,8 +3,16 @@
 
 #include <iostream>
 #include <cstring>
+#include <sys/stat.h>
+#include "FileOps.h"
 
 using namespace std;
+
+#define RANGE_FAILURE -99
+#define WIN_SIZE_FAILURE -98
+#define POL_FAILURE -97
+#define REV_SEG_FAILURE -96
+#define FILE_FAILURE -95
 
 class FA
 {
@@ -12,12 +20,56 @@ public:
     FA(string file_name_, int min_win_, int max_win_, int ord_, int rev_seg_)
 	  : file_name(file_name_), min_win(min_win_), max_win(max_win_), ord(ord_), rev_seg(rev_seg_) {}
 	virtual ~FA() {}
-	virtual int GetTsLength() = 0;
-	virtual int GetNumScales(int, int) = 0;
+
+    void CheckInputs(string fn, int mw, int Mw, int po, int rvsg){
+        //file existence
+        struct stat buffer;
+        if(stat(fn.c_str(), &buffer) != 0){
+            fprintf(stdout, "ERROR %d: file %s does not exist\n", FILE_FAILURE, fn.c_str());
+            exit(FILE_FAILURE);
+        }
+        //windows size
+        if(Mw < mw){
+            fprintf(stdout, "ERROR %d: biggest scale must be greater than smallest scale\n", RANGE_FAILURE);
+            exit(RANGE_FAILURE);
+        }else if(mw < 3){
+            fprintf(stdout, "ERROR %d: smallest scale must be greater than 2\n", WIN_SIZE_FAILURE);
+            exit(WIN_SIZE_FAILURE);
+        }else if(Mw > GetTsLength()){
+            fprintf(stdout, "ERROR %d: biggest scale must be smaller than time series length\n", WIN_SIZE_FAILURE);
+            exit(WIN_SIZE_FAILURE);
+        }
+        //polynomial order
+        if(po < 1){
+            fprintf(stdout, "ERROR %d: polynomial order must be greater than 0\n", POL_FAILURE);
+            exit(POL_FAILURE);
+        }
+        //rev_seg
+        if(rvsg != 0 && rvsg != 1){
+            fprintf(stdout, "ERROR %d: parameter for backward computation must be 0 or 1\n", REV_SEG_FAILURE);
+            exit(REV_SEG_FAILURE);
+        }
+    }
+    
+    void AllocateMemory(int L1, int L2){
+        t = new double [L1];
+        y = new double [L1];
+        s = new int [L2];
+        F = new double [L2];
+    }
+    
+    int GetTsLength(){
+        return FileOps().rows_number(file_name);
+    }
+    
+    int GetNumScales(int start, int end){
+        return end - start + 1;
+    }
+    
 	virtual void SetFlucVectors() = 0;
 	virtual void WinFlucComp() = 0;
-	virtual double H_loglogFit(int, int) = 0;
-	virtual void SaveFile(string) = 0;
+    virtual double H_loglogFit(int, int) = 0;
+    virtual void SaveFile(string) = 0;
 protected:
 	string file_name;
 	int min_win;

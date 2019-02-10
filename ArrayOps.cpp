@@ -29,12 +29,12 @@ void ArrayOps::zero_vec(double *vec, int L){
         *(vec + i) = 0.0;
 }
 
-void ArrayOps::double_range(double *vec, int L, double start, double step=1.0){
+void ArrayOps::double_range(double *vec, int L, double start, double step){
 	for(int i = 0; i < L; i++)
         *(vec + i) = (double)(i * step + start);
 }
 
-void ArrayOps::int_range(double *vec, int L, int start, int step=1){
+void ArrayOps::int_range(int *vec, int L, int start, int step){
 	for(int i = 0; i < L; i++)
         *(vec + i) = i * step + start;
 }

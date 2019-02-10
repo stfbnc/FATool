@@ -11,7 +11,7 @@ public:
     FileOps();
 	~FileOps();
 	int rows_number(string);
-    void open_file(FILE *, string, const char *);
+    FILE* open_file(string, const char *);
 };
 
 #endif
