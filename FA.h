@@ -17,17 +17,21 @@ using namespace std;
 class FA
 {
 public:
-    FA(string file_name_, int min_win_, int max_win_, int ord_, int rev_seg_)
-	  : file_name(file_name_), min_win(min_win_), max_win(max_win_), ord(ord_), rev_seg(rev_seg_) {}
+    FA(string file_name_, int min_win_, int max_win_, int ord_, int rev_seg_=1)
+	  : file_name(file_name_), min_win(min_win_), max_win(max_win_), ord(ord_), rev_seg(rev_seg_) {
+          N = GetTsLength(file_name_);
+      }
 	virtual ~FA() {}
 
-    void CheckInputs(string fn, int mw, int Mw, int po, int rvsg){
-        //file existence
+    void CheckFileExistence(string fn){
         struct stat buffer;
         if(stat(fn.c_str(), &buffer) != 0){
             fprintf(stdout, "ERROR %d: file %s does not exist\n", FILE_FAILURE, fn.c_str());
             exit(FILE_FAILURE);
         }
+    }
+    
+    void CheckInputs(int mw, int Mw, int po, int rvsg=1){
         //windows size
         if(Mw < mw){
             fprintf(stdout, "ERROR %d: biggest scale must be greater than smallest scale\n", RANGE_FAILURE);
@@ -35,7 +39,7 @@ public:
         }else if(mw < 3){
             fprintf(stdout, "ERROR %d: smallest scale must be greater than 2\n", WIN_SIZE_FAILURE);
             exit(WIN_SIZE_FAILURE);
-        }else if(Mw > GetTsLength()){
+        }else if(Mw > N){
             fprintf(stdout, "ERROR %d: biggest scale must be smaller than time series length\n", WIN_SIZE_FAILURE);
             exit(WIN_SIZE_FAILURE);
         }
@@ -58,8 +62,9 @@ public:
         F = new double [L2];
     }
     
-    int GetTsLength(){
-        return FileOps().rows_number(file_name);
+    int GetTsLength(string fn){
+        FileOps fo = FileOps();
+        return fo.rows_number(fn);
     }
     
     int GetNumScales(int start, int end){
@@ -76,6 +81,7 @@ protected:
 	int max_win;
 	int ord;
 	int rev_seg;
+    int N;
 	double *t;
 	double *y;
 	int *s;

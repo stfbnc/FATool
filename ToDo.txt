@@ -1,0 +1,4 @@
+- Rho_Dcca estende dcca e fa il calcolo per tutto e dà rho
+- Ht
+- mfdfa che generalizza dfa
+- mfdfa può anche fare lo spettro multifrattale

@@ -1,1 +1,1 @@
-g++ -o FA_MAIN FA_MAIN.cpp DFA.cpp ArrayOps.cpp FileOps.cpp MathOps.cpp 
+g++ -o FA_MAIN FA_MAIN.cpp DCCA.cpp DFA.cpp ArrayOps.cpp FileOps.cpp MathOps.cpp 

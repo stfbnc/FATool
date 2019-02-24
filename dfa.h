@@ -6,7 +6,7 @@
 class DFA : public FA
 {
 public:
-    DFA(string, int, int, int, int);
+    DFA(string, int, int, int, int=1);
 	~DFA();
 	void SetFlucVectors();
 	void WinFlucComp();

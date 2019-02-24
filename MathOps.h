@@ -8,6 +8,7 @@ public:
 	~MathOps();
 	double mean(double *, int);
 	double nan_mean(double *, int);
+    double custom_mean(double *, int, int);
 	void subtract_mean(double *, int, double *);
 	void cumsum(double *, double *, int);
 	void nan_cumsum(double *, double *, int);
