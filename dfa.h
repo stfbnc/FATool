@@ -12,6 +12,13 @@ public:
 	void WinFlucComp();
 	double H_loglogFit(int, int);
 	void SaveFile(string);
+	void setH(double);
+	double getH();
+	void setH_intercept(double);
+	double getH_intercept();
+private:
+	double H;
+	double H_intercept;
 };
 
 #endif
