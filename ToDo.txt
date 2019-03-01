@@ -1,5 +1,5 @@
-﻿- mettere H e H_intercept come variabili di classe e mettere metodi get per recuperarli
-- Ht
+﻿- Ht
 - Rho_Dcca estende dcca e fa il calcolo per tutto e dà rho
 - mfdfa che generalizza fa
 - mfdfa può anche fare lo spettro multifrattale
+- nanDFA che estende dfa (e lo stesso con le altre classi)

@@ -9,12 +9,15 @@
 
 using namespace std;
 
-DFA::DFA(string FileName, int MinWin, int MaxWin, int PolOrd, int RevSeg)
-		: FA(FileName, MinWin, MaxWin, PolOrd, RevSeg)
+//DFA::DFA(string fileName, int minWin, int maxWin, int polOrd, int revSeg)
+//		: FA(fileName, minWin, maxWin, polOrd, revSeg)
+DFA::DFA(string fileName, int minWin, int maxWin, int polOrd, int revSeg)
+		: file_name(fileName), min_win(minWin), max_win(maxWin), ord(polOrd), rev_seg(revSeg)
 {
-    CheckFileExistence(FileName);
-    CheckInputs(MinWin, MaxWin, PolOrd, RevSeg);
-    AllocateMemory(N, GetNumScales(MinWin, MaxWin));
+    checkFileExistence(fileName);
+	N = setTsLength(fileName);
+    checkInputs(minWin, maxWin, polOrd, revSeg);
+    allocateMemory(N, getRangeLength(minWin, maxWin));
 }
 
 DFA::~DFA(){
@@ -24,7 +27,42 @@ DFA::~DFA(){
 	delete[] F;
 }
 
-void DFA::SetFlucVectors(){
+void DFA::checkInputs(int mw, int Mw, int po, int rvsg){
+	//windows size
+	if(Mw < mw){
+		fprintf(stdout, "ERROR %d: biggest scale must be greater than smallest scale\n", RANGE_FAILURE);
+		exit(RANGE_FAILURE);
+	}else if(mw < 3){
+		fprintf(stdout, "ERROR %d: smallest scale must be greater than 2\n", WIN_SIZE_FAILURE);
+		exit(WIN_SIZE_FAILURE);
+	}else if(Mw > N){
+		fprintf(stdout, "ERROR %d: biggest scale must be smaller than time series length\n", WIN_SIZE_FAILURE);
+		exit(WIN_SIZE_FAILURE);
+	}
+	//polynomial order
+	if(po < 1){
+		fprintf(stdout, "ERROR %d: polynomial order must be greater than 0\n", POL_FAILURE);
+		exit(POL_FAILURE);
+	}
+	//rev_seg
+	if(rvsg != 0 && rvsg != 1){
+		fprintf(stdout, "ERROR %d: parameter for backward computation must be 0 or 1\n", REV_SEG_FAILURE);
+		exit(REV_SEG_FAILURE);
+	}
+}
+
+void DFA::allocateMemory(int L1, int L2){
+	t = new double [L1];
+	y = new double [L1];
+	s = new int [L2];
+	F = new double [L2];
+}
+
+int DFA::getTsLength(){
+	return N;
+}
+
+void DFA::setFlucVectors(){
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
     FileOps fo = FileOps();
@@ -43,10 +81,10 @@ void DFA::SetFlucVectors(){
     mo.cumsum(pn_nomean, y, N);
 }
     
-void DFA::WinFlucComp(){
+void DFA::winFlucComp(){
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
-	int range = GetNumScales(min_win, max_win);
+	int range = getRangeLength(min_win, max_win);
     ao.int_range(s, range, min_win);
 	int F_len = N / min_win;
     double F_nu1[F_len], F_nu2[F_len];
@@ -93,27 +131,45 @@ void DFA::WinFlucComp(){
         }
     }
 }
+
+/*void DFA::setH(double H_val){
+	H = H_val;
+}*/
+
+double DFA::getH(){
+	return H;
+}
+
+/*void DFA::setH_intercept(double H_intcpt_val){
+	H_intercept = H_intcpt_val;
+}*/
+
+double DFA::getH_intercept(){
+	return H_intercept;
+}
 // l'interfaccia puo' calcolare H facendo un fit in un untervallo qualsiasi, anche dopo aver fatto l'analisi
-double DFA::H_loglogFit(int start, int end){
+void DFA::H_loglogFit(int start, int end){
 	//if start < min_win || end > max_win -> error
     MathOps mo = MathOps();
-	int range = GetNumScales(start, end);
-	double H, H_intercept;
+	int range = getRangeLength(start, end);
     double log_s[range], log_F[range];
     for(int i = start - min_win; i <= end - min_win; i++){
         log_s[i] = log(s[i]);
         log_F[i] = log(F[i]);
     }
     mo.lin_fit(range, log_s, log_F, &H, &H_intercept);
-	return H;
 }
 // posso salvare il file di tutto il range per poi eventualmente ricaricarlo per rifare e salvare il grafico in un altro range
-void DFA::SaveFile(string path_tot){
+void DFA::saveFile(string path_tot){
     FileOps fo = FileOps();
-	int range = GetNumScales(min_win, max_win);
+	int range = getRangeLength(min_win, max_win);
 	FILE *f;
     f = fo.open_file(path_tot, "w");
     for(int i = 0; i < range; i++)
         fprintf(f, "%d %lf\n", s[i], F[i]);
     fclose(f);
 }
+
+/*void DFA::plot(){
+	
+}*/

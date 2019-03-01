@@ -17,10 +17,11 @@ using namespace std;
 class FA
 {
 public:
-    FA(string file_name_, int min_win_, int max_win_, int ord_, int rev_seg_=1)
+    /*FA(string file_name_, int min_win_, int max_win_, int ord_, int rev_seg_=1)
 	  : file_name(file_name_), min_win(min_win_), max_win(max_win_), ord(ord_), rev_seg(rev_seg_) {
           N = GetTsLength(file_name_);
-      }
+      }*/
+	FA() {}
 	virtual ~FA() {}
 
     void CheckFileExistence(string fn){
@@ -31,7 +32,7 @@ public:
         }
     }
     
-    void CheckInputs(int mw, int Mw, int po, int rvsg=1){
+    /*void checkInputs(int mw, int Mw, int po, int rvsg=1){
         //windows size
         if(Mw < mw){
             fprintf(stdout, "ERROR %d: biggest scale must be greater than smallest scale\n", RANGE_FAILURE);
@@ -53,29 +54,31 @@ public:
             fprintf(stdout, "ERROR %d: parameter for backward computation must be 0 or 1\n", REV_SEG_FAILURE);
             exit(REV_SEG_FAILURE);
         }
-    }
+    }*/
     
-    void AllocateMemory(int L1, int L2){
+    /*void allocateMemory(int L1, int L2){
         t = new double [L1];
         y = new double [L1];
         s = new int [L2];
         F = new double [L2];
-    }
+    }*/
     
-    int GetTsLength(string fn){
+    int setTsLength(string fn){
         FileOps fo = FileOps();
         return fo.rows_number(fn);
     }
     
-    int GetNumScales(int start, int end){
+    int getRangeLength(int start, int end){
         return end - start + 1;
     }
     
-	virtual void SetFlucVectors() = 0;
-	virtual void WinFlucComp() = 0;
-    virtual double H_loglogFit(int, int) = 0;
-    virtual void SaveFile(string) = 0;
-protected:
+	virtual void checkInputs() = 0;
+	virtual void allocateMemory(int, int) = 0;
+	virtual void getFlucVectors() = 0;
+	virtual void winFlucComp() = 0;
+    virtual void H_loglogFit(int, int) = 0;
+    virtual void saveFile(string) = 0;
+/*protected:
 	string file_name;
 	int min_win;
 	int max_win;
@@ -86,6 +89,7 @@ protected:
 	double *y;
 	int *s;
 	double *F;
+*/
 };
 
 #endif

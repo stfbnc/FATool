@@ -8,15 +8,29 @@ class DFA : public FA
 public:
     DFA(string, int, int, int, int=1);
 	~DFA();
-	void SetFlucVectors();
-	void WinFlucComp();
-	double H_loglogFit(int, int);
-	void SaveFile(string);
-	void setH(double);
+	void checkInputs(int, int, int, int=1);
+	void allocateMemory(int, int);
+	int getTsLength();
+	void setFlucVectors();
+	void winFlucComp();
+	//void setH(double);
 	double getH();
-	void setH_intercept(double);
+	//void setH_intercept(double);
 	double getH_intercept();
+	void H_loglogFit(int, int);
+	void saveFile(string);
+	//void plot();
 private:
+	string file_name;
+	int min_win;
+	int max_win;
+	int ord;
+	int rev_seg;
+    int N;
+	double *t;
+	double *y;
+	int *s;
+	double *F;
 	double H;
 	double H_intercept;
 };

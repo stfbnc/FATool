@@ -9,22 +9,22 @@
 
 using namespace std;
 
-HT::HT(string FileName, int Scale, int PolOrd)
-		: file_name(FileName), scale(Scale), ord(PolOrd)
+HT::HT(string fileName, int inputScale, int polOrd)
+		: file_name(fileName), scale(inputScale), ord(polOrd)
 {
-    CheckFileExistence(FileName);
+    checkFileExistence(fileName);
     //CheckInputs(MinWin, MaxWin, PolOrd, RevSeg);
-    AllocateMemory(N, GetNumScales(Scale, N));
+    allocateMemory(N, getRangeLength(inputScale, N));
 }
 
 HT::~HT(){
 	delete[] t;
 	delete[] y;
-	delete[] s;
 	delete[] F;
+	delete[] Ht;
 }
 
-void HT::SetFlucVectors(){
+void HT::setFlucVectors(){
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
     FileOps fo = FileOps();
@@ -43,10 +43,10 @@ void HT::SetFlucVectors(){
     mo.cumsum(pn_nomean, y, N);
 }
     
-void HT::WinFlucComp(){
+void HT::winFlucComp(){
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
-	int range = GetNumScales(scale, N);
+	int range = getRangeLength(scale, N);
     double t_fit[scale], y_fit[scale], diff_vec[scale];
     //computation
     int start_lim, end_lim;
@@ -54,7 +54,7 @@ void HT::WinFlucComp(){
 	ao.zero_vec(t_fit, scale);
 	ao.zero_vec(y_fit, scale);
 	ao.zero_vec(diff_vec, scale);
-	ao.zero_vec(s, range);
+	ao.zero_vec(F, range);
 	for(int v = 0; v <= N - scale; v++){
 		start_lim = v;
 		end_lim = v + scale - 1;
@@ -63,7 +63,7 @@ void HT::WinFlucComp(){
 		mo.lin_fit(scale, t_fit, y_fit, &ang_coeff, &intercept);
 		for(int j = 0; j < scale; j++)
 			diff_vec[j] = pow((y_fit[j] - (intercept + ang_coeff * t_fit[j])), 2.0);
-		s[v] = sqrt(mo.mean(diff_vec, scale));
+		F[v] = sqrt(mo.mean(diff_vec, scale));
 	}
 }
 // l'interfaccia puo' calcolare H facendo un fit in un untervallo qualsiasi, anche dopo aver fatto l'analisi
@@ -74,22 +74,22 @@ void HT::H_loglogFit(int start, int end){
 	//getH_intercept
 	
     MathOps mo = MathOps();
-	int range = GetNumScales(scale, N);
+	int range = getRangeLength(scale, N);
 	double Regfit, logscale;
 	Regfit = Hq0_intercept + Hq0 * log(scale);
     logscale = log(range) - log(scale);
     for(int i = start; i <= end; i++){
-        F[i] = (Regfit - log(s[i]))/(double) logscale + Hq0;
+        Ht[i] = (Regfit - log(s[i]))/(double) logscale + Hq0;
     }
 }
 // posso salvare il file di tutto il range per poi eventualmente ricaricarlo per rifare e salvare il grafico in un altro range
-void HT::SaveFile(string path_tot){
+void HT::saveFile(string path_tot){
     FileOps fo = FileOps();
-	int range = GetNumScales(scale, N);
+	int range = getRangeLength(scale, N);
 	FILE *f;
     f = fo.open_file(path_tot, "w");
 	fprintf(f, "#scale=%d\n", scale);
     for(int i = 0; i < range; i++)
-        fprintf(f, "%lf\n", F[i]);
+        fprintf(f, "%lf\n", Ht[i]);
     fclose(f);
 }

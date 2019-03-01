@@ -8,12 +8,13 @@ class HT : public FA
 public:
     HT(string, int, int);
 	~HT();
-	void SetFlucVectors();
-	void WinFlucComp();
+	void setFlucVectors();
+	void winFlucComp();
 	double H_loglogFit(int, int);
-	void SaveFile(string);
+	void saveFile(string);
 protected:
 	int scale;
+	double *Ht;
 };
 
 #endif
