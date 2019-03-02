@@ -24,7 +24,7 @@ public:
 	FA() {}
 	virtual ~FA() {}
 
-    void CheckFileExistence(string fn){
+    void checkFileExistence(string fn){
         struct stat buffer;
         if(stat(fn.c_str(), &buffer) != 0){
             fprintf(stdout, "ERROR %d: file %s does not exist\n", FILE_FAILURE, fn.c_str());
@@ -72,9 +72,9 @@ public:
         return end - start + 1;
     }
     
-	virtual void checkInputs() = 0;
+	//virtual void checkInputs() = 0;
 	virtual void allocateMemory(int, int) = 0;
-	virtual void getFlucVectors() = 0;
+	virtual void setFlucVectors() = 0;
 	virtual void winFlucComp() = 0;
     virtual void H_loglogFit(int, int) = 0;
     virtual void saveFile(string) = 0;

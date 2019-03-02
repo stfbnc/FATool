@@ -9,13 +9,13 @@
 
 using namespace std;
 
-DCCA::DCCA(string fileName, string fileName2, int minWin, int maxWin, int polOrd)
-		: file_name(fileName), min_win(minWin), max_win(maxWin), ord(polOrd), file_name2(fileName2)
+DCCA::DCCA(string fileName, string fileName2, int minWin, int maxWin, int polOrd, string compType)
+		: file_name(fileName), file_name2(fileName2), min_win(minWin), max_win(maxWin), ord(polOrd), isAbs(compType)
 {
     checkFileExistence(fileName);
     checkFileExistence(fileName2);
-	N = getEqualLength(fileName, fileName2);
-    checkInputs(minWin, maxWin, polOrd);
+	getEqualLength(fileName, fileName2);
+    checkInputs(minWin, maxWin, polOrd, compType);
     allocateMemory(N, getRangeLength(minWin, maxWin));
 }
 
@@ -27,7 +27,7 @@ DCCA::~DCCA(){
 	delete[] F;
 }
 
-void DCCA::checkInputs(int mw, int Mw, int po){
+void DCCA::checkInputs(int mw, int Mw, int po, string type){
 	//windows size
 	if(Mw < mw){
 		fprintf(stdout, "ERROR %d: biggest scale must be greater than smallest scale\n", RANGE_FAILURE);
@@ -44,11 +44,11 @@ void DCCA::checkInputs(int mw, int Mw, int po){
 		fprintf(stdout, "ERROR %d: polynomial order must be greater than 0\n", POL_FAILURE);
 		exit(POL_FAILURE);
 	}
-	//rev_seg
-	if(rvsg != 0 && rvsg != 1){
-		fprintf(stdout, "ERROR %d: parameter for backward computation must be 0 or 1\n", REV_SEG_FAILURE);
-		exit(REV_SEG_FAILURE);
-	}
+    //dcca computation type
+    if(type.compare(DEFAULT_DCCA) != 0 && type.compare(CORR_DCCA) != 0){
+        fprintf(stdout, "ERROR %d: computation type must be %s or %s\n", REV_SEG_FAILURE, DEFAULT_DCCA, CORR_DCCA);
+        exit(REV_SEG_FAILURE);
+    }
 }
 
 void DCCA::allocateMemory(int L1, int L2){
@@ -99,7 +99,7 @@ void DCCA::setFlucVectors(){
     mo.cumsum(ts2_nomean, y2, N);
 }
     
-void DCCA::WinFlucComp(){
+void DCCA::winFlucComp(){
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
 	int range = getRangeLength(min_win, max_win);
@@ -127,19 +127,28 @@ void DCCA::WinFlucComp(){
             ao.slice_vec(y2, y_fit2, start_lim, end_lim);
             mo.lin_fit(curr_win_size+1, t_fit, y_fit1, &ang_coeff1, &intercept1);
             mo.lin_fit(curr_win_size+1, t_fit, y_fit2, &ang_coeff2, &intercept2);
-            for(int j = 0; j <= curr_win_size; j++)
-                diff_vec[j] = (y_fit1[j] - (intercept1 + ang_coeff1 * t_fit[j])) * (y_fit2[j] - (intercept2 + ang_coeff2 * t_fit[j]));
+            if(isAbs.compare(CORR_DCCA) == 0){
+                for(int j = 0; j <= curr_win_size; j++)
+                    diff_vec[j] = (y_fit1[j] - (intercept1 + ang_coeff1 * t_fit[j])) * (y_fit2[j] - (intercept2 + ang_coeff2 * t_fit[j]));
+            }else if(isAbs.compare(DEFAULT_DCCA) == 0){
+                for(int j = 0; j <= curr_win_size; j++)
+                    diff_vec[j] = fabs((y_fit1[j] - (intercept1 + ang_coeff1 * t_fit[j])) * (y_fit2[j] - (intercept2 + ang_coeff2 * t_fit[j])));
+            }
             F_nu[v] = mo.custom_mean(diff_vec, curr_win_size+1, curr_win_size-1);
         }
-        F[i] = sqrt(mo.custom_mean(F_nu, N_s, N_s));
+        if(isAbs.compare(CORR_DCCA) == 0){
+            F[i] = mo.mean(F_nu, N_s);
+        }else if(isAbs.compare(DEFAULT_DCCA) == 0){
+            F[i] = sqrt(mo.mean(F_nu, N_s));
+        }
     }
 }
 
-double DFA::getH(){
+double DCCA::getH(){
 	return H;
 }
 
-double DFA::getH_intercept(){
+double DCCA::getH_intercept(){
 	return H_intercept;
 }
 
@@ -154,10 +163,9 @@ void DCCA::H_loglogFit(int start, int end){
         log_F[i] = log(F[i]);
     }
     mo.lin_fit(range, log_s, log_F, &H, &H_intercept);
-	return H;
 }
 // posso salvare il file di tutto il range per poi eventualmente ricaricarlo per rifare e salvare il grafico in un altro range
-void DCCA::SaveFile(string path_tot){
+void DCCA::saveFile(string path_tot){
     FileOps fo = FileOps();
 	int range = getRangeLength(min_win, max_win);
 	FILE *f;
@@ -167,6 +175,6 @@ void DCCA::SaveFile(string path_tot){
     fclose(f);
 }
 
-/*void DFA::plot(){
+/*void DCCA::plot(){
 	
 }*/
