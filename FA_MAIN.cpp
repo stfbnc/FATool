@@ -16,7 +16,7 @@ int main(int argc, char **argv){
 	int Mw = stoi(argv[3]);
 	int po = stoi(argv[4]);
 	int rv_sg = stoi(argv[5]);*/
-	string fn = "./prova2.txt";
+	string fn = "./prova.txt";
     string fm = "./prova.txt";
 	int mw = 4;
 	int Mw = 25;
@@ -28,16 +28,17 @@ int main(int argc, char **argv){
     printf("%d\n", a.getRangeLength(mw, Mw));
     a.setFlucVectors();
     a.winFlucComp();
+    double *arr = a.getF(); //sono la stessa cosa? se modifico uno si modifica l'altro?
     a.H_loglogFit(mw, Mw);
     printf("%lf | %lf\n", a.getH_intercept(), a.getH());
     
-    DCCA b = DCCA(fn, fm, mw, Mw, po, "sign");
+    /*DCCA b = DCCA(fn, fm, mw, Mw, po);
     printf("%d\n", b.getTsLength());
     printf("%d\n", b.getRangeLength(mw, Mw));
     b.setFlucVectors();
     b.winFlucComp();
     b.H_loglogFit(mw, Mw);
-    printf("%lf | %lf\n", b.getH_intercept(), b.getH());
+    printf("%lf | %lf\n", b.getH_intercept(), b.getH());*/
     
     return 0;
 }

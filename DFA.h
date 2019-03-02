@@ -13,6 +13,7 @@ public:
 	int getTsLength();
 	void setFlucVectors();
 	void winFlucComp();
+    double *getF();
 	double getH();
 	double getH_intercept();
 	void H_loglogFit(int, int);

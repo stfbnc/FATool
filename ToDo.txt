@@ -1,5 +1,6 @@
-﻿- Ht
-- Rho_Dcca estende dcca e fa il calcolo per tutto e dà rho
+- Ht
+- Rho_Dcca fa il calcolo per tutto e dà rho
+- calcolo delle soglie
 - mfdfa che generalizza fa
 - mfdfa può anche fare lo spettro multifrattale
 - nanDFA che estende dfa (e lo stesso con le altre classi)

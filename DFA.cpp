@@ -130,6 +130,10 @@ void DFA::winFlucComp(){
     }
 }
 
+double* DFA::getF(){
+    return F;
+}
+
 double DFA::getH(){
 	return H;
 }
