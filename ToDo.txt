@@ -1,6 +1,8 @@
+- rivedere i nomi dei file da salvare, aggiungere dfa (o dcca, etc) all'inizio del file
 - Ht
-- Rho_Dcca fa il calcolo per tutto e dà rho
+- Ht per varie scale (overload costruttore per range scale o stringa sep da , con scale)
 - calcolo delle soglie
-- mfdfa che generalizza fa
+- mfdfa_singleq per un solo q
+- mfdfa per più scale (scala finale, scala iniziale, numero scale)
 - mfdfa può anche fare lo spettro multifrattale
 - nanDFA che estende dfa (e lo stesso con le altre classi)

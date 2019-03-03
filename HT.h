@@ -1,7 +1,11 @@
 #ifndef HT_H
 #define HT_H
 
+#include <iostream>
+#include <cstring>
 #include "FA.h"
+
+using namespace std;
 
 class HT : public FA
 {

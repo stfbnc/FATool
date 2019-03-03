@@ -1,5 +1,5 @@
-#ifndef DFA_H
-#define DFA_H
+#ifndef MFDFAsingleQ_H
+#define MFDFAsingleQ_H
 
 #include <iostream>
 #include <cstring>
@@ -7,11 +7,11 @@
 
 using namespace std;
 
-class DFA : public FA
+class MFDFAsingleQ : public FA
 {
 public:
-    DFA(string, int, int, int, int=1);
-	~DFA();
+    MFDFAsingleQ(string, int, int, int, double, int=1);
+	~MFDFAsingleQ();
 	void checkInputs(int, int, int, int);
 	void allocateMemory(int, int);
 	int getTsLength();
@@ -27,6 +27,7 @@ private:
 	int min_win;
 	int max_win;
 	int ord;
+    double q;
 	int rev_seg;
     int N;
 	double *t;

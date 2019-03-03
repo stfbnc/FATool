@@ -2,15 +2,15 @@
 #include <cstdio>
 #include <cmath>
 #include <cstring>
-#include "DFA.h"
+#include "MFDFAsingleQ.h"
 #include "ArrayOps.h"
 #include "MathOps.h"
 #include "FileOps.h"
 
 using namespace std;
 
-DFA::DFA(string fileName, int minWin, int maxWin, int polOrd, int revSeg)
-		: file_name(fileName), min_win(minWin), max_win(maxWin), ord(polOrd), rev_seg(revSeg)
+MFDFAsingleQ::MFDFAsingleQ(string fileName, int minWin, int maxWin, int polOrd, double qOrd, int revSeg)
+		: file_name(fileName), min_win(minWin), max_win(maxWin), ord(polOrd), q(qOrd), rev_seg(revSeg)
 {
     checkFileExistence(fileName);
 	N = setTsLength(fileName);
@@ -18,14 +18,14 @@ DFA::DFA(string fileName, int minWin, int maxWin, int polOrd, int revSeg)
     allocateMemory(N, getRangeLength(minWin, maxWin));
 }
 
-DFA::~DFA(){
+MFDFAsingleQ::~MFDFAsingleQ(){
 	delete[] t;
 	delete[] y;
 	delete[] s;
 	delete[] F;
 }
 
-void DFA::checkInputs(int mw, int Mw, int po, int rvsg){
+void MFDFAsingleQ::checkInputs(int mw, int Mw, int po, int rvsg){
 	//windows size
 	if(Mw < mw){
 		fprintf(stdout, "ERROR %d: biggest scale must be greater than smallest scale\n", RANGE_FAILURE);
@@ -49,18 +49,18 @@ void DFA::checkInputs(int mw, int Mw, int po, int rvsg){
 	}
 }
 
-void DFA::allocateMemory(int L1, int L2){
+void MFDFAsingleQ::allocateMemory(int L1, int L2){
 	t = new double [L1];
 	y = new double [L1];
 	s = new int [L2];
 	F = new double [L2];
 }
 
-int DFA::getTsLength(){
+int MFDFAsingleQ::getTsLength(){
 	return N;
 }
 
-void DFA::setFlucVectors(){
+void MFDFAsingleQ::setFlucVectors(){
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
     FileOps fo = FileOps();
@@ -79,7 +79,7 @@ void DFA::setFlucVectors(){
     mo.cumsum(pn_nomean, y, N);
 }
     
-void DFA::winFlucComp(){
+void MFDFAsingleQ::winFlucComp(){
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
 	int range = getRangeLength(min_win, max_win);
@@ -106,7 +106,11 @@ void DFA::winFlucComp(){
             mo.lin_fit(curr_win_size, t_fit, y_fit, &ang_coeff, &intercept);
             for(int j = 0; j < curr_win_size; j++)
                 diff_vec[j] = pow((y_fit[j] - (intercept + ang_coeff * t_fit[j])), 2.0);
-            F_nu1[v] = mo.mean(diff_vec, curr_win_size);
+            if(q == 0){
+                F_nu1[v] = log(mo.mean(diff_vec, curr_win_size));
+            }else{
+                F_nu1[v] = pow(mo.mean(diff_vec, curr_win_size), 0.5*q);
+            }
         }
         if(rev_seg == 1){
             ao.zero_vec(F_nu2, F_len);
@@ -121,24 +125,36 @@ void DFA::winFlucComp(){
                 mo.lin_fit(curr_win_size, t_fit, y_fit, &ang_coeff, &intercept);
                 for(int j = 0; j < curr_win_size; j++)
                     diff_vec[j] = pow((y_fit[j] - (intercept + ang_coeff * t_fit[j])), 2.0);
-                F_nu2[v] = mo.mean(diff_vec, curr_win_size);
+                if(q == 0){
+                    F_nu2[v] = log(mo.mean(diff_vec, curr_win_size));
+                }else{
+                    F_nu2[v] = pow(mo.mean(diff_vec, curr_win_size), 0.5*q);
+                }
             }
-            F[i] = sqrt((mo.mean(F_nu1, N_s) + mo.mean(F_nu2, N_s)) / 2.0);
+            if(q == 0){
+                F[i] = exp((mo.custom_mean(F_nu1, N_s, 2*N_s) + mo.custom_mean(F_nu2, N_s, 2*N_s)) / 2.0);
+            }else{
+                F[i] = pow((mo.mean(F_nu1, N_s) + mo.mean(F_nu2, N_s)) / 2.0, 1/(double)q);
+            }
         }else{
-            F[i] = sqrt(mo.mean(F_nu1, N_s));
+            if(q == 0){
+                F[i] = exp(mo.custom_mean(F_nu1, N_s, 2*N_s));
+            }else{
+                F[i] = pow(mo.mean(F_nu1, N_s), 1/(double)q);
+            }
         }
     }
 }
 
-double DFA::getH(){
+double MFDFAsingleQ::getH(){
 	return H;
 }
 
-double DFA::getH_intercept(){
+double MFDFAsingleQ::getH_intercept(){
 	return H_intercept;
 }
 // l'interfaccia puo' calcolare H facendo un fit in un untervallo qualsiasi, anche dopo aver fatto l'analisi
-void DFA::H_loglogFit(int start, int end){
+void MFDFAsingleQ::H_loglogFit(int start, int end){
 	//if start < min_win || end > max_win -> error
     MathOps mo = MathOps();
 	int range = getRangeLength(start, end);
@@ -150,7 +166,7 @@ void DFA::H_loglogFit(int start, int end){
     mo.lin_fit(range, log_s, log_F, &H, &H_intercept);
 }
 // posso salvare il file di tutto il range per poi eventualmente ricaricarlo per rifare e salvare il grafico in un altro range
-void DFA::saveFile(string path_tot){
+void MFDFAsingleQ::saveFile(string path_tot){
     FileOps fo = FileOps();
 	int range = getRangeLength(min_win, max_win);
 	FILE *f;
@@ -160,6 +176,6 @@ void DFA::saveFile(string path_tot){
     fclose(f);
 }
 
-/*void DFA::plot(){
+/*void MFDFAsingleQ::plot(){
 	
 }*/

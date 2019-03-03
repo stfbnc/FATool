@@ -144,6 +144,10 @@ void DCCA::winFlucComp(){
     }
 }
 
+double* DCCA::getF(){
+    return F;
+}
+
 double DCCA::getH(){
 	return H;
 }
