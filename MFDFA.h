@@ -14,7 +14,11 @@ public:
 	~MFDFA();
     void allocateQmemory(int);
     void getQrange(double, int, double);
+	void qWinFlucComp();
+	void saveFile(string path_tot);
+	void qsaveFile(string path_tot);
 	//void plot();
+	//void qplot();
 private:
 	string file_name;
 	int min_win;
@@ -23,6 +27,7 @@ private:
     double q;
 	int rev_seg;
     int N;
+	double startq;
     int Nq;
     double stepq;
     double *qRange;

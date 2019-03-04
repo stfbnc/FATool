@@ -10,7 +10,7 @@
 using namespace std;
 
 MFDFA::MFDFA(string fileName, int minWin, int maxWin, int polOrd, double qIn, int qLen, double qStep, int revSeg)
-		: MFDFAsingleQ(fileName, minWin, maxWin, polOrd, qIn, revSeg), Nq(qLen), stepq(qStep)
+		: MFDFAsingleQ(fileName, minWin, maxWin, polOrd, qIn, revSeg), startq(qIn), Nq(qLen), stepq(qStep)
 {
     allocateQmemory(qLen);
 }
@@ -34,14 +34,52 @@ void MFDFA::allocateQmemory(int L){
 void MFDFA::getQrange(double start, int len, double step){
     ArrayOps ao = ArrayOps();
     ao.double_range(qRange, len, start, step);
-    for(int i = 0; i < len; i++)
-        printf("%lf\n", qRange[i]);
 }
 
 //funzione che fa in loop per i vari q e salva un file unico con le varie fluttuazioni e su prima riga i q
+void MFDFA::qWinFlucComp(){
+	getQrange(startq, Nq, stepq);
+	int Lq = getRangeLength(min_win, max_win);
+	double flucMtx[Lq][Nq];
+	for(int i = 0; i < Nq; i++){
+		q = getQrange[i];
+		winFlucComp();
+		for(int j = 0; j < Lq; j++){
+			flucMtx[j][i] = F[j];
+		}
+		H_loglogFit(min_win, max_win);
+		Hq[i] = getH();
+		H_interceptq[i] = getH_intercept();
+	}
+}
 
-//funzione che salva q, Hq, e intercetta
+void MFDFA::saveFile(string path_tot){
+	FileOps fo = FileOps();
+	int Lq = getRangeLength(min_win, max_win);
+	FILE *f;
+    f = fo.open_file(path_tot, "w");
+    for(int i = 0; i < Lq; i++){
+		for(int j = 0; j < Nq; j++){
+			fprintf(f, "%d %lf\n", s[i], F[i]);
+		}
+	}
+    fclose(f);
+}
+
+void MFDFA::qsaveFile(string path_tot){
+	FileOps fo = FileOps();
+	FILE *f;
+    f = fo.open_file(path_tot, "w");
+    for(int i = 0; i < Nq; i++){
+		fprintf(f, "%lf %lf %lf\n", qRange[i], Hq[i], H_interceptq[i]);
+	}
+    fclose(f);
+}
 
 /*void MFDFA::plot(){
+	
+}*/
+
+/*void MFDFA::qplot(){
 	
 }*/
