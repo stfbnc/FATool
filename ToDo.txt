@@ -1,8 +1,7 @@
-- rivedere i nomi dei file da salvare, aggiungere dfa (o dcca, etc) all'inizio del file
+﻿- rivedere i nomi dei file da salvare, aggiungere dfa (o dcca, etc) all'inizio del file
 - Ht
 - Ht per varie scale (overload costruttore per range scale o stringa sep da , con scale)
+- parametro costruttore per fare dfa (o altre) non a tutte le scale ma a scale equispaziate pointEvery oppure per un certo numero numPoints
 - calcolo delle soglie
-- mfdfa_singleq per un solo q
-- mfdfa per più scale (scala finale, scala iniziale, numero scale)
 - mfdfa può anche fare lo spettro multifrattale
 - nanDFA che estende dfa (e lo stesso con le altre classi)

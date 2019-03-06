@@ -2,29 +2,56 @@
 #include <cstdio>
 #include <cmath>
 #include <cstring>
-#include "HT.h"
+#include "HTsingleScale.h"
 #include "ArrayOps.h"
 #include "MathOps.h"
 #include "FileOps.h"
 
 using namespace std;
 
-HT::HT(string fileName, int inputScale, int polOrd)
+HTsingleScale::HTsingleScale(string fileName, int inputScale, int polOrd)
 		: file_name(fileName), scale(inputScale), ord(polOrd)
 {
     checkFileExistence(fileName);
-    //CheckInputs(MinWin, MaxWin, PolOrd, RevSeg);
+    checkInputs(inputScale, polOrd);
     allocateMemory(N, getRangeLength(inputScale, N));
 }
 
-HT::~HT(){
+HTsingleScale::~HTsingleScale(){
 	delete[] t;
 	delete[] y;
 	delete[] F;
 	delete[] Ht;
 }
 
-void HT::setFlucVectors(){
+void HTsingleScale::checkInputs(int iScale, int po){
+	//windows size
+	if(iScale < 3){
+		fprintf(stdout, "ERROR %d: scale must be greater than 2\n", WIN_SIZE_FAILURE);
+		exit(WIN_SIZE_FAILURE);
+	}else if(iScale > N){
+		fprintf(stdout, "ERROR %d: scale must be smaller than time series length\n", WIN_SIZE_FAILURE);
+		exit(WIN_SIZE_FAILURE);
+	}
+	//polynomial order
+	if(po < 1){
+		fprintf(stdout, "ERROR %d: polynomial order must be greater than 0\n", POL_FAILURE);
+		exit(POL_FAILURE);
+	}
+}
+
+void HTsingleScale::allocateMemory(int L1, int L2){
+	t = new double [L1];
+	y = new double [L1];
+	F = new int [L2];
+	Ht = new double [L2];
+}
+
+int HTsingleScale::getTsLength(){
+	return N;
+}
+
+void HTsingleScale::setFlucVectors(){
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
     FileOps fo = FileOps();
@@ -43,7 +70,7 @@ void HT::setFlucVectors(){
     mo.cumsum(pn_nomean, y, N);
 }
     
-void HT::winFlucComp(){
+void HTsingleScale::winFlucComp(){
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
 	int range = getRangeLength(scale, N);
@@ -55,7 +82,7 @@ void HT::winFlucComp(){
 	ao.zero_vec(y_fit, scale);
 	ao.zero_vec(diff_vec, scale);
 	ao.zero_vec(F, range);
-	for(int v = 0; v <= N - scale; v++){
+	for(int v = 0; v <= N-scale; v++){
 		start_lim = v;
 		end_lim = v + scale - 1;
 		ao.slice_vec(t, t_fit, start_lim, end_lim);
@@ -67,8 +94,9 @@ void HT::winFlucComp(){
 	}
 }
 // l'interfaccia puo' calcolare H facendo un fit in un untervallo qualsiasi, anche dopo aver fatto l'analisi
-void HT::H_loglogFit(int start, int end){
+void HTsingleScale::H_loglogFit(int start, int end){
 	//tutta la parte della DFA a q = 0 va qui
+	MFDFAsingleQ dfaQ0 = MFDFAsingleQ();
 	//DFA0
 	//getH
 	//getH_intercept
@@ -83,7 +111,7 @@ void HT::H_loglogFit(int start, int end){
     }
 }
 // posso salvare il file di tutto il range per poi eventualmente ricaricarlo per rifare e salvare il grafico in un altro range
-void HT::saveFile(string path_tot){
+void HTsingleScale::saveFile(string path_tot){
     FileOps fo = FileOps();
 	int range = getRangeLength(scale, N);
 	FILE *f;

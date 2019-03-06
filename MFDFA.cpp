@@ -36,7 +36,6 @@ void MFDFA::getQrange(double start, int len, double step){
     ao.double_range(qRange, len, start, step);
 }
 
-//funzione che fa in loop per i vari q e salva un file unico con le varie fluttuazioni e su prima riga i q
 void MFDFA::qWinFlucComp(){
 	getQrange(startq, Nq, stepq);
 	int Lq = getRangeLength(min_win, max_win);
@@ -58,9 +57,14 @@ void MFDFA::saveFile(string path_tot){
 	int Lq = getRangeLength(min_win, max_win);
 	FILE *f;
     f = fo.open_file(path_tot, "w");
+	fprintf(f, "#q ");
+	for(int i = 0; i < Lq; i++){
+		i == Lq-1 ? fprintf(f, "%lf\n", Hq[i]) : fprintf(f, "%lf ", Hq[i]);
+	}
     for(int i = 0; i < Lq; i++){
+		fprintf(f, "%d ", s[i]);
 		for(int j = 0; j < Nq; j++){
-			fprintf(f, "%d %lf\n", s[i], F[i]);
+			j == Nq-1 ? fprintf(f, "%lf\n", F[i]) : fprintf(f, "%lf ", F[i]);
 		}
 	}
     fclose(f);

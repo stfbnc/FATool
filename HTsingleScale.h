@@ -1,5 +1,5 @@
-#ifndef HT_H
-#define HT_H
+#ifndef HTsingleScale_H
+#define HTsingleScale_H
 
 #include <iostream>
 #include <cstring>
@@ -17,6 +17,9 @@ public:
 	double H_loglogFit(int, int);
 	void saveFile(string);
 protected:
+	double *t;
+	double *y;
+	double *F;
 	int scale;
 	double *Ht;
 };
