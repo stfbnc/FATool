@@ -26,7 +26,7 @@ int main(int argc, char **argv){
 	int po = 1;
 	int rv_sg = 1;
     double qin = -3.0;
-    int qlen = 7;
+    int qlen = 1;
     double step = 1.0;
 
 	DFA a = DFA(fn, mw, Mw, po, rv_sg);
@@ -60,11 +60,15 @@ int main(int argc, char **argv){
     MFDFA e = MFDFA(fn, mw, Mw, po, qin, qlen, step, rv_sg);
     printf("%d\n", e.getTsLength());
     printf("%d\n", e.getRangeLength(mw, Mw));
+    printf("cia0");
     e.setFlucVectors();
-    e.getQrange(qin, qlen, step);
-    e.winFlucComp();
-    e.H_loglogFit(mw, Mw);
-    printf("%lf | %lf\n", e.getH_intercept(), e.getH());
+    printf("cia1");
+    e.qWinFlucComp();
+    printf("cia2");
+//    e.saveFile("all_fluc.txt");
+//    printf("cia3");
+//    e.qsaveFile("all_q.txt");
+//    printf("cia4");
     
     return 0;
 }

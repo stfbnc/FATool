@@ -6,6 +6,7 @@
 #include "ArrayOps.h"
 #include "MathOps.h"
 #include "FileOps.h"
+#include "MFDFAsingleQ.h"
 
 using namespace std;
 
@@ -43,7 +44,7 @@ void HTsingleScale::checkInputs(int iScale, int po){
 void HTsingleScale::allocateMemory(int L1, int L2){
 	t = new double [L1];
 	y = new double [L1];
-	F = new int [L2];
+	F = new double [L2];
 	Ht = new double [L2];
 }
 
@@ -96,10 +97,12 @@ void HTsingleScale::winFlucComp(){
 // l'interfaccia puo' calcolare H facendo un fit in un untervallo qualsiasi, anche dopo aver fatto l'analisi
 void HTsingleScale::H_loglogFit(int start, int end){
 	//tutta la parte della DFA a q = 0 va qui
-	MFDFAsingleQ dfaQ0 = MFDFAsingleQ();
-	//DFA0
-	//getH
-	//getH_intercept
+	MFDFAsingleQ dfaQ0 = MFDFAsingleQ(file_name, 4, getTsLength()/5, 1, 0.0);
+	dfaQ0.setFlucVectors();
+	dfaQ0.winFlucComp();
+	dfaQ0.H_loglogFit(4, getTsLength()/5);
+	double Hq0 = dfaQ0.getH();
+	double Hq0_intercept = dfaQ0.getH_intercept();
 	
     MathOps mo = MathOps();
 	int range = getRangeLength(scale, N);
@@ -107,7 +110,7 @@ void HTsingleScale::H_loglogFit(int start, int end){
 	Regfit = Hq0_intercept + Hq0 * log(scale);
     logscale = log(range) - log(scale);
     for(int i = start; i <= end; i++){
-        Ht[i] = (Regfit - log(s[i]))/(double) logscale + Hq0;
+        Ht[i] = (Regfit - log(F[i]))/(double) logscale + Hq0;
     }
 }
 // posso salvare il file di tutto il range per poi eventualmente ricaricarlo per rifare e salvare il grafico in un altro range

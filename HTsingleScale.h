@@ -7,20 +7,26 @@
 
 using namespace std;
 
-class HT : public FA
+class HTsingleScale : public FA
 {
 public:
-    HT(string, int, int);
-	~HT();
+	HTsingleScale(string, int, int);
+	~HTsingleScale();
+	void checkInputs(int, int);
+	void allocateMemory(int, int);
+	int getTsLength();
 	void setFlucVectors();
 	void winFlucComp();
-	double H_loglogFit(int, int);
+	void H_loglogFit(int, int);
 	void saveFile(string);
 protected:
+	string file_name;
+	int scale;
+	int ord;
+	int N;
 	double *t;
 	double *y;
 	double *F;
-	int scale;
 	double *Ht;
 };
 

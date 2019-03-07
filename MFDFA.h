@@ -12,7 +12,7 @@ class MFDFA : public MFDFAsingleQ
 public:
     MFDFA(string, int, int, int, double, int, double=1.0, int=1);
 	~MFDFA();
-    void allocateQmemory(int);
+    void allocateQmemory(int, int);
     void getQrange(double, int, double);
 	void qWinFlucComp();
 	void saveFile(string path_tot);
@@ -35,6 +35,7 @@ private:
 	double *y;
 	int *s;
 	double *F;
+	double **flucMtx;
 	double H;
 	double H_intercept;
     double *Hq;
