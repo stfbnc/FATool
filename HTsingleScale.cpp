@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdio>
+#include <cstdlib>
 #include <cmath>
 #include <cstring>
 #include "HTsingleScale.h"
@@ -14,6 +15,7 @@ HTsingleScale::HTsingleScale(string fileName, int inputScale, int polOrd)
 		: file_name(fileName), scale(inputScale), ord(polOrd)
 {
     checkFileExistence(fileName);
+	N = setTsLength(fileName);
     checkInputs(inputScale, polOrd);
     allocateMemory(N, getRangeLength(inputScale, N));
 }
@@ -96,20 +98,22 @@ void HTsingleScale::winFlucComp(){
 }
 // l'interfaccia puo' calcolare H facendo un fit in un untervallo qualsiasi, anche dopo aver fatto l'analisi
 void HTsingleScale::H_loglogFit(int start, int end){
-	//tutta la parte della DFA a q = 0 va qui
-	MFDFAsingleQ dfaQ0 = MFDFAsingleQ(file_name, 4, getTsLength()/5, 1, 0.0);
+	//int start = 4;
+	//int end = N / 5;
+	MFDFAsingleQ dfaQ0 = MFDFAsingleQ(file_name, start, end, 1, 0.0);
 	dfaQ0.setFlucVectors();
 	dfaQ0.winFlucComp();
-	dfaQ0.H_loglogFit(4, getTsLength()/5);
+	dfaQ0.H_loglogFit(start, end);
 	double Hq0 = dfaQ0.getH();
 	double Hq0_intercept = dfaQ0.getH_intercept();
+	printf("%lf | %lf\n", Hq0, Hq0_intercept);
 	
     MathOps mo = MathOps();
 	int range = getRangeLength(scale, N);
 	double Regfit, logscale;
 	Regfit = Hq0_intercept + Hq0 * log(scale);
     logscale = log(range) - log(scale);
-    for(int i = start; i <= end; i++){
+    for(int i = 0; i < range; i++){
         Ht[i] = (Regfit - log(F[i]))/(double) logscale + Hq0;
     }
 }

@@ -20,24 +20,10 @@ public:
 	//void plot();
 	//void qplot();
 private:
-	string file_name;
-	int min_win;
-	int max_win;
-	int ord;
-    double q;
-	int rev_seg;
-    int N;
-	double startq;
     int Nq;
     double stepq;
     double *qRange;
-	double *t;
-	double *y;
-	int *s;
-	double *F;
 	double **flucMtx;
-	double H;
-	double H_intercept;
     double *Hq;
     double *H_interceptq;
 };

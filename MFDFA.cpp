@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdio>
+#include <cstdlib>
 #include <cmath>
 #include <cstring>
 #include "MFDFA.h"
@@ -10,16 +11,13 @@
 using namespace std;
 
 MFDFA::MFDFA(string fileName, int minWin, int maxWin, int polOrd, double qIn, int qLen, double qStep, int revSeg)
-		: MFDFAsingleQ(fileName, minWin, maxWin, polOrd, qIn, revSeg), startq(qIn), Nq(qLen), stepq(qStep)
+		: MFDFAsingleQ(fileName, minWin, maxWin, polOrd, qIn, revSeg), Nq(qLen), stepq(qStep)
 {
+	allocateMemory(N, getRangeLength(min_win, max_win));
     allocateQmemory(qLen, getRangeLength(min_win, max_win));
 }
 
 MFDFA::~MFDFA(){
-	delete[] t;
-	delete[] y;
-	delete[] s;
-	delete[] F;
     delete[] qRange;
     delete[] Hq;
     delete[] H_interceptq;
@@ -45,9 +43,8 @@ void MFDFA::getQrange(double start, int len, double step){
 }
 
 void MFDFA::qWinFlucComp(){
-	getQrange(startq, Nq, stepq);
+	getQrange(q, Nq, stepq);
 	int Lq = getRangeLength(min_win, max_win);
-	//double flucMtx[Lq][Nq];
 	for(int i = 0; i < Nq; i++){
 		q = qRange[i];
 		winFlucComp();
@@ -57,7 +54,6 @@ void MFDFA::qWinFlucComp(){
 		H_loglogFit(min_win, max_win);
 		Hq[i] = getH();
 		H_interceptq[i] = getH_intercept();
-		printf("%lf %lf %lf\n", q, Hq[i], H_interceptq[i]);
 	}
 }
 
@@ -67,13 +63,13 @@ void MFDFA::saveFile(string path_tot){
 	FILE *f;
     f = fo.open_file(path_tot, "w");
 	fprintf(f, "#q ");
-	for(int i = 0; i < Lq; i++){
-		i == Lq-1 ? fprintf(f, "%lf\n", Hq[i]) : fprintf(f, "%lf ", Hq[i]);
+	for(int i = 0; i < Nq; i++){
+		i == Nq-1 ? fprintf(f, "%lf\n", qRange[i]) : fprintf(f, "%lf ", qRange[i]);
 	}
     for(int i = 0; i < Lq; i++){
 		fprintf(f, "%d ", s[i]);
 		for(int j = 0; j < Nq; j++){
-			j == Nq-1 ? fprintf(f, "%lf\n", F[i]) : fprintf(f, "%lf ", F[i]);
+			j == Nq-1 ? fprintf(f, "%lf\n", flucMtx[i][j]) : fprintf(f, "%lf ", flucMtx[i][j]);
 		}
 	}
     fclose(f);

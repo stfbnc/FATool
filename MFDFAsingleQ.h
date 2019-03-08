@@ -22,7 +22,8 @@ public:
 	void H_loglogFit(int, int);
 	void saveFile(string);
 	//void plot();
-private:
+//private:
+protected:
 	string file_name;
 	int min_win;
 	int max_win;

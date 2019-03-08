@@ -2,6 +2,8 @@
 #define FA_H
 
 #include <iostream>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <sys/stat.h>
 #include "FileOps.h"
