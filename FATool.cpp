@@ -10,6 +10,7 @@
 #include "MFDFAsingleQ.h"
 #include "MFDFA.h"
 #include "HTsingleScale.h"
+#include "HT.h"
 
 using namespace std;
 
@@ -23,13 +24,15 @@ int main(int argc, char **argv){
 	string fn = "./prova.txt";
     string fm = "./prova2.txt";
 	int mw = 4;
-	int Mw = 25;
+	int Mw = 10;
 	int po = 1;
 	int rv_sg = 1;
     double qin = -3.0;
-    int qlen = 2;
+    int qlen = 7;
     double step = 1.0;
 	int scale = 10;
+	int Nscales = 2;
+	int stepSc = 3;
 
 	DFA a = DFA(fn, mw, Mw, po, rv_sg);
     printf("%d\n", a.getTsLength());
@@ -51,14 +54,14 @@ int main(int argc, char **argv){
     c.computeRho();
     c.saveFile("./cppDcca.txt");*/
     
-    MFDFAsingleQ d = MFDFAsingleQ(fn, 10, 11, po, 0.0, rv_sg);
-    printf("%d\n", d.getTsLength());
-    printf("%d\n", d.getRangeLength(10, 11));
-    d.setFlucVectors();
-    d.winFlucComp();
-    d.H_loglogFit(10, 11);
-    printf("%lf | %lf\n", d.getH_intercept(), d.getH());
-    
+//    MFDFAsingleQ d = MFDFAsingleQ(fn, mw, Mw, po, -3.0, rv_sg);
+//    printf("%d\n", d.getTsLength());
+//    printf("%d\n", d.getRangeLength(mw, Mw));
+//    d.setFlucVectors();
+//    d.winFlucComp();
+//    d.H_loglogFit(mw, Mw);
+//    printf("%lf | %lf\n", d.getH_intercept(), d.getH());
+//
 //    MFDFA e = MFDFA(fn, mw, Mw, po, qin, qlen, step, rv_sg);
 //    printf("%d\n", e.getTsLength());
 //    printf("%d\n", e.getRangeLength(mw, Mw));
@@ -77,8 +80,15 @@ int main(int argc, char **argv){
     printf("%d\n", f.getRangeLength(scale, f.getTsLength()));
     f.setFlucVectors();
     f.winFlucComp();
-    f.H_loglogFit();
+    f.H_loglogFit(4, f.getTsLength()/5);
 	f.saveFile("aHT.txt");
+
+	HT g = HT(fn, scale, Nscales, stepSc, po);
+	printf("%d\n", g.getTsLength());
+	printf("%d\n", g.getRangeLength(scale, g.getTsLength()));
+	g.setFlucVectors();
+	g.scalesWinFlucComp();
+	g.saveFile("ahtscales.txt");
 
     return 0;
 }

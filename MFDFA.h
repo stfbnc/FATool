@@ -15,7 +15,7 @@ public:
     void allocateQmemory(int, int);
     void getQrange(double, int, double);
 	void qWinFlucComp();
-	void saveFile(string path_tot);
+	void saveFile(string path_tot) override;
 	void qsaveFile(string path_tot);
 	//void plot();
 	//void qplot();

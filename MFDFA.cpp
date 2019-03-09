@@ -13,7 +13,7 @@ using namespace std;
 MFDFA::MFDFA(string fileName, int minWin, int maxWin, int polOrd, double qIn, int qLen, double qStep, int revSeg)
 		: MFDFAsingleQ(fileName, minWin, maxWin, polOrd, qIn, revSeg), Nq(qLen), stepq(qStep)
 {
-	allocateMemory(N, getRangeLength(min_win, max_win));
+	//allocateMemory(N, getRangeLength(min_win, max_win));
     allocateQmemory(qLen, getRangeLength(min_win, max_win));
 }
 

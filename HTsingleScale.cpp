@@ -97,16 +97,15 @@ void HTsingleScale::winFlucComp(){
 	}
 }
 // l'interfaccia puo' calcolare H facendo un fit in un untervallo qualsiasi, anche dopo aver fatto l'analisi
-void HTsingleScale::H_loglogFit(int start, int end){
-	//int start = 4;
-	//int end = N / 5;
+void HTsingleScale::H_loglogFit(int a, int b){
+	int start = 4;
+	int end = N / 5;
 	MFDFAsingleQ dfaQ0 = MFDFAsingleQ(file_name, start, end, 1, 0.0);
 	dfaQ0.setFlucVectors();
 	dfaQ0.winFlucComp();
 	dfaQ0.H_loglogFit(start, end);
 	double Hq0 = dfaQ0.getH();
 	double Hq0_intercept = dfaQ0.getH_intercept();
-	printf("%lf | %lf\n", Hq0, Hq0_intercept);
 	
     MathOps mo = MathOps();
 	int range = getRangeLength(scale, N);
