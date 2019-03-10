@@ -34,13 +34,13 @@ int main(int argc, char **argv){
 	int Nscales = 2;
 	int stepSc = 3;
 
-	DFA a = DFA(fn, mw, Mw, po, rv_sg);
-    printf("%d\n", a.getTsLength());
-    printf("%d\n", a.getRangeLength(mw, Mw));
-    a.setFlucVectors();
-    a.winFlucComp();
-    a.H_loglogFit(mw, Mw);
-    printf("%lf | %lf\n", a.getH_intercept(), a.getH());
+//	DFA a = DFA(fn, mw, Mw, po, rv_sg);
+//    printf("%d\n", a.getTsLength());
+//    printf("%d\n", a.getRangeLength(mw, Mw));
+//    a.setFlucVectors();
+//    a.winFlucComp();
+//    a.H_loglogFit(mw, Mw);
+//    printf("%lf | %lf\n", a.getH_intercept(), a.getH());
     
     /*DCCA b = DCCA(fn, fm, mw, Mw, po);
     printf("%d\n", b.getTsLength());
@@ -54,7 +54,7 @@ int main(int argc, char **argv){
     c.computeRho();
     c.saveFile("./cppDcca.txt");*/
     
-//    MFDFAsingleQ d = MFDFAsingleQ(fn, mw, Mw, po, -3.0, rv_sg);
+//    MFDFAsingleQ d = MFDFAsingleQ(fn, mw, Mw, po, 0.0, rv_sg);
 //    printf("%d\n", d.getTsLength());
 //    printf("%d\n", d.getRangeLength(mw, Mw));
 //    d.setFlucVectors();
@@ -75,13 +75,13 @@ int main(int argc, char **argv){
 //    e.qsaveFile("all_q.txt");
 //    printf("cia4\n");
     
-	HTsingleScale f = HTsingleScale(fn, scale, po);
-    printf("%d\n", f.getTsLength());
-    printf("%d\n", f.getRangeLength(scale, f.getTsLength()));
-    f.setFlucVectors();
-    f.winFlucComp();
-    f.H_loglogFit(4, f.getTsLength()/5);
-	f.saveFile("aHT.txt");
+//	HTsingleScale f = HTsingleScale(fn, scale, po);
+//    printf("%d\n", f.getTsLength());
+//    printf("%d\n", f.getRangeLength(scale, f.getTsLength()));
+//    f.setFlucVectors();
+//    f.winFlucComp();
+//    f.H_loglogFit(4, f.getTsLength()/5);
+//	f.saveFile("aHT.txt");
 
 	HT g = HT(fn, scale, Nscales, stepSc, po);
 	printf("%d\n", g.getTsLength());
@@ -89,6 +89,10 @@ int main(int argc, char **argv){
 	g.setFlucVectors();
 	g.scalesWinFlucComp();
 	g.saveFile("ahtscales.txt");
+
+	HT h = HT(fn, "4,34,5", po);
+	printf("%d\n", h.getTsLength());
+	printf("%d\n", h.getRangeLength(scale, h.getTsLength()));
 
     return 0;
 }

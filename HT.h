@@ -11,14 +11,16 @@ class HT : public HTsingleScale
 {
 public:
 	HT(string, int, int, int, int);
-	//HT(string, string, int);
+	HT(string, string, int);
 	~HT();
 	void checkScalesInputs(int, int);
 	void allocateScalesMemory(int, int);
+	void getScales(string);
 	void scalesWinFlucComp();
 	void saveFile(string) override;
 private:
 	int Nscales;
+	int minScale;
 	int *scales;
 	double **HTmtx;
 };

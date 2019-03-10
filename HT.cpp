@@ -11,18 +11,33 @@
 
 using namespace std;
 
+string scalesSep = ",";
+
 HT::HT(string fileName, int inputScale, int totScales, int stepScale, int polOrd)
-		: HTsingleScale(fileName, inputScale, polOrd), Nscales(totScales)
+		: HTsingleScale(fileName, inputScale, polOrd), Nscales(totScales), minScale(inputScale)
 {
     checkScalesInputs(totScales, stepScale);
     allocateScalesMemory(totScales, getRangeLength(inputScale, N));
     ArrayOps ao = ArrayOps();
-    ao.int_range(scales, totScales, scale, stepScale);
+    ao.int_range(scales, totScales, inputScale, stepScale);
+}
+
+HT::HT(string fileName, string strScales, int polOrd)
+		: HTsingleScale(fileName, stoi(strScales.substr(0, strScales.find_first_of(scalesSep))), polOrd),
+		  //Nscales(count(strScales.begin(), strScales.end(), scalesSep)),
+		  Nscales(3),
+		  minScale(stoi(strScales.substr(0, strScales.find_first_of(scalesSep))))
+{
+	allocateScalesMemory(Nscales, getRangeLength(minScale, N));
+	getScales(strScales);
+	for(int i = 0; i < Nscales; i++){
+		printf("%d\n", scales[i]);
+	}
 }
 
 HT::~HT(){
 	delete[] scales;
-	for(int i = 0; i < getRangeLength(scale, N); i++){
+	for(int i = 0; i < getRangeLength(minScale, N); i++){
 		delete[] HTmtx[i];
 	}
 	delete[] HTmtx;
@@ -33,7 +48,7 @@ void HT::checkScalesInputs(int numScales, int scStep){
 	if(numScales < 1 || numScales > N){
 		fprintf(stdout, "ERROR %d: number of scales must be included between 1 and time series length\n", WIN_SIZE_FAILURE);
 		exit(WIN_SIZE_FAILURE);
-	}else if(scStep < 1 || (scale+(numScales-1)*scStep) > N){
+	}else if(scStep < 1 || (minScale+(numScales-1)*scStep) > N){
 		fprintf(stdout, "ERROR %d: step must be strictly positive and such that scales are smaller than the time series length\n", WIN_SIZE_FAILURE);
 		exit(WIN_SIZE_FAILURE);
 	}
@@ -47,8 +62,19 @@ void HT::allocateScalesMemory(int L1, int L2){
 	}
 }
 
+void HT::getScales(string str){
+	int i = 0;
+	int pos = 0;
+	string token;
+	while ((pos = str.find(scalesSep)) != string::npos) {
+	    token = str.substr(0, pos);
+	    scales[i] = stoi(token);
+	    str.erase(0, pos+scalesSep.length());
+	}
+}
+
 void HT::scalesWinFlucComp(){
-	int L = getRangeLength(scale, N);
+	int L = getRangeLength(minScale, N);
 	for(int i = 0; i < Nscales; i++){
 		scale = scales[i];
 		int Lscale = getRangeLength(scale, N);
@@ -66,7 +92,7 @@ void HT::scalesWinFlucComp(){
 // posso salvare il file di tutto il range per poi eventualmente ricaricarlo per rifare e salvare il grafico in un altro range
 void HT::saveFile(string path_tot){
 	FileOps fo = FileOps();
-	int L = getRangeLength(scale, N);
+	int L = getRangeLength(minScale, N);
 	FILE *f;
 	f = fo.open_file(path_tot, "w");
 	fprintf(f, "#scale ");
