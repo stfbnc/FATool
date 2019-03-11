@@ -15,6 +15,7 @@ public:
 	~HT();
 	void checkScalesInputs(int, int);
 	void allocateScalesMemory(int, int);
+	int getNumScales(string str);
 	void getScales(string);
 	void scalesWinFlucComp();
 	void saveFile(string) override;

@@ -90,9 +90,12 @@ int main(int argc, char **argv){
 	g.scalesWinFlucComp();
 	g.saveFile("ahtscales.txt");
 
-	HT h = HT(fn, "4,34,5", po);
+	HT h = HT(fn, "10,13", po);
 	printf("%d\n", h.getTsLength());
 	printf("%d\n", h.getRangeLength(scale, h.getTsLength()));
+	h.setFlucVectors();
+	h.scalesWinFlucComp();
+	h.saveFile("ahtstring.txt");
 
     return 0;
 }

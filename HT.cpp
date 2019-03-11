@@ -23,11 +23,11 @@ HT::HT(string fileName, int inputScale, int totScales, int stepScale, int polOrd
 }
 
 HT::HT(string fileName, string strScales, int polOrd)
-		: HTsingleScale(fileName, stoi(strScales.substr(0, strScales.find_first_of(scalesSep))), polOrd),
-		  //Nscales(count(strScales.begin(), strScales.end(), scalesSep)),
-		  Nscales(3),
-		  minScale(stoi(strScales.substr(0, strScales.find_first_of(scalesSep))))
+		: HTsingleScale(fileName, stoi(strScales.substr(0, strScales.find_first_of(scalesSep))), polOrd)
 {
+	minScale = stoi(strScales.substr(0, strScales.find_first_of(scalesSep)));
+	Nscales = getNumScales(strScales);
+	printf("%d\n", Nscales);
 	allocateScalesMemory(Nscales, getRangeLength(minScale, N));
 	getScales(strScales);
 	for(int i = 0; i < Nscales; i++){
@@ -62,15 +62,28 @@ void HT::allocateScalesMemory(int L1, int L2){
 	}
 }
 
+int HT::getNumScales(string str){
+	int count = 0;
+	int pos = 0;
+	while((pos = str.find(scalesSep, pos)) != string::npos){
+	    count++;
+	    pos++;
+	}
+	count++;
+	return count;
+}
+
 void HT::getScales(string str){
 	int i = 0;
 	int pos = 0;
 	string token;
-	while ((pos = str.find(scalesSep)) != string::npos) {
+	while((pos = str.find(scalesSep)) != string::npos){
 	    token = str.substr(0, pos);
 	    scales[i] = stoi(token);
 	    str.erase(0, pos+scalesSep.length());
+	    i++;
 	}
+	scales[i] = stoi(str);
 }
 
 void HT::scalesWinFlucComp(){
