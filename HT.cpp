@@ -11,8 +11,6 @@
 
 using namespace std;
 
-string scalesSep = ",";
-
 HT::HT(string fileName, int inputScale, int totScales, int stepScale, int polOrd)
 		: HTsingleScale(fileName, inputScale, polOrd), Nscales(totScales), minScale(inputScale)
 {
@@ -25,14 +23,11 @@ HT::HT(string fileName, int inputScale, int totScales, int stepScale, int polOrd
 HT::HT(string fileName, string strScales, int polOrd)
 		: HTsingleScale(fileName, stoi(strScales.substr(0, strScales.find_first_of(scalesSep))), polOrd)
 {
-	minScale = stoi(strScales.substr(0, strScales.find_first_of(scalesSep)));
 	Nscales = getNumScales(strScales);
-	printf("%d\n", Nscales);
 	allocateScalesMemory(Nscales, getRangeLength(minScale, N));
 	getScales(strScales);
-	for(int i = 0; i < Nscales; i++){
-		printf("%d\n", scales[i]);
-	}
+	MathOps mo = MathOps();
+	minScale = mo.vec_min(scales, Nscales);
 }
 
 HT::~HT(){

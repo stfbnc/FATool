@@ -43,6 +43,14 @@ void MathOps::subtract_mean(double *vec, int L, double *vec_nomean){
 	for(int i = 0; i < L; i++)
 		vec_nomean[i] = vec[i] - avg;
 }
+
+int MathOps::vec_min(int *vec, int len){
+    int m = vec[0];
+    for(int i = 1; i < len; i++)
+        if(vec[i] < m)
+            m = vec[i];
+    return m;
+}
 	
 void MathOps::cumsum(double *vec, double *sum_vec, int L){
     sum_vec[0] = vec[0];
