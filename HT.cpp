@@ -83,9 +83,11 @@ void HT::getScales(string str){
 
 void HT::scalesWinFlucComp(){
 	int L = getRangeLength(minScale, N);
+	ArrayOps ao = ArrayOps();
 	for(int i = 0; i < Nscales; i++){
 		scale = scales[i];
 		int Lscale = getRangeLength(scale, N);
+		ao.zero_vec(Ht, L);
 		winFlucComp();
 		H_loglogFit(1, 1);
 		for(int j = 0; j < Lscale; j++){
