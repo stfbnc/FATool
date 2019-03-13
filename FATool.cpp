@@ -83,19 +83,19 @@ int main(int argc, char **argv){
 //    f.H_loglogFit(4, f.getTsLength()/5);
 //	f.saveFile("aHT.txt");
 
-	HT g = HT(fn, scale, Nscales, stepSc, po);
-	printf("%d\n", g.getTsLength());
-	printf("%d\n", g.getRangeLength(scale, g.getTsLength()));
-	g.setFlucVectors();
-	g.scalesWinFlucComp();
-	g.saveFile("ahtscales.txt");
+//	HT g = HT(fn, scale, Nscales, stepSc, po);
+//	printf("%d\n", g.getTsLength());
+//	printf("%d\n", g.getRangeLength(scale, g.getTsLength()));
+//	g.setFlucVectors();
+//	g.scalesWinFlucComp();
+//	g.saveFile("ahtscales.txt");
 
 	HT h = HT(fn, "10,13", po);
 	printf("%d\n", h.getTsLength());
 	printf("%d\n", h.getRangeLength(scale, h.getTsLength()));
 	h.setFlucVectors();
 	h.scalesWinFlucComp();
-	h.saveFile("ahtstring.txt");
+	h.saveFile(".");
 
     return 0;
 }

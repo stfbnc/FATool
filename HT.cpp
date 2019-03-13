@@ -11,6 +11,8 @@
 
 using namespace std;
 
+//static string scalesSep = ",";
+
 HT::HT(string fileName, int inputScale, int totScales, int stepScale, int polOrd)
 		: HTsingleScale(fileName, inputScale, polOrd), Nscales(totScales), minScale(inputScale)
 {
@@ -104,7 +106,7 @@ void HT::saveFile(string path_tot){
 	FileOps fo = FileOps();
 	int L = getRangeLength(minScale, N);
 	FILE *f;
-	f = fo.open_file(path_tot, "w");
+	f = fo.open_file(path_tot+"/Ht_"+file_name.substr(file_name.find_last_of("/")+1), "w");
 	fprintf(f, "#scale ");
 	for(int i = 0; i < Nscales; i++){
 		i == Nscales-1 ? fprintf(f, "%d\n", scales[i]) : fprintf(f, "%d ", scales[i]);
