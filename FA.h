@@ -10,12 +10,6 @@
 
 using namespace std;
 
-#define RANGE_FAILURE -99
-#define WIN_SIZE_FAILURE -98
-#define POL_FAILURE -97
-#define REV_SEG_FAILURE -96
-#define FILE_FAILURE -95
-
 class FA
 {
 public:

@@ -20,7 +20,6 @@ public:
 	void scalesWinFlucComp();
 	void saveFile(string) override;
 private:
-	const string scalesSep = ",";
 	int Nscales;
 	int minScale;
 	int *scales;

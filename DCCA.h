@@ -5,9 +5,6 @@
 #include <cstring>
 #include "FA.h"
 
-#define DEFAULT_DCCA "abs"
-#define CORR_DCCA "sign"
-
 using namespace std;
 
 class DCCA : public FA
