@@ -1,68 +1,62 @@
-#include <iostream>
-#include <cstdio>
-#include <cstdlib>
-#include <cmath>
-#include <cstring>
-#include <limits>
 #include "HT.h"
-#include "ArrayOps.h"
-#include "MathOps.h"
-#include "FileOps.h"
 
-using namespace std;
-
-//static string scalesSep = ",";
-
-HT::HT(string fileName, int inputScale, int totScales, int stepScale, int polOrd)
-		: HTsingleScale(fileName, inputScale, polOrd), Nscales(totScales), minScale(inputScale)
+HT::HT(string file_name_, int scale_, int Nscales_, int stepScale_)
+		: HTsingleScale(file_name_, scale_)
 {
-    checkScalesInputs(totScales, stepScale);
-    allocateScalesMemory(totScales, getRangeLength(inputScale, N));
+	Nscales = Nscales_;
+	minScale = scale_;
+	stepScale = stepScale_;
+	scales = NULL;
+	HTmtx = NULL;
+    checkInputs();
+    allocateScalesMemory();
     ArrayOps ao = ArrayOps();
-    ao.int_range(scales, totScales, inputScale, stepScale);
+    ao.int_range(scales, Nscales, minScale, stepScale);
 }
 
-HT::HT(string fileName, string strScales, int polOrd)
-		: HTsingleScale(fileName, stoi(strScales.substr(0, strScales.find_first_of(scalesSep))), polOrd)
+HT::HT(string fileName, string strScales)
+		: HTsingleScale(fileName, stoi(strScales.substr(0, strScales.find_first_of(STR_SEP))))
 {
 	Nscales = getNumScales(strScales);
-	allocateScalesMemory(Nscales, getRangeLength(minScale, N));
+	scales = NULL;
+	HTmtx = NULL;
+	allocateScalesMemory();
 	getScales(strScales);
 	MathOps mo = MathOps();
 	minScale = mo.vec_min(scales, Nscales);
 }
 
 HT::~HT(){
-	delete[] scales;
+	delAlloc<int>(scales);
 	for(int i = 0; i < getRangeLength(minScale, N); i++){
-		delete[] HTmtx[i];
+		delAlloc<double>(HTmtx[i]);
 	}
 	delete[] HTmtx;
 }
 
-void HT::checkScalesInputs(int numScales, int scStep){
+void HT::checkInputs(){
 	//windows size
-	if(numScales < 1 || numScales > N){
+	if(Nscales < 1 || Nscales > N){
 		fprintf(stdout, "ERROR %d: number of scales must be included between 1 and time series length\n", WIN_SIZE_FAILURE);
 		exit(WIN_SIZE_FAILURE);
-	}else if(scStep < 1 || (minScale+(numScales-1)*scStep) > N){
+	}else if(stepScale < 1 || (minScale+(Nscales-1)*stepScale) > N){
 		fprintf(stdout, "ERROR %d: step must be strictly positive and such that scales are smaller than the time series length\n", WIN_SIZE_FAILURE);
 		exit(WIN_SIZE_FAILURE);
 	}
 }
 
-void HT::allocateScalesMemory(int L1, int L2){
-	scales = new int [L1];
-	HTmtx = new double* [L2];
-	for(int i = 0; i < L2; i++){
-		HTmtx[i] = new double [L1];
+void HT::allocateScalesMemory(){
+	scales = new int [Nscales];
+	HTmtx = new double* [getRangeLength(minScale, N)];
+	for(int i = 0; i < getRangeLength(minScale, N); i++){
+		HTmtx[i] = new double [Nscales];
 	}
 }
 
 int HT::getNumScales(string str){
 	int count = 0;
 	int pos = 0;
-	while((pos = str.find(scalesSep, pos)) != string::npos){
+	while((pos = str.find(STR_SEP, pos)) != string::npos){
 	    count++;
 	    pos++;
 	}
@@ -74,10 +68,10 @@ void HT::getScales(string str){
 	int i = 0;
 	int pos = 0;
 	string token;
-	while((pos = str.find(scalesSep)) != string::npos){
+	while((pos = str.find(STR_SEP)) != string::npos){
 	    token = str.substr(0, pos);
 	    scales[i] = stoi(token);
-	    str.erase(0, pos+scalesSep.length());
+	    str.erase(0, pos+STR_SEP.length());
 	    i++;
 	}
 	scales[i] = stoi(str);
@@ -101,12 +95,15 @@ void HT::scalesWinFlucComp(){
 	}
 }
 
+string HT::outFileStr(){
+	return "/"+HT_FN_START+"_"+file_name.substr(file_name.find_last_of("/")+1);
+}
 // posso salvare il file di tutto il range per poi eventualmente ricaricarlo per rifare e salvare il grafico in un altro range
 void HT::saveFile(string path_tot){
 	FileOps fo = FileOps();
 	int L = getRangeLength(minScale, N);
 	FILE *f;
-	f = fo.open_file(path_tot+"/Ht_"+file_name.substr(file_name.find_last_of("/")+1), "w");
+	f = fo.open_file(path_tot+outFileStr(), "w");
 	fprintf(f, "#scale ");
 	for(int i = 0; i < Nscales; i++){
 		i == Nscales-1 ? fprintf(f, "%d\n", scales[i]) : fprintf(f, "%d ", scales[i]);

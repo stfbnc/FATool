@@ -1,53 +1,40 @@
-#include <iostream>
-#include <cstdio>
-#include <cstdlib>
-#include <cmath>
-#include <cstring>
 #include "HTsingleScale.h"
-#include "ArrayOps.h"
-#include "MathOps.h"
-#include "FileOps.h"
 #include "MFDFAsingleQ.h"
 
-using namespace std;
-
-HTsingleScale::HTsingleScale(string fileName, int inputScale, int polOrd)
-		: file_name(fileName), scale(inputScale), ord(polOrd)
+HTsingleScale::HTsingleScale(string file_name_, int scale_)
+		: FA()
 {
-    checkFileExistence(fileName);
-	N = setTsLength(fileName);
-    checkInputs(inputScale, polOrd);
-    allocateMemory(N, getRangeLength(inputScale, N));
+	file_name = file_name_;
+	scale = scale_;
+    checkFileExistence(file_name);
+	N = setTsLength(file_name);
+    checkInputs();
+    allocateMemory();
 }
 
 HTsingleScale::~HTsingleScale(){
-	delete[] t;
-	delete[] y;
-	delete[] F;
-	delete[] Ht;
+	delAlloc<double>(t);
+	delAlloc<double>(y);
+	delAlloc<double>(F);
+	delAlloc<double>(Ht);
 }
 
-void HTsingleScale::checkInputs(int iScale, int po){
+void HTsingleScale::checkInputs(){
 	//windows size
-	if(iScale < 3){
+	if(scale < 3){
 		fprintf(stdout, "ERROR %d: scale must be greater than 2\n", WIN_SIZE_FAILURE);
 		exit(WIN_SIZE_FAILURE);
-	}else if(iScale > N){
+	}else if(scale > N){
 		fprintf(stdout, "ERROR %d: scale must be smaller than time series length\n", WIN_SIZE_FAILURE);
 		exit(WIN_SIZE_FAILURE);
 	}
-	//polynomial order
-	if(po < 1){
-		fprintf(stdout, "ERROR %d: polynomial order must be greater than 0\n", POL_FAILURE);
-		exit(POL_FAILURE);
-	}
 }
 
-void HTsingleScale::allocateMemory(int L1, int L2){
-	t = new double [L1];
-	y = new double [L1];
-	F = new double [L2];
-	Ht = new double [L2];
+void HTsingleScale::allocateMemory(){
+	t = new double [N];
+	y = new double [N];
+	F = new double [getRangeLength(scale, N)];
+	Ht = new double [getRangeLength(scale, N)];
 }
 
 int HTsingleScale::getTsLength(){
@@ -116,12 +103,16 @@ void HTsingleScale::H_loglogFit(int a, int b){
         Ht[i] = (Regfit - log(F[i]))/(double) logscale + Hq0;
     }
 }
+
+string HTsingleScale::outFileStr(){
+	return "/"+HTsS_FN_START+"_"+to_string(scale)+"_"+file_name.substr(file_name.find_last_of("/")+1);
+}
 // posso salvare il file di tutto il range per poi eventualmente ricaricarlo per rifare e salvare il grafico in un altro range
 void HTsingleScale::saveFile(string path_tot){
     FileOps fo = FileOps();
 	int range = getRangeLength(scale, N);
 	FILE *f;
-    f = fo.open_file(path_tot, "w");
+    f = fo.open_file(path_tot+outFileStr(), "w");
 	fprintf(f, "#scale=%d\n", scale);
     for(int i = 0; i < range; i++)
         fprintf(f, "%lf\n", Ht[i]);

@@ -1,8 +1,4 @@
-- rivedere i nomi dei file da salvare, aggiungere dfa (o dcca, etc) all'inizio del file
-- file di parametri globali e funzioni globali
 - parametro costruttore per fare dfa (o altre) non a tutte le scale ma a scale equispaziate pointEvery
-- rifare interfaccia con variabili protected
-- check inputs virtuale pura e non prende alcun argomento, e le altre se la implementano con variabili già inizializzate
 - calcolo delle soglie
 - mfdfa può anche fare lo spettro multifrattale
 - nanDFA che estende dfa (e lo stesso con le altre classi)

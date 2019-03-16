@@ -1,49 +1,53 @@
-#include <iostream>
-#include <cstdio>
-#include <cstdlib>
-#include <cmath>
-#include <cstring>
 #include "MFDFA.h"
-#include "ArrayOps.h"
-#include "MathOps.h"
-#include "FileOps.h"
 
-using namespace std;
-
-MFDFA::MFDFA(string fileName, int minWin, int maxWin, int polOrd, double qIn, int qLen, double qStep, int revSeg)
-		: MFDFAsingleQ(fileName, minWin, maxWin, polOrd, qIn, revSeg), Nq(qLen), stepq(qStep)
+MFDFA::MFDFA(string file_name_, int min_win_, int max_win_, int ord_, double qIn_, int Nq_, double stepq_, int rev_seg_)
+		: MFDFAsingleQ(file_name_, min_win_, max_win_, ord_, qIn_, rev_seg_)
 {
-	//allocateMemory(N, getRangeLength(min_win, max_win));
-    allocateQmemory(qLen, getRangeLength(min_win, max_win));
+	Nq = Nq_;
+	stepq = stepq_;
+	qRange = NULL;
+	flucMtx = NULL;
+	Hq = NULL;
+	H_interceptq = NULL;
+	checkInputs();
+    allocateQmemory();
 }
 
 MFDFA::~MFDFA(){
-    delete[] qRange;
-    delete[] Hq;
-    delete[] H_interceptq;
+	delAlloc<double>(qRange);
+	delAlloc<double>(Hq);
+	delAlloc<double>(H_interceptq);
     for(int i = 0; i < getRangeLength(min_win, max_win); i++){
-        delete[] flucMtx[i];
+    	delAlloc<double>(flucMtx[i]);
     }
     delete[] flucMtx;
 }
 
-void MFDFA::allocateQmemory(int L1, int L2){
-    qRange = new double [L1];
-    Hq = new double [L1];
-    H_interceptq = new double [L1];
-    flucMtx = new double* [L2];
-    for(int i = 0; i < L2; i++){
-    	flucMtx[i] = new double [L1];
+void MFDFA::checkInputs(){
+	//windows size
+	if(Nq < 1){
+		fprintf(stdout, "ERROR %d: number of qs must be greater than 1\n", WIN_SIZE_FAILURE);
+		exit(WIN_SIZE_FAILURE);
+	}
+}
+
+void MFDFA::allocateQmemory(){
+    qRange = new double [Nq];
+    Hq = new double [Nq];
+    H_interceptq = new double [Nq];
+    flucMtx = new double* [getRangeLength(min_win, max_win)];
+    for(int i = 0; i < getRangeLength(min_win, max_win); i++){
+    	flucMtx[i] = new double [Nq];
     }
 }
 
-void MFDFA::getQrange(double start, int len, double step){
+void MFDFA::setQrange(double start, int len, double step){
     ArrayOps ao = ArrayOps();
     ao.double_range(qRange, len, start, step);
 }
 
 void MFDFA::qWinFlucComp(){
-	getQrange(q, Nq, stepq);
+	setQrange(q, Nq, stepq);
 	int Lq = getRangeLength(min_win, max_win);
 	for(int i = 0; i < Nq; i++){
 		q = qRange[i];
@@ -57,11 +61,16 @@ void MFDFA::qWinFlucComp(){
 	}
 }
 
+string MFDFA::outFileStr(){
+	return "/"+MFDFA_FN_START+"_"+to_string(min_win)+"_"+to_string(min_win)+"_q"+to_string(qRange[0])+"_"+to_string(qRange[Nq-1])+
+			"_"+file_name.substr(file_name.find_last_of("/")+1);
+}
+
 void MFDFA::saveFile(string path_tot){
 	FileOps fo = FileOps();
 	int Lq = getRangeLength(min_win, max_win);
 	FILE *f;
-    f = fo.open_file(path_tot, "w");
+    f = fo.open_file(path_tot+outFileStr(), "w");
 	fprintf(f, "#q ");
 	for(int i = 0; i < Nq; i++){
 		i == Nq-1 ? fprintf(f, "%lf\n", qRange[i]) : fprintf(f, "%lf ", qRange[i]);
@@ -75,10 +84,15 @@ void MFDFA::saveFile(string path_tot){
     fclose(f);
 }
 
+string MFDFA::qoutFileStr(){
+	return "/"+MFDFA_FN_START+"_"+"_q"+to_string(qRange[0])+"_"+to_string(qRange[Nq-1])+
+			"_"+file_name.substr(file_name.find_last_of("/")+1);
+}
+
 void MFDFA::qsaveFile(string path_tot){
 	FileOps fo = FileOps();
 	FILE *f;
-    f = fo.open_file(path_tot, "w");
+    f = fo.open_file(path_tot+qoutFileStr(), "w");
     for(int i = 0; i < Nq; i++){
 		fprintf(f, "%lf %lf %lf\n", qRange[i], Hq[i], H_interceptq[i]);
 	}

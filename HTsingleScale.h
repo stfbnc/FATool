@@ -1,32 +1,24 @@
 #ifndef HTsingleScale_H
 #define HTsingleScale_H
 
-#include <iostream>
-#include <cstring>
+#include "FAGlobs.h"
 #include "FA.h"
-
-using namespace std;
 
 class HTsingleScale : public FA
 {
 public:
-	HTsingleScale(string, int, int);
+	HTsingleScale(string, int);
 	~HTsingleScale();
-	void checkInputs(int, int);
-	void allocateMemory(int, int);
+	void checkInputs();
+	void allocateMemory();
 	int getTsLength();
 	void setFlucVectors();
 	void winFlucComp();
 	void H_loglogFit(int, int);
+	string outFileStr();
 	void saveFile(string);
 protected:
-	string file_name;
 	int scale;
-	int ord;
-	int N;
-	double *t;
-	double *y;
-	double *F;
 	double *Ht;
 };
 

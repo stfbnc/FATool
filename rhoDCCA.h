@@ -1,10 +1,8 @@
 #ifndef RHO_DCCA_H
 #define RHO_DCCA_H
 
-#include <iostream>
-#include <cstring>
-
-using namespace std;
+#include "FAGlobs.h"
+#include "DCCA.h"
 
 class rhoDCCA
 {
@@ -13,6 +11,7 @@ public:
 	~rhoDCCA();
     void computeRho();
     int getRhoLength();
+    string outFileStr();
     void saveFile(string);
     //void plot();
 private:

@@ -1,8 +1,4 @@
-#include <iostream>
-#include <cmath>
-#include "ArrayOps.h"
-#include "FileOps.h"
-#include "MathOps.h"
+#include "FAGlobs.h"
 #include "FA.h"
 #include "DFA.h"
 #include "DCCA.h"
@@ -90,7 +86,7 @@ int main(int argc, char **argv){
 //	g.scalesWinFlucComp();
 //	g.saveFile("ahtscales.txt");
 
-	HT h = HT(fn, "10,13", po);
+	HT h = HT(fn, "10,13");
 	printf("%d\n", h.getTsLength());
 	printf("%d\n", h.getRangeLength(scale, h.getTsLength()));
 	h.setFlucVectors();

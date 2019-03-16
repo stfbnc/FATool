@@ -1,21 +1,21 @@
 #ifndef MFDFA_H
 #define MFDFA_H
 
-#include <iostream>
-#include <cstring>
+#include "FAGlobs.h"
 #include "MFDFAsingleQ.h"
-
-using namespace std;
 
 class MFDFA : public MFDFAsingleQ
 {
 public:
     MFDFA(string, int, int, int, double, int, double=1.0, int=1);
 	~MFDFA();
-    void allocateQmemory(int, int);
-    void getQrange(double, int, double);
+	void checkInputs() override;
+    void allocateQmemory();
+    void setQrange(double, int, double);
 	void qWinFlucComp();
+	string outFileStr() override;
 	void saveFile(string path_tot) override;
+	string qoutFileStr();
 	void qsaveFile(string path_tot);
 	//void plot();
 	//void qplot();

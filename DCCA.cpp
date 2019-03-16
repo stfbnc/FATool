@@ -1,63 +1,59 @@
-#include <iostream>
-#include <cstdio>
-#include <cstdlib>
-#include <cmath>
-#include <cstring>
 #include "DCCA.h"
-#include "ArrayOps.h"
-#include "MathOps.h"
-#include "FileOps.h"
 
-using namespace std;
-
-DCCA::DCCA(string fileName, string fileName2, int minWin, int maxWin, int polOrd, string compType)
-		: file_name(fileName), file_name2(fileName2), min_win(minWin), max_win(maxWin), ord(polOrd), isAbs(compType)
+DCCA::DCCA(string file_name_, string file_name2_, int min_win_, int max_win_, int ord_, string isAbs_)
+		: FA()
 {
-    checkFileExistence(fileName);
-    checkFileExistence(fileName2);
-	getEqualLength(fileName, fileName2);
-    checkInputs(minWin, maxWin, polOrd, compType);
-    allocateMemory(N, getRangeLength(minWin, maxWin));
+	file_name = file_name_;
+	file_name2 = file_name2_;
+	min_win = min_win_;
+	max_win = max_win_;
+	ord = ord_;
+	isAbs = isAbs_;
+    checkFileExistence(file_name);
+    checkFileExistence(file_name2);
+	getEqualLength(file_name, file_name2);
+    checkInputs();
+    allocateMemory();
 }
 
 DCCA::~DCCA(){
-	delete[] t;
-	delete[] y;
-    delete[] y2;
-	delete[] s;
-	delete[] F;
+	delAlloc<double>(t);
+	delAlloc<double>(y);
+	delAlloc<double>(y2);
+	delAlloc<int>(s);
+	delAlloc<double>(F);
 }
 
-void DCCA::checkInputs(int mw, int Mw, int po, string type){
+void DCCA::checkInputs(){
 	//windows size
-	if(Mw < mw){
+	if(max_win < min_win){
 		fprintf(stdout, "ERROR %d: biggest scale must be greater than smallest scale\n", RANGE_FAILURE);
 		exit(RANGE_FAILURE);
-	}else if(mw < 3){
+	}else if(min_win < 3){
 		fprintf(stdout, "ERROR %d: smallest scale must be greater than 2\n", WIN_SIZE_FAILURE);
 		exit(WIN_SIZE_FAILURE);
-	}else if(Mw > N){
+	}else if(max_win > N){
 		fprintf(stdout, "ERROR %d: biggest scale must be smaller than time series length\n", WIN_SIZE_FAILURE);
 		exit(WIN_SIZE_FAILURE);
 	}
 	//polynomial order
-	if(po < 1){
+	if(ord < 1){
 		fprintf(stdout, "ERROR %d: polynomial order must be greater than 0\n", POL_FAILURE);
 		exit(POL_FAILURE);
 	}
     //dcca computation type
-    if(type.compare(DEFAULT_DCCA) != 0 && type.compare(CORR_DCCA) != 0){
+    if(isAbs.compare(DEFAULT_DCCA) != 0 && isAbs.compare(CORR_DCCA) != 0){
         fprintf(stdout, "ERROR %d: computation type must be %s or %s\n", REV_SEG_FAILURE, DEFAULT_DCCA, CORR_DCCA);
         exit(REV_SEG_FAILURE);
     }
 }
 
-void DCCA::allocateMemory(int L1, int L2){
-	t = new double [L1];
-	y = new double [L1];
-	y2 = new double [L1];
-	s = new int [L2];
-	F = new double [L2];
+void DCCA::allocateMemory(){
+	t = new double [N];
+	y = new double [N];
+	y2 = new double [N];
+	s = new int [getRangeLength(min_win, max_win)];
+	F = new double [getRangeLength(min_win, max_win)];
 }
 
 void DCCA::getEqualLength(string fn1, string fn2){
@@ -169,12 +165,18 @@ void DCCA::H_loglogFit(int start, int end){
     }
     mo.lin_fit(range, log_s, log_F, &H, &H_intercept);
 }
+
+string DCCA::outFileStr(){
+	return "/"+DCCA_FN_START+"_"+to_string(min_win)+"_"+to_string(min_win)+"_"
+			+file_name.substr(file_name.find_last_of("/")+1)+"_"
+			+file_name2.substr(file_name2.find_last_of("/")+1);
+}
 // posso salvare il file di tutto il range per poi eventualmente ricaricarlo per rifare e salvare il grafico in un altro range
 void DCCA::saveFile(string path_tot){
     FileOps fo = FileOps();
 	int range = getRangeLength(min_win, max_win);
 	FILE *f;
-    f = fo.open_file(path_tot, "w");
+    f = fo.open_file(path_tot+outFileStr(), "w");
     for(int i = 0; i < range; i++)
         fprintf(f, "%d %lf\n", s[i], F[i]);
     fclose(f);

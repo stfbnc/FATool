@@ -1,60 +1,56 @@
-#include <iostream>
-#include <cstdio>
-#include <cstdlib>
-#include <cmath>
-#include <cstring>
 #include "MFDFAsingleQ.h"
-#include "ArrayOps.h"
-#include "MathOps.h"
-#include "FileOps.h"
 
-using namespace std;
-
-MFDFAsingleQ::MFDFAsingleQ(string fileName, int minWin, int maxWin, int polOrd, double qOrd, int revSeg)
-		: file_name(fileName), min_win(minWin), max_win(maxWin), ord(polOrd), q(qOrd), rev_seg(revSeg)
+MFDFAsingleQ::MFDFAsingleQ(string file_name_, int min_win_, int max_win_, int ord_, double q_, int rev_seg_)
+		: FA()
 {
-    checkFileExistence(fileName);
-	N = setTsLength(fileName);
-    checkInputs(minWin, maxWin, polOrd, revSeg);
-    allocateMemory(N, getRangeLength(minWin, maxWin));
+	file_name = file_name_;
+	min_win = min_win_;
+	max_win = max_win_;
+	ord = ord_;
+	q = q_;
+	rev_seg = rev_seg_;
+    checkFileExistence(file_name);
+	N = setTsLength(file_name);
+    checkInputs();
+    allocateMemory();
 }
 
 MFDFAsingleQ::~MFDFAsingleQ(){
-	delete[] t;
-	delete[] y;
-	delete[] s;
-	delete[] F;
+	delAlloc<double>(t);
+	delAlloc<double>(y);
+	delAlloc<int>(s);
+	delAlloc<double>(F);
 }
 
-void MFDFAsingleQ::checkInputs(int mw, int Mw, int po, int rvsg){
+void MFDFAsingleQ::checkInputs(){
 	//windows size
-	if(Mw < mw){
+	if(max_win < min_win){
 		fprintf(stdout, "ERROR %d: biggest scale must be greater than smallest scale\n", RANGE_FAILURE);
 		exit(RANGE_FAILURE);
-	}else if(mw < 3){
+	}else if(min_win < 3){
 		fprintf(stdout, "ERROR %d: smallest scale must be greater than 2\n", WIN_SIZE_FAILURE);
 		exit(WIN_SIZE_FAILURE);
-	}else if(Mw > N){
+	}else if(max_win > N){
 		fprintf(stdout, "ERROR %d: biggest scale must be smaller than time series length\n", WIN_SIZE_FAILURE);
 		exit(WIN_SIZE_FAILURE);
 	}
 	//polynomial order
-	if(po < 1){
+	if(ord < 1){
 		fprintf(stdout, "ERROR %d: polynomial order must be greater than 0\n", POL_FAILURE);
 		exit(POL_FAILURE);
 	}
 	//rev_seg
-	if(rvsg != 0 && rvsg != 1){
+	if(rev_seg != 0 && rev_seg != 1){
 		fprintf(stdout, "ERROR %d: parameter for backward computation must be 0 or 1\n", REV_SEG_FAILURE);
 		exit(REV_SEG_FAILURE);
 	}
 }
 
-void MFDFAsingleQ::allocateMemory(int L1, int L2){
-	t = new double [L1];
-	y = new double [L1];
-	s = new int [L2];
-	F = new double [L2];
+void MFDFAsingleQ::allocateMemory(){
+	t = new double [N];
+	y = new double [N];
+	s = new int [getRangeLength(min_win, max_win)];
+	F = new double [getRangeLength(min_win, max_win)];
 }
 
 int MFDFAsingleQ::getTsLength(){
@@ -166,12 +162,17 @@ void MFDFAsingleQ::H_loglogFit(int start, int end){
     }
     mo.lin_fit(range, log_s, log_F, &H, &H_intercept);
 }
+
+string MFDFAsingleQ::outFileStr(){
+	return "/"+MFDFAsQ_FN_START+"_"+to_string(min_win)+"_"+to_string(min_win)+"_q"+to_string(q)+"_"+
+			file_name.substr(file_name.find_last_of("/")+1);
+}
 // posso salvare il file di tutto il range per poi eventualmente ricaricarlo per rifare e salvare il grafico in un altro range
 void MFDFAsingleQ::saveFile(string path_tot){
     FileOps fo = FileOps();
 	int range = getRangeLength(min_win, max_win);
 	FILE *f;
-    f = fo.open_file(path_tot, "w");
+    f = fo.open_file(path_tot+outFileStr(), "w");
     for(int i = 0; i < range; i++)
         fprintf(f, "%d %lf\n", s[i], F[i]);
     fclose(f);
