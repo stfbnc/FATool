@@ -1,6 +1,6 @@
 #include "DFA.h"
 
-DFA::DFA(string file_name_, int min_win_, int max_win_, int ord_, int rev_seg_, int win_step_)
+DFA::DFA(string file_name_, int min_win_, int max_win_, int ord_, int win_step_, int rev_seg_)
 	: FA()
 {
 	file_name = file_name_;
@@ -119,7 +119,7 @@ double DFA::getH_intercept(){
 void DFA::H_loglogFit(int start, int end){
 	//if start < min_win || end > max_win -> error
     MathOps mo = MathOps();
-	int range = getRangeLength(start, end);
+	int range = getRangeLength(start, end, win_step);
     double log_s[range], log_F[range];
     for(int i = (start-min_win)/win_step; i <= (end-min_win)/win_step; i++){
         log_s[i] = log(s[i]);

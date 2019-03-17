@@ -1,6 +1,6 @@
 #include "DCCA.h"
 
-DCCA::DCCA(string file_name_, string file_name2_, int min_win_, int max_win_, int ord_, string isAbs_)
+DCCA::DCCA(string file_name_, string file_name2_, int min_win_, int max_win_, int ord_, string isAbs_, int win_step_)
 	: FA()
 {
 	file_name = file_name_;
@@ -9,6 +9,7 @@ DCCA::DCCA(string file_name_, string file_name2_, int min_win_, int max_win_, in
 	max_win = max_win_;
 	ord = ord_;
 	isAbs = isAbs_;
+	win_step = win_step_;
     checkFileExistence(file_name);
     checkFileExistence(file_name2);
 	getEqualLength(file_name, file_name2);
@@ -52,8 +53,8 @@ void DCCA::allocateMemory(){
 	t = new double [N];
 	y = new double [N];
 	y2 = new double [N];
-	s = new int [getRangeLength(min_win, max_win)];
-	F = new double [getRangeLength(min_win, max_win)];
+	s = new int [getRangeLength(min_win, max_win, win_step)];
+	F = new double [getRangeLength(min_win, max_win, win_step)];
 }
 
 void DCCA::getEqualLength(string fn1, string fn2){
@@ -87,8 +88,8 @@ void DCCA::setFlucVectors(){
 void DCCA::winFlucComp(){
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
-	int range = getRangeLength(min_win, max_win);
-    ao.int_range(s, range, min_win);
+	int range = getRangeLength(min_win, max_win, win_step);
+    ao.int_range(s, range, min_win, win_step);
 	int F_len = N - min_win;
     double F_nu[F_len];
     double t_fit[max_win+1], y_fit1[max_win+1], y_fit2[max_win+1], diff_vec[max_win+1];
@@ -145,9 +146,9 @@ double DCCA::getH_intercept(){
 void DCCA::H_loglogFit(int start, int end){
 	//if start < min_win || end > max_win -> error
     MathOps mo = MathOps();
-	int range = getRangeLength(start, end);
+	int range = getRangeLength(start, end, win_step);
     double log_s[range], log_F[range];
-    for(int i = start - min_win; i <= end - min_win; i++){
+    for(int i = (start-min_win)/win_step; i <= (end-min_win)/win_step; i++){
         log_s[i] = log(s[i]);
         log_F[i] = log(F[i]);
     }
@@ -162,7 +163,7 @@ string DCCA::outFileStr(){
 // posso salvare il file di tutto il range per poi eventualmente ricaricarlo per rifare e salvare il grafico in un altro range
 void DCCA::saveFile(string path_tot){
     FileOps fo = FileOps();
-	int range = getRangeLength(min_win, max_win);
+	int range = getRangeLength(min_win, max_win, win_step);
 	FILE *f;
     f = fo.open_file(path_tot+outFileStr(), "w");
     for(int i = 0; i < range; i++)

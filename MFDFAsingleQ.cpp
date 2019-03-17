@@ -1,6 +1,6 @@
 #include "MFDFAsingleQ.h"
 
-MFDFAsingleQ::MFDFAsingleQ(string file_name_, int min_win_, int max_win_, int ord_, double q_, int rev_seg_)
+MFDFAsingleQ::MFDFAsingleQ(string file_name_, int min_win_, int max_win_, int ord_, double q_, int win_step_, int rev_seg_)
 	: FA()
 {
 	file_name = file_name_;
@@ -8,6 +8,7 @@ MFDFAsingleQ::MFDFAsingleQ(string file_name_, int min_win_, int max_win_, int or
 	max_win = max_win_;
 	ord = ord_;
 	q = q_;
+	win_step = win_step_;
 	rev_seg = rev_seg_;
     checkFileExistence(file_name);
 	N = setTsLength(file_name);
@@ -49,8 +50,8 @@ void MFDFAsingleQ::checkInputs(){
 void MFDFAsingleQ::allocateMemory(){
 	t = new double [N];
 	y = new double [N];
-	s = new int [getRangeLength(min_win, max_win)];
-	F = new double [getRangeLength(min_win, max_win)];
+	s = new int [getRangeLength(min_win, max_win, win_step)];
+	F = new double [getRangeLength(min_win, max_win, win_step)];
 }
 
 int MFDFAsingleQ::getTsLength(){
@@ -60,8 +61,8 @@ int MFDFAsingleQ::getTsLength(){
 void MFDFAsingleQ::winFlucComp(){
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
-	int range = getRangeLength(min_win, max_win);
-    ao.int_range(s, range, min_win);
+	int range = getRangeLength(min_win, max_win, win_step);
+    ao.int_range(s, range, min_win, win_step);
 	int F_len = N / min_win;
     double F_nu1[F_len], F_nu2[F_len];
     double t_fit[max_win], y_fit[max_win], diff_vec[max_win];
@@ -135,9 +136,9 @@ double MFDFAsingleQ::getH_intercept(){
 void MFDFAsingleQ::H_loglogFit(int start, int end){
 	//if start < min_win || end > max_win -> error
     MathOps mo = MathOps();
-	int range = getRangeLength(start, end);
+	int range = getRangeLength(start, end, win_step);
     double log_s[range], log_F[range];
-    for(int i = start - min_win; i <= end - min_win; i++){
+    for(int i = (start-min_win)/win_step; i <= (end-min_win)/win_step; i++){
         log_s[i] = log(s[i]);
         log_F[i] = log(F[i]);
     }
@@ -145,13 +146,13 @@ void MFDFAsingleQ::H_loglogFit(int start, int end){
 }
 
 string MFDFAsingleQ::outFileStr(){
-	return "/"+MFDFAsQ_FN_START+"_"+to_string(min_win)+"_"+to_string(min_win)+"_q"+to_string(q)+"_"+
+	return "/"+MFDFAsQ_FN_START+"_"+to_string(min_win)+"_"+to_string(min_win)+"_q"+to_string((int)q)+"_"+
 			file_name.substr(file_name.find_last_of("/")+1);
 }
 // posso salvare il file di tutto il range per poi eventualmente ricaricarlo per rifare e salvare il grafico in un altro range
 void MFDFAsingleQ::saveFile(string path_tot){
     FileOps fo = FileOps();
-	int range = getRangeLength(min_win, max_win);
+	int range = getRangeLength(min_win, max_win, win_step);
 	FILE *f;
     f = fo.open_file(path_tot+outFileStr(), "w");
     for(int i = 0; i < range; i++)

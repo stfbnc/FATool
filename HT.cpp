@@ -84,12 +84,10 @@ void HT::winFlucComp(){
 		ao.zero_vec(Ht, L);
 		HTsingleScale::winFlucComp();
 		H_loglogFit(1, 1);
-		for(int j = 0; j < Lscale; j++){
+		for(int j = 0; j < Lscale; j++)
 			HTmtx[j][i] = Ht[j];
-		}
-		for(int j = Lscale; j < L; j++){
+		for(int j = Lscale; j < L; j++)
 			HTmtx[j][i] = numeric_limits<double>::quiet_NaN();
-		}
 	}
 }
 

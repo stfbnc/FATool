@@ -1,4 +1,4 @@
-- parametro costruttore per fare dfa (o altre) non a tutte le scale ma a scale equispaziate pointEvery
+- spostare la parte del fit in mfdfa e ht in un'altra funzione H_loglog override
 - calcolo delle soglie
 - mfdfa può anche fare lo spettro multifrattale
 - nanDFA che estende dfa (e lo stesso con le altre classi)

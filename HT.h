@@ -14,7 +14,6 @@ public:
 	void allocateScalesMemory();
 	int getNumScales(string);
 	void getScales(string);
-	//void scalesWinFlucComp();
 	void winFlucComp() override;
 	string outFileStr() override;
 	void saveFile(string) override;

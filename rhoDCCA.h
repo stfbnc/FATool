@@ -7,7 +7,7 @@
 class rhoDCCA
 {
 public:
-    rhoDCCA(string, string, int, int, int);
+    rhoDCCA(string, string, int, int, int, int=1);
 	~rhoDCCA();
     void computeRho();
     int getRhoLength();
@@ -20,6 +20,7 @@ private:
 	int min_win;
 	int max_win;
 	int ord;
+	int win_step;
     double *rho;
     int L;
 };

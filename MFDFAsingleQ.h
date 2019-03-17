@@ -7,7 +7,7 @@
 class MFDFAsingleQ : public FA
 {
 public:
-    MFDFAsingleQ(string, int, int, int, double, int=1);
+    MFDFAsingleQ(string, int, int, int, double, int=1, int=1);
 	~MFDFAsingleQ();
 	void checkInputs();
 	void allocateMemory();
@@ -25,6 +25,7 @@ protected:
 	int ord;
     double q;
 	int rev_seg;
+	int win_step;
 	int *s;
 	double H;
 	double H_intercept;

@@ -7,7 +7,7 @@
 class DCCA : public FA
 {
 public:
-    DCCA(string, string, int, int, int, string=DEFAULT_DCCA);
+    DCCA(string, string, int, int, int, string=DEFAULT_DCCA, int=1);
 	~DCCA();
 	void checkInputs();
 	void allocateMemory();
@@ -28,6 +28,7 @@ private:
 	int max_win;
 	int ord;
     string isAbs;
+    int win_step;
 	double *y2;
 	int *s;
 	double H;

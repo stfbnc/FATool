@@ -7,7 +7,7 @@
 class MFDFA : public MFDFAsingleQ
 {
 public:
-    MFDFA(string, int, int, int, double, int, double=1.0, int=1);
+    MFDFA(string, int, int, int, double, int, int=1, double=1.0, int=1);
 	~MFDFA();
 	void checkInputs() override;
     void allocateQmemory();

@@ -68,7 +68,10 @@ void HTsingleScale::winFlucComp(){
 void HTsingleScale::H_loglogFit(int a, int b){
 	int start = 4;
 	int end = N / 5;
-	MFDFAsingleQ dfaQ0 = MFDFAsingleQ(file_name, start, end, 1, 0.0);
+	int step = N / 20;
+	if(step == 0)
+		step = 1;
+	MFDFAsingleQ dfaQ0 = MFDFAsingleQ(file_name, start, end, 1, 0.0, step);
 	dfaQ0.setFlucVectors();
 	dfaQ0.winFlucComp();
 	dfaQ0.H_loglogFit(start, end);

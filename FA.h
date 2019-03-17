@@ -23,9 +23,8 @@ public:
 	template <class T>
 	void del2Alloc(T **p, int iLen){
 		if(p != NULL){
-			for(int i = 0; i < iLen; i++){
+			for(int i = 0; i < iLen; i++)
 				delAlloc<T>(p[i]);
-			}
 			delete [] p;
 		}
 	}
@@ -49,7 +48,6 @@ public:
     
     virtual void checkInputs() = 0;
 	virtual void allocateMemory() = 0;
-	//virtual void setFlucVectors() = 0;
 
 	void setFlucVectors(){
 	    MathOps mo = MathOps();
