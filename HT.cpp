@@ -1,7 +1,7 @@
 #include "HT.h"
 
 HT::HT(string file_name_, int scale_, int Nscales_, int stepScale_)
-		: HTsingleScale(file_name_, scale_)
+	: HTsingleScale(file_name_, scale_)
 {
 	Nscales = Nscales_;
 	minScale = scale_;
@@ -28,10 +28,7 @@ HT::HT(string fileName, string strScales)
 
 HT::~HT(){
 	delAlloc<int>(scales);
-	for(int i = 0; i < getRangeLength(minScale, N); i++){
-		delAlloc<double>(HTmtx[i]);
-	}
-	delete[] HTmtx;
+	del2Alloc<double>(HTmtx, getRangeLength(minScale, N));
 }
 
 void HT::checkInputs(){
@@ -77,14 +74,15 @@ void HT::getScales(string str){
 	scales[i] = stoi(str);
 }
 
-void HT::scalesWinFlucComp(){
+//void HT::scalesWinFlucComp(){
+void HT::winFlucComp(){
 	int L = getRangeLength(minScale, N);
 	ArrayOps ao = ArrayOps();
 	for(int i = 0; i < Nscales; i++){
 		scale = scales[i];
 		int Lscale = getRangeLength(scale, N);
 		ao.zero_vec(Ht, L);
-		winFlucComp();
+		HTsingleScale::winFlucComp();
 		H_loglogFit(1, 1);
 		for(int j = 0; j < Lscale; j++){
 			HTmtx[j][i] = Ht[j];

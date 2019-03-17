@@ -1,7 +1,7 @@
 #include "MFDFA.h"
 
 MFDFA::MFDFA(string file_name_, int min_win_, int max_win_, int ord_, double qIn_, int Nq_, double stepq_, int rev_seg_)
-		: MFDFAsingleQ(file_name_, min_win_, max_win_, ord_, qIn_, rev_seg_)
+	: MFDFAsingleQ(file_name_, min_win_, max_win_, ord_, qIn_, rev_seg_)
 {
 	Nq = Nq_;
 	stepq = stepq_;
@@ -17,10 +17,7 @@ MFDFA::~MFDFA(){
 	delAlloc<double>(qRange);
 	delAlloc<double>(Hq);
 	delAlloc<double>(H_interceptq);
-    for(int i = 0; i < getRangeLength(min_win, max_win); i++){
-    	delAlloc<double>(flucMtx[i]);
-    }
-    delete[] flucMtx;
+	del2Alloc<double>(flucMtx, getRangeLength(min_win, max_win));
 }
 
 void MFDFA::checkInputs(){
@@ -46,12 +43,12 @@ void MFDFA::setQrange(double start, int len, double step){
     ao.double_range(qRange, len, start, step);
 }
 
-void MFDFA::qWinFlucComp(){
+void MFDFA::winFlucComp(){
 	setQrange(q, Nq, stepq);
 	int Lq = getRangeLength(min_win, max_win);
 	for(int i = 0; i < Nq; i++){
 		q = qRange[i];
-		winFlucComp();
+		MFDFAsingleQ::winFlucComp();
 		for(int j = 0; j < Lq; j++){
 			flucMtx[j][i] = F[j];
 		}
@@ -62,8 +59,8 @@ void MFDFA::qWinFlucComp(){
 }
 
 string MFDFA::outFileStr(){
-	return "/"+MFDFA_FN_START+"_"+to_string(min_win)+"_"+to_string(min_win)+"_q"+to_string(qRange[0])+"_"+to_string(qRange[Nq-1])+
-			"_"+file_name.substr(file_name.find_last_of("/")+1);
+	return "/"+MFDFA_FN_START+"_"+to_string(min_win)+"_"+to_string(max_win)+"_q"+to_string((int)qRange[0])+"_"+
+			to_string((int)qRange[Nq-1])+"_"+file_name.substr(file_name.find_last_of("/")+1);
 }
 
 void MFDFA::saveFile(string path_tot){
@@ -85,7 +82,7 @@ void MFDFA::saveFile(string path_tot){
 }
 
 string MFDFA::qoutFileStr(){
-	return "/"+MFDFA_FN_START+"_"+"_q"+to_string(qRange[0])+"_"+to_string(qRange[Nq-1])+
+	return "/"+MFDFA_FN_START+"_q"+to_string((int)qRange[0])+"_"+to_string((int)qRange[Nq-1])+
 			"_"+file_name.substr(file_name.find_last_of("/")+1);
 }
 

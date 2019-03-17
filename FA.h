@@ -20,6 +20,16 @@ public:
 			delete [] p;
 	}
 
+	template <class T>
+	void del2Alloc(T **p, int iLen){
+		if(p != NULL){
+			for(int i = 0; i < iLen; i++){
+				delAlloc<T>(p[i]);
+			}
+			delete [] p;
+		}
+	}
+
     void checkFileExistence(string fn){
         struct stat buffer;
         if(stat(fn.c_str(), &buffer) != 0){
@@ -33,13 +43,33 @@ public:
         return fo.rows_number(fn);
     }
     
-    int getRangeLength(int start, int end){
-        return end - start + 1;
+    int getRangeLength(int start, int end, int step=1){
+        return (end - start) / step + 1;
     }
     
     virtual void checkInputs() = 0;
 	virtual void allocateMemory() = 0;
-	virtual void setFlucVectors() = 0;
+	//virtual void setFlucVectors() = 0;
+
+	void setFlucVectors(){
+	    MathOps mo = MathOps();
+	    ArrayOps ao = ArrayOps();
+	    FileOps fo = FileOps();
+		//time series vector
+		double pn[N], pn_nomean[N];
+	    FILE *f;
+	    f = fo.open_file(file_name, "r");
+	    for(int i = 0; i < N; i++)
+	        fscanf(f, "%lf", &pn[i]);
+	    fclose(f);
+		//time vector
+	    ao.double_range(t, N, 1.0);
+	    //time series minus its mean
+	    mo.subtract_mean(pn, N, pn_nomean);
+	    //cumulative sum
+	    mo.cumsum(pn_nomean, y, N);
+	}
+
 	virtual void winFlucComp() = 0;
     virtual void H_loglogFit(int, int) = 0;
     virtual string outFileStr() = 0;

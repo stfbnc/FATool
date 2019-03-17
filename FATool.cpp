@@ -30,25 +30,27 @@ int main(int argc, char **argv){
 	int Nscales = 2;
 	int stepSc = 3;
 
-//	DFA a = DFA(fn, mw, Mw, po, rv_sg);
-//    printf("%d\n", a.getTsLength());
-//    printf("%d\n", a.getRangeLength(mw, Mw));
-//    a.setFlucVectors();
-//    a.winFlucComp();
-//    a.H_loglogFit(mw, Mw);
-//    printf("%lf | %lf\n", a.getH_intercept(), a.getH());
+	DFA a = DFA(fn, mw, Mw, po, rv_sg, 2);
+    printf("%d\n", a.getTsLength());
+    printf("%d\n", a.getRangeLength(mw, Mw));
+    a.setFlucVectors();
+    a.winFlucComp();
+    a.H_loglogFit(mw, Mw);
+    printf("%lf | %lf\n", a.getH_intercept(), a.getH());
+    a.saveFile(".");
     
-    /*DCCA b = DCCA(fn, fm, mw, Mw, po);
+    DCCA b = DCCA(fn, fm, mw, Mw, po);
     printf("%d\n", b.getTsLength());
     printf("%d\n", b.getRangeLength(mw, Mw));
     b.setFlucVectors();
     b.winFlucComp();
     b.H_loglogFit(mw, Mw);
-    printf("%lf | %lf\n", b.getH_intercept(), b.getH());*/
+    printf("%lf | %lf\n", b.getH_intercept(), b.getH());
+    b.saveFile(".");
     
-    /*rhoDCCA c = rhoDCCA(fn, fm, mw, Mw, po);
+    rhoDCCA c = rhoDCCA(fn, fm, mw, Mw, po);
     c.computeRho();
-    c.saveFile("./cppDcca.txt");*/
+    c.saveFile(".");
     
 //    MFDFAsingleQ d = MFDFAsingleQ(fn, mw, Mw, po, 0.0, rv_sg);
 //    printf("%d\n", d.getTsLength());
@@ -64,11 +66,11 @@ int main(int argc, char **argv){
 //    printf("cia0\n");
 //    e.setFlucVectors();
 //    printf("cia1\n");
-//    e.qWinFlucComp();
+//    e.winFlucComp();
 //    printf("cia2\n");
-//    e.saveFile("all_fluc.txt");
+//    e.saveFile(".");
 //    printf("cia3\n");
-//    e.qsaveFile("all_q.txt");
+//    e.qsaveFile(".");
 //    printf("cia4\n");
     
 //	HTsingleScale f = HTsingleScale(fn, scale, po);
@@ -86,12 +88,13 @@ int main(int argc, char **argv){
 //	g.scalesWinFlucComp();
 //	g.saveFile("ahtscales.txt");
 
-	HT h = HT(fn, "10,13");
-	printf("%d\n", h.getTsLength());
-	printf("%d\n", h.getRangeLength(scale, h.getTsLength()));
-	h.setFlucVectors();
-	h.scalesWinFlucComp();
-	h.saveFile(".");
+//	HT h = HT(fn, "10,13");
+//	printf("%d\n", h.getTsLength());
+//	printf("%d\n", h.getRangeLength(scale, h.getTsLength()));
+//	h.setFlucVectors();
+//	//h.scalesWinFlucComp();
+//	h.winFlucComp();
+//	h.saveFile(".");
 
     return 0;
 }

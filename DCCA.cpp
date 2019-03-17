@@ -1,7 +1,7 @@
 #include "DCCA.h"
 
 DCCA::DCCA(string file_name_, string file_name2_, int min_win_, int max_win_, int ord_, string isAbs_)
-		: FA()
+	: FA()
 {
 	file_name = file_name_;
 	file_name2 = file_name2_;
@@ -71,29 +71,17 @@ int DCCA::getTsLength(){
 }
 
 void DCCA::setFlucVectors(){
+	FA::setFlucVectors();
     MathOps mo = MathOps();
-    ArrayOps ao = ArrayOps();
     FileOps fo = FileOps();
-	//time series vectors
-	double ts1[N], ts2[N];
-    double ts1_nomean[N], ts2_nomean[N];
-    FILE *f;
-    f = fo.open_file(file_name, "r");
-    for(int i = 0; i < N; i++)
-        fscanf(f, "%lf", &ts1[i]);
-    fclose(f);
-    f = fo.open_file(file_name2, "r");
-    for(int i = 0; i < N; i++)
-        fscanf(f, "%lf", &ts2[i]);
-    fclose(f);
-	//time vector
-    ao.double_range(t, N, 1.0);
-    //time series minus its mean
-    mo.subtract_mean(ts1, N, ts1_nomean);
-    mo.subtract_mean(ts2, N, ts2_nomean);
-    //cumulative sum
-    mo.cumsum(ts1_nomean, y, N);
-    mo.cumsum(ts2_nomean, y2, N);
+	double pn2[N], pn2_nomean[N];
+	FILE *f;
+	f = fo.open_file(file_name2, "r");
+	for(int i = 0; i < N; i++)
+		fscanf(f, "%lf", &pn2[i]);
+	fclose(f);
+	mo.subtract_mean(pn2, N, pn2_nomean);
+	mo.cumsum(pn2_nomean, y2, N);
 }
     
 void DCCA::winFlucComp(){

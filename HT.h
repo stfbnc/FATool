@@ -12,9 +12,10 @@ public:
 	~HT();
 	void checkInputs() override;
 	void allocateScalesMemory();
-	int getNumScales(string str);
+	int getNumScales(string);
 	void getScales(string);
-	void scalesWinFlucComp();
+	//void scalesWinFlucComp();
+	void winFlucComp() override;
 	string outFileStr() override;
 	void saveFile(string) override;
 private:

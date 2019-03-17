@@ -12,7 +12,6 @@ public:
 	void checkInputs();
 	void allocateMemory();
 	int getTsLength();
-	void setFlucVectors();
 	void winFlucComp();
 	void H_loglogFit(int, int);
 	string outFileStr();

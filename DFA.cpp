@@ -1,13 +1,14 @@
 #include "DFA.h"
 
-DFA::DFA(string file_name_, int min_win_, int max_win_, int ord_, int rev_seg_)
-		: FA()
+DFA::DFA(string file_name_, int min_win_, int max_win_, int ord_, int rev_seg_, int win_step_)
+	: FA()
 {
 	file_name = file_name_;
 	min_win = min_win_;
 	max_win = max_win_;
 	ord = ord_;
 	rev_seg = rev_seg_;
+	win_step = win_step_;
     checkFileExistence(file_name);
 	N = setTsLength(file_name);
     checkInputs();
@@ -48,38 +49,19 @@ void DFA::checkInputs(){
 void DFA::allocateMemory(){
 	t = new double [N];
 	y = new double [N];
-	s = new int [getRangeLength(min_win, max_win)];
-	F = new double [getRangeLength(min_win, max_win)];
+	s = new int [getRangeLength(min_win, max_win, win_step)];
+	F = new double [getRangeLength(min_win, max_win, win_step)];
 }
 
 int DFA::getTsLength(){
 	return N;
 }
-
-void DFA::setFlucVectors(){
-    MathOps mo = MathOps();
-    ArrayOps ao = ArrayOps();
-    FileOps fo = FileOps();
-	//time series vector
-	double pn[N], pn_nomean[N];
-    FILE *f;
-    f = fo.open_file(file_name, "r");
-    for(int i = 0; i < N; i++)
-        fscanf(f, "%lf", &pn[i]);
-    fclose(f);
-	//time vector
-    ao.double_range(t, N, 1.0);
-    //time series minus its mean
-    mo.subtract_mean(pn, N, pn_nomean);
-    //cumulative sum
-    mo.cumsum(pn_nomean, y, N);
-}
     
 void DFA::winFlucComp(){
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
-	int range = getRangeLength(min_win, max_win);
-    ao.int_range(s, range, min_win);
+	int range = getRangeLength(min_win, max_win, win_step);
+    ao.int_range(s, range, min_win, win_step);
 	int F_len = N / min_win;
     double F_nu1[F_len], F_nu2[F_len];
     double t_fit[max_win], y_fit[max_win], diff_vec[max_win];
@@ -139,7 +121,7 @@ void DFA::H_loglogFit(int start, int end){
     MathOps mo = MathOps();
 	int range = getRangeLength(start, end);
     double log_s[range], log_F[range];
-    for(int i = start - min_win; i <= end - min_win; i++){
+    for(int i = (start-min_win)/win_step; i <= (end-min_win)/win_step; i++){
         log_s[i] = log(s[i]);
         log_F[i] = log(F[i]);
     }
@@ -152,7 +134,7 @@ string DFA::outFileStr(){
 // posso salvare il file di tutto il range per poi eventualmente ricaricarlo per rifare e salvare il grafico in un altro range
 void DFA::saveFile(string path_tot){
     FileOps fo = FileOps();
-	int range = getRangeLength(min_win, max_win);
+	int range = getRangeLength(min_win, max_win, win_step);
 	FILE *f;
     f = fo.open_file(path_tot+outFileStr(), "w");
     for(int i = 0; i < range; i++)

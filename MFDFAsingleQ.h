@@ -12,7 +12,6 @@ public:
 	void checkInputs();
 	void allocateMemory();
 	int getTsLength();
-	void setFlucVectors();
 	void winFlucComp();
 	double getH();
 	double getH_intercept();

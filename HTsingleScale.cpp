@@ -2,7 +2,7 @@
 #include "MFDFAsingleQ.h"
 
 HTsingleScale::HTsingleScale(string file_name_, int scale_)
-		: FA()
+	: FA()
 {
 	file_name = file_name_;
 	scale = scale_;
@@ -39,25 +39,6 @@ void HTsingleScale::allocateMemory(){
 
 int HTsingleScale::getTsLength(){
 	return N;
-}
-
-void HTsingleScale::setFlucVectors(){
-    MathOps mo = MathOps();
-    ArrayOps ao = ArrayOps();
-    FileOps fo = FileOps();
-	//time series vector
-	double pn[N], pn_nomean[N];
-    FILE *f;
-    f = fo.open_file(file_name, "r");
-    for(int i = 0; i < N; i++)
-        fscanf(f, "%lf", &pn[i]);
-    fclose(f);
-	//time vector
-    ao.double_range(t, N, 1.0);
-    //time series minus its mean
-    mo.subtract_mean(pn, N, pn_nomean);
-    //cumulative sum
-    mo.cumsum(pn_nomean, y, N);
 }
     
 void HTsingleScale::winFlucComp(){

@@ -12,11 +12,11 @@ public:
 	void checkInputs() override;
     void allocateQmemory();
     void setQrange(double, int, double);
-	void qWinFlucComp();
+	void winFlucComp() override;
 	string outFileStr() override;
-	void saveFile(string path_tot) override;
+	void saveFile(string) override;
 	string qoutFileStr();
-	void qsaveFile(string path_tot);
+	void qsaveFile(string);
 	//void plot();
 	//void qplot();
 private:

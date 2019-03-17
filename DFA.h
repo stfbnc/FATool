@@ -7,12 +7,11 @@
 class DFA : public FA
 {
 public:
-    DFA(string, int, int, int, int=1);
+    DFA(string, int, int, int, int=1, int=1);
 	~DFA();
 	void checkInputs();
 	void allocateMemory();
 	int getTsLength();
-	void setFlucVectors();
 	void winFlucComp();
 	double getH();
 	double getH_intercept();
@@ -25,6 +24,7 @@ private:
 	int max_win;
 	int ord;
 	int rev_seg;
+	int win_step;
 	int *s;
 	double H;
 	double H_intercept;
