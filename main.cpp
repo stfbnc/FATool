@@ -8,7 +8,8 @@
 //#include "HTsingleScale.h"
 //#include "HT.h"
 #include <QApplication>
-#include <QPushButton>
+#include "plot_window.h"
+#include "main_window.h"
 
 //using namespace std;
 
@@ -98,17 +99,10 @@ int main(int argc, char **argv){
 //	h.winFlucComp();
 //	h.saveFile(".");
 
-    //return 0;
-
     QApplication app(argc, argv);
 
-    QWidget window;
-    window.setFixedSize(1000, 500);
-
-    QPushButton *button = new QPushButton("Load file", &window);
-    button->setGeometry(10, 10, 100, 30);
-
-    window.show();
+    MainWindow win;
+    win.show();
 
     return app.exec();
 }

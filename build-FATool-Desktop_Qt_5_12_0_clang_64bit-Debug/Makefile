@@ -12,10 +12,10 @@ MAKEFILE      = Makefile
 
 CC            = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
 CXX           = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++
-DEFINES       = -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_QML_DEBUG -DQT_PRINTSUPPORT_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g $(EXPORT_ARCH_ARGS) -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk -mmacosx-version-min=10.12 -Wall -W -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -stdlib=libc++ -g -std=gnu++11 $(EXPORT_ARCH_ARGS) -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk -mmacosx-version-min=10.12 -Wall -W -fPIC $(DEFINES)
-INCPATH       = -I../../FATool -I. -I/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers -I/Applications/Qt/5.12.0/clang_64/lib/QtGui.framework/Headers -I/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/OpenGL.framework/Headers -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/AGL.framework/Headers -I/Applications/Qt/5.12.0/clang_64/mkspecs/macx-clang -F/Applications/Qt/5.12.0/clang_64/lib
+INCPATH       = -I../../FATool -I. -I/Applications/Qt/5.12.0/clang_64/lib/QtPrintSupport.framework/Headers -I/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers -I/Applications/Qt/5.12.0/clang_64/lib/QtGui.framework/Headers -I/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/OpenGL.framework/Headers -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/AGL.framework/Headers -I/Applications/Qt/5.12.0/clang_64/mkspecs/macx-clang -F/Applications/Qt/5.12.0/clang_64/lib
 QMAKE         = /Applications/Qt/5.12.0/clang_64/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -38,7 +38,7 @@ DISTNAME      = FATool1.0.0
 DISTDIR = /Users/stefano/Desktop/programmi/C++/FATool/build-FATool-Desktop_Qt_5_12_0_clang_64bit-Debug/.tmp/FATool1.0.0
 LINK          = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++
 LFLAGS        = -stdlib=libc++ -headerpad_max_install_names $(EXPORT_ARCH_ARGS) -Wl,-syslibroot,/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk -mmacosx-version-min=10.12 -Wl,-rpath,@executable_path/Frameworks -Wl,-rpath,/Applications/Qt/5.12.0/clang_64/lib
-LIBS          = $(SUBLIBS) -F/Applications/Qt/5.12.0/clang_64/lib -framework QtWidgets -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework OpenGL -framework AGL   
+LIBS          = $(SUBLIBS) -F/Applications/Qt/5.12.0/clang_64/lib -framework QtPrintSupport -framework QtWidgets -framework QtGui -framework QtCore -framework DiskArbitration -framework IOKit -framework OpenGL -framework AGL   
 AR            = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar cq
 RANLIB        = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib -s
 SED           = sed
@@ -50,8 +50,15 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = ../main.cpp 
-OBJECTS       = main.o
+SOURCES       = ../main.cpp \
+		../plot_window.cpp \
+		../qcustomplot.cpp \
+		../main_window.cpp moc_qcustomplot.cpp
+OBJECTS       = main.o \
+		plot_window.o \
+		qcustomplot.o \
+		main_window.o \
+		moc_qcustomplot.o
 DIST          = /Applications/Qt/5.12.0/clang_64/mkspecs/features/spec_pre.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/qdevice.pri \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/device_config.prf \
@@ -216,6 +223,7 @@ DIST          = /Applications/Qt/5.12.0/clang_64/mkspecs/features/spec_pre.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/qt_config.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/macx-clang/qmake.conf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/spec_post.prf \
+		../.qmake.stash \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/exclusive_builds.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/mac/sdk.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/toolchain.prf \
@@ -243,7 +251,12 @@ DIST          = /Applications/Qt/5.12.0/clang_64/mkspecs/features/spec_pre.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/exceptions.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/yacc.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/lex.prf \
-		../../FATool.pro  ../main.cpp
+		../../FATool.pro ../plot_window.h \
+		../qcustomplot.h \
+		../main_window.h ../main.cpp \
+		../plot_window.cpp \
+		../qcustomplot.cpp \
+		../main_window.cpp
 QMAKE_TARGET  = FATool
 DESTDIR       = 
 TARGET        = FATool.app/Contents/MacOS/FATool
@@ -429,6 +442,7 @@ Makefile: ../FATool.pro /Applications/Qt/5.12.0/clang_64/mkspecs/macx-clang/qmak
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/qt_config.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/macx-clang/qmake.conf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/exclusive_builds.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/mac/sdk.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/toolchain.prf \
@@ -457,6 +471,7 @@ Makefile: ../FATool.pro /Applications/Qt/5.12.0/clang_64/mkspecs/macx-clang/qmak
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/yacc.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/lex.prf \
 		../FATool.pro \
+		/Applications/Qt/5.12.0/clang_64/lib/QtPrintSupport.framework/QtPrintSupport.prl \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/QtWidgets.prl \
 		/Applications/Qt/5.12.0/clang_64/lib/QtGui.framework/QtGui.prl \
 		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/QtCore.prl
@@ -625,6 +640,7 @@ Makefile: ../FATool.pro /Applications/Qt/5.12.0/clang_64/mkspecs/macx-clang/qmak
 /Applications/Qt/5.12.0/clang_64/mkspecs/features/qt_config.prf:
 /Applications/Qt/5.12.0/clang_64/mkspecs/macx-clang/qmake.conf:
 /Applications/Qt/5.12.0/clang_64/mkspecs/features/spec_post.prf:
+.qmake.stash:
 /Applications/Qt/5.12.0/clang_64/mkspecs/features/exclusive_builds.prf:
 /Applications/Qt/5.12.0/clang_64/mkspecs/features/mac/sdk.prf:
 /Applications/Qt/5.12.0/clang_64/mkspecs/features/toolchain.prf:
@@ -653,6 +669,7 @@ Makefile: ../FATool.pro /Applications/Qt/5.12.0/clang_64/mkspecs/macx-clang/qmak
 /Applications/Qt/5.12.0/clang_64/mkspecs/features/yacc.prf:
 /Applications/Qt/5.12.0/clang_64/mkspecs/features/lex.prf:
 ../FATool.pro:
+/Applications/Qt/5.12.0/clang_64/lib/QtPrintSupport.framework/QtPrintSupport.prl:
 /Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/QtWidgets.prl:
 /Applications/Qt/5.12.0/clang_64/lib/QtGui.framework/QtGui.prl:
 /Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/QtCore.prl:
@@ -686,7 +703,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /Applications/Qt/5.12.0/clang_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../main.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../plot_window.h ../qcustomplot.h ../main_window.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../main.cpp ../plot_window.cpp ../qcustomplot.cpp ../main_window.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -696,6 +714,7 @@ clean: compiler_clean
 
 distclean: clean 
 	-$(DEL_FILE) -r FATool.app
+	-$(DEL_FILE) .qmake.stash
 	-$(DEL_FILE) Makefile
 
 
@@ -717,8 +736,17 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /Applications/Qt/5.12.0/clang_64/mkspecs/features/data/dummy.cpp
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -pipe -stdlib=libc++ -g -std=gnu++11 $(EXPORT_ARCH_ARGS) -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk -mmacosx-version-min=10.12 -Wall -W -dM -E -o moc_predefs.h /Applications/Qt/5.12.0/clang_64/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all:
+compiler_moc_header_make_all: moc_qcustomplot.cpp
 compiler_moc_header_clean:
+	-$(DEL_FILE) moc_qcustomplot.cpp
+moc_qcustomplot.cpp: /Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qmath.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qnumeric.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/QtNumeric \
+		../qcustomplot.h \
+		moc_predefs.h \
+		/Applications/Qt/5.12.0/clang_64/bin/moc
+	/Applications/Qt/5.12.0/clang_64/bin/moc $(DEFINES) --include /Users/stefano/Desktop/programmi/C++/FATool/build-FATool-Desktop_Qt_5_12_0_clang_64bit-Debug/moc_predefs.h -I/Applications/Qt/5.12.0/clang_64/mkspecs/macx-clang -I/Users/stefano/Desktop/programmi/C++/FATool -I/Applications/Qt/5.12.0/clang_64/lib/QtPrintSupport.framework/Headers -I/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers -I/Applications/Qt/5.12.0/clang_64/lib/QtGui.framework/Headers -I/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/10.0.0/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include -F/Applications/Qt/5.12.0/clang_64/lib ../qcustomplot.h -o moc_qcustomplot.cpp
+
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
 compiler_moc_source_make_all:
@@ -733,15 +761,52 @@ compiler_yacc_impl_make_all:
 compiler_yacc_impl_clean:
 compiler_lex_make_all:
 compiler_lex_clean:
-compiler_clean: compiler_moc_predefs_clean 
+compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean 
 
 ####### Compile
 
 main.o: ../main.cpp /Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QApplication \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qapplication.h \
-		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QPushButton \
-		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qpushbutton.h
+		../plot_window.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QWidget \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
+		../main_window.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../main.cpp
+
+plot_window.o: ../plot_window.cpp ../plot_window.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QApplication \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qapplication.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QWidget \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QPushButton \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qpushbutton.h \
+		../qcustomplot.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qmath.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qnumeric.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/QtNumeric
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o plot_window.o ../plot_window.cpp
+
+qcustomplot.o: ../qcustomplot.cpp ../qcustomplot.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qmath.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qnumeric.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/QtNumeric
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qcustomplot.o ../qcustomplot.cpp
+
+main_window.o: ../main_window.cpp ../main_window.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QApplication \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qapplication.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QWidget \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QPushButton \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qpushbutton.h \
+		../qcustomplot.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qmath.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qnumeric.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/QtNumeric
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main_window.o ../main_window.cpp
+
+moc_qcustomplot.o: moc_qcustomplot.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_qcustomplot.o moc_qcustomplot.cpp
 
 ####### Install
 
