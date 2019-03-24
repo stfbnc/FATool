@@ -1,14 +1,16 @@
-#include "FAGlobs.h"
-#include "FA.h"
-#include "DFA.h"
-#include "DCCA.h"
-#include "rhoDCCA.h"
-#include "MFDFAsingleQ.h"
-#include "MFDFA.h"
-#include "HTsingleScale.h"
-#include "HT.h"
+//#include "FAGlobs.h"
+//#include "FA.h"
+//#include "DFA.h"
+//#include "DCCA.h"
+//#include "rhoDCCA.h"
+//#include "MFDFAsingleQ.h"
+//#include "MFDFA.h"
+//#include "HTsingleScale.h"
+//#include "HT.h"
+#include <QApplication>
+#include <QPushButton>
 
-using namespace std;
+//using namespace std;
 
 int main(int argc, char **argv){
 
@@ -17,18 +19,18 @@ int main(int argc, char **argv){
 	int Mw = stoi(argv[3]);
 	int po = stoi(argv[4]);
 	int rv_sg = stoi(argv[5]);*/
-	string fn = "./prova.txt";
-    string fm = "./prova2.txt";
-	int mw = 4;
-	int Mw = 10;
-	int po = 1;
-	int rv_sg = 1;
-    double qin = -3.0;
-    int qlen = 7;
-    double step = 1.0;
-	int scale = 10;
-	int Nscales = 2;
-	int stepSc = 3;
+//	string fn = "./prova.txt";
+//    string fm = "./prova2.txt";
+//	int mw = 4;
+//	int Mw = 10;
+//	int po = 1;
+//	int rv_sg = 1;
+//    double qin = -3.0;
+//    int qlen = 7;
+//    double step = 1.0;
+//	int scale = 10;
+//	int Nscales = 2;
+//	int stepSc = 3;
 
 //	DFA a = DFA(fn, mw, Mw, po, 2, rv_sg);
 //    printf("%d\n", a.getTsLength());
@@ -74,27 +76,39 @@ int main(int argc, char **argv){
 //    e.qsaveFile(".");
 //    printf("cia4\n");
     
-	HTsingleScale f = HTsingleScale(fn, scale);
-    printf("%d\n", f.getTsLength());
-    printf("%d\n", f.getRangeLength(scale, f.getTsLength()));
-    f.setFlucVectors();
-    f.winFlucComp();
-    f.H_loglogFit(4, f.getTsLength()/5);
-	f.saveFile(".");
+//	HTsingleScale f = HTsingleScale(fn, scale);
+//    printf("%d\n", f.getTsLength());
+//    printf("%d\n", f.getRangeLength(scale, f.getTsLength()));
+//    f.setFlucVectors();
+//    f.winFlucComp();
+//    f.H_loglogFit(4, f.getTsLength()/5);
+//	f.saveFile(".");
 
-	HT g = HT(fn, scale, Nscales, stepSc);
-	printf("%d\n", g.getTsLength());
-	printf("%d\n", g.getRangeLength(scale, g.getTsLength()));
-	g.setFlucVectors();
-	g.winFlucComp();
-	g.saveFile(".");
+//	HT g = HT(fn, scale, Nscales, stepSc);
+//	printf("%d\n", g.getTsLength());
+//	printf("%d\n", g.getRangeLength(scale, g.getTsLength()));
+//	g.setFlucVectors();
+//	g.winFlucComp();
+//	g.saveFile(".");
 
-	HT h = HT(fn, "10,13");
-	printf("%d\n", h.getTsLength());
-	printf("%d\n", h.getRangeLength(scale, h.getTsLength()));
-	h.setFlucVectors();
-	h.winFlucComp();
-	h.saveFile(".");
+//	HT h = HT(fn, "10,13");
+//	printf("%d\n", h.getTsLength());
+//	printf("%d\n", h.getRangeLength(scale, h.getTsLength()));
+//	h.setFlucVectors();
+//	h.winFlucComp();
+//	h.saveFile(".");
 
-    return 0;
+    //return 0;
+
+    QApplication app(argc, argv);
+
+    QWidget window;
+    window.setFixedSize(1000, 500);
+
+    QPushButton *button = new QPushButton("Load file", &window);
+    button->setGeometry(10, 10, 100, 30);
+
+    window.show();
+
+    return app.exec();
 }
