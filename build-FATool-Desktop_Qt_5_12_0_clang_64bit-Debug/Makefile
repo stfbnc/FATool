@@ -53,12 +53,14 @@ OBJECTS_DIR   = ./
 SOURCES       = ../main.cpp \
 		../plot_window.cpp \
 		../qcustomplot.cpp \
-		../main_window.cpp moc_qcustomplot.cpp
+		../main_window.cpp moc_qcustomplot.cpp \
+		moc_main_window.cpp
 OBJECTS       = main.o \
 		plot_window.o \
 		qcustomplot.o \
 		main_window.o \
-		moc_qcustomplot.o
+		moc_qcustomplot.o \
+		moc_main_window.o
 DIST          = /Applications/Qt/5.12.0/clang_64/mkspecs/features/spec_pre.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/qdevice.pri \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/device_config.prf \
@@ -736,9 +738,9 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /Applications/Qt/5.12.0/clang_64/mkspecs/features/data/dummy.cpp
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -pipe -stdlib=libc++ -g -std=gnu++11 $(EXPORT_ARCH_ARGS) -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk -mmacosx-version-min=10.12 -Wall -W -dM -E -o moc_predefs.h /Applications/Qt/5.12.0/clang_64/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_qcustomplot.cpp
+compiler_moc_header_make_all: moc_qcustomplot.cpp moc_main_window.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_qcustomplot.cpp
+	-$(DEL_FILE) moc_qcustomplot.cpp moc_main_window.cpp
 moc_qcustomplot.cpp: /Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qmath.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qnumeric.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/QtNumeric \
@@ -746,6 +748,15 @@ moc_qcustomplot.cpp: /Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Heade
 		moc_predefs.h \
 		/Applications/Qt/5.12.0/clang_64/bin/moc
 	/Applications/Qt/5.12.0/clang_64/bin/moc $(DEFINES) --include /Users/stefano/Desktop/programmi/C++/FATool/build-FATool-Desktop_Qt_5_12_0_clang_64bit-Debug/moc_predefs.h -I/Applications/Qt/5.12.0/clang_64/mkspecs/macx-clang -I/Users/stefano/Desktop/programmi/C++/FATool -I/Applications/Qt/5.12.0/clang_64/lib/QtPrintSupport.framework/Headers -I/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers -I/Applications/Qt/5.12.0/clang_64/lib/QtGui.framework/Headers -I/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/10.0.0/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include -F/Applications/Qt/5.12.0/clang_64/lib ../qcustomplot.h -o moc_qcustomplot.cpp
+
+moc_main_window.cpp: /Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QApplication \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qapplication.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QWidget \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
+		../main_window.h \
+		moc_predefs.h \
+		/Applications/Qt/5.12.0/clang_64/bin/moc
+	/Applications/Qt/5.12.0/clang_64/bin/moc $(DEFINES) --include /Users/stefano/Desktop/programmi/C++/FATool/build-FATool-Desktop_Qt_5_12_0_clang_64bit-Debug/moc_predefs.h -I/Applications/Qt/5.12.0/clang_64/mkspecs/macx-clang -I/Users/stefano/Desktop/programmi/C++/FATool -I/Applications/Qt/5.12.0/clang_64/lib/QtPrintSupport.framework/Headers -I/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers -I/Applications/Qt/5.12.0/clang_64/lib/QtGui.framework/Headers -I/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/10.0.0/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include -F/Applications/Qt/5.12.0/clang_64/lib ../main_window.h -o moc_main_window.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -799,6 +810,10 @@ main_window.o: ../main_window.cpp ../main_window.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QPushButton \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qpushbutton.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QLabel \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qlabel.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QComboBox \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qcombobox.h \
 		../qcustomplot.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qmath.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qnumeric.h \
@@ -807,6 +822,9 @@ main_window.o: ../main_window.cpp ../main_window.h \
 
 moc_qcustomplot.o: moc_qcustomplot.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_qcustomplot.o moc_qcustomplot.cpp
+
+moc_main_window.o: moc_main_window.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_main_window.o moc_main_window.cpp
 
 ####### Install
 

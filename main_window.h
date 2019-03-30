@@ -10,6 +10,7 @@ class QComboBox;
 class QCustomPlot;
 class MainWindow : public QWidget
 {
+Q_OBJECT
 public:
     explicit MainWindow(QWidget *parent=nullptr);
 private slots:
@@ -18,7 +19,7 @@ private:
     void SetDimensions();
     void FillList();
     //void onLoadClick();
-    QPushButton *close_button;
+    QPushButton *quit_button;
     QPushButton *load_button;
     QPushButton *go_button;
     QPushButton *save_button;

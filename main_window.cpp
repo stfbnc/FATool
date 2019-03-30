@@ -1,3 +1,4 @@
+#include <QDebug>
 #include "main_window.h"
 #include <QPushButton>
 #include <QLabel>
@@ -15,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     //load button
     load_button = new QPushButton("Load file(s)", this);
     load_button->setGeometry(padX, padY/2, xWidth, yHeight);
-    connect(load_button, SIGNAL (clicked()), QApplication::instance(), SLOT (onLoadClick()));
+    connect(load_button, SIGNAL (clicked()), this, SLOT (onLoadClick()));
     //save button
     save_button = new QPushButton("Save plot", this);
     save_button->setGeometry(2*padX+xWidth, padY/2, xWidth, yHeight);
@@ -31,9 +32,9 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     go_button = new QPushButton("Go!", this);
     go_button->setGeometry((xDim+padX+xWidth)/2+padX+xWidth/2, padY/2, xWidth, yHeight);
     //close button
-    close_button = new QPushButton("Close", this);
-    close_button->setGeometry(xDim-xWidth-padX, padY/2, xWidth, yHeight);
-    connect(close_button, SIGNAL (clicked()), QApplication::instance(), SLOT (quit()));
+    quit_button = new QPushButton("Quit", this);
+    quit_button->setGeometry(xDim-xWidth-padX, padY/2, xWidth, yHeight);
+    connect(quit_button, SIGNAL (clicked()), QApplication::instance(), SLOT (quit()));
     //plot section
     qplot = new QCustomPlot(this);
     qplot->setGeometry(padX, padY+yHeight, xDim-2*padX, yDim-yHeight-2*padY);
@@ -65,7 +66,9 @@ void MainWindow::FillList()
 void MainWindow::onLoadClick()
 {
     QFileDialog dialog(this);
-    dialog.setFileMode(QFileDialog::AnyFile);
-    if (dialog.exec())
-        fileNames = dialog.selectedFiles();
+    dialog.setDirectory(QDir::homePath());
+    dialog.setFileMode(QFileDialog::ExistingFiles);
+    if(dialog.exec())
+        fileNames.append(dialog.selectedFiles());
+    qInfo() << fileNames;
 }
