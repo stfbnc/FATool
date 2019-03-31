@@ -1,9 +1,9 @@
 #include <QDebug>
 #include "main_window.h"
-#include <QPushButton>
-#include <QLabel>
-#include <QComboBox>
-#include "qcustomplot.h"
+#include "FAGlobs.h"
+#include "FileOps.h"
+
+//qInfo() << dd_list->currentText();
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 {
@@ -17,9 +17,23 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     load_button = new QPushButton("Load file(s)", this);
     load_button->setGeometry(padX, padY/2, xWidth, yHeight);
     connect(load_button, SIGNAL (clicked()), this, SLOT (onLoadClick()));
+    //plot section
+    qplot = new QCustomPlot(this);
+    qplot->setGeometry(padX, padY+yHeight, xDim-2*padX, yDim-yHeight-2*padY);
+    qplot->xAxis2->setVisible(true);
+    qplot->xAxis2->setTickLabels(false);
+    qplot->yAxis2->setVisible(true);
+    qplot->yAxis2->setTickLabels(false);
+    connect(qplot->xAxis, SIGNAL(rangeChanged(QCPRange)), qplot->xAxis2, SLOT(setRange(QCPRange)));
+    connect(qplot->yAxis, SIGNAL(rangeChanged(QCPRange)), qplot->yAxis2, SLOT(setRange(QCPRange)));
+    qplot->xAxis->setLabel("time");
+    qplot->yAxis->setLabel("Time series");
+    qplot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    qplot->replot();
     //save button
     save_button = new QPushButton("Save plot", this);
     save_button->setGeometry(2*padX+xWidth, padY/2, xWidth, yHeight);
+    connect(save_button, SIGNAL (clicked()), this, SLOT (onSaveClick()));
     //text
     fluct_txt = new QLabel("Type of analysis:", this);
     fluct_txt->setGeometry((xDim+padX+xWidth)/2-padX-xWidth*3/2, padY/2, xWidth, yHeight);
@@ -35,13 +49,9 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     quit_button = new QPushButton("Quit", this);
     quit_button->setGeometry(xDim-xWidth-padX, padY/2, xWidth, yHeight);
     connect(quit_button, SIGNAL (clicked()), QApplication::instance(), SLOT (quit()));
-    //plot section
-    qplot = new QCustomPlot(this);
-    qplot->setGeometry(padX, padY+yHeight, xDim-2*padX, yDim-yHeight-2*padY);
-    qplot->xAxis->setLabel("time");
-    qplot->yAxis->setLabel("Time series");
-    qplot->replot();
 }
+
+MainWindow::~MainWindow(){}
 
 void MainWindow::SetDimensions()
 {
@@ -56,11 +66,11 @@ void MainWindow::SetDimensions()
 void MainWindow::FillList()
 {
     dd_list->addItem("-");
-    dd_list->addItem("DFA");
-    dd_list->addItem("MFDFA");
-    dd_list->addItem("DCCA");
-    dd_list->addItem("Ht");
-    dd_list->addItem("rhoDCCA");
+    dd_list->addItem(strDFA);
+    dd_list->addItem(strMFDFA);
+    dd_list->addItem(strDCCA);
+    dd_list->addItem(strHT);
+    dd_list->addItem(strRHODCCA);
 }
 
 void MainWindow::onLoadClick()
@@ -68,7 +78,41 @@ void MainWindow::onLoadClick()
     QFileDialog dialog(this);
     dialog.setDirectory(QDir::homePath());
     dialog.setFileMode(QFileDialog::ExistingFiles);
+    dialog.setNameFilter(dataFilter);
     if(dialog.exec())
         fileNames.append(dialog.selectedFiles());
-    qInfo() << fileNames;
+    fileNames.removeDuplicates();
+    qplot->legend->clearItems();
+    qplot->clearGraphs();
+    for(int i = 0; i < fileNames.size(); i++){
+        string fn = fileNames.at(i).toLocal8Bit().constData();
+        FileOps fo;
+        int len = fo.rows_number(fn);
+        QVector<double> t(len), vec(len);
+        FILE *f;
+        f = fo.open_file(fn, "r");
+        if(f){
+            for(int j = 0; j < len; j++){
+                t[j] = j;
+                fscanf(f, "%lf", &vec[j]);
+            }
+        }
+        fclose(f);
+        qplot->addGraph();
+        QPen pen;
+        pen.setColor(colours[i%colours.size()]);
+        qplot->graph(i)->setPen(pen);
+        qplot->graph(i)->setName(QString::fromStdString(fn).split("/").last());
+        qplot->graph(i)->setData(t, vec);
+        i == 0 ? qplot->graph(i)->rescaleAxes() : qplot->graph(i)->rescaleAxes(true);
+    }
+    qplot->legend->setVisible(true);
+    qplot->replot();
+}
+
+void MainWindow::onSaveClick(){
+    if(qplot->graphCount() > 0){
+        save_win = new SaveWindow(qplot);
+        save_win->show();
+    }
 }

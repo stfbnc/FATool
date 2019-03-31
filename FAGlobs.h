@@ -12,6 +12,9 @@
 #include "ArrayOps.h"
 #include "MathOps.h"
 #include "FileOps.h"
+//Qt
+#include <QString>
+#include "qcustomplot.h"
 //defines for parameters errors
 #define RANGE_FAILURE -99
 #define WIN_SIZE_FAILURE -98
@@ -32,5 +35,15 @@ const string HTsS_FN_START = "HTsingleScale";
 const string MFDFA_FN_START = "MFDFA";
 const string MFDFAsQ_FN_START = "MFDFAsingleQ";
 const string RHODCCA_FN_START = "rhoDCCA";
+//strings for dropdown list
+const QString strDFA = "DFA";
+const QString strDCCA = "DCCA";
+const QString strMFDFA = "MFDFA";
+const QString strHT = "Ht";
+const QString strRHODCCA = "rhoDCCA";
+//filter for files to analyse
+const QString dataFilter = "*.txt *.dat *.csv";
+//plots colours
+const QVector<QColor> colours = {Qt::red, Qt::blue, Qt::green, Qt::black, Qt::magenta, Qt::cyan};
 
 #endif
