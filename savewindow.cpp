@@ -10,16 +10,17 @@ SaveWindow::SaveWindow(QCustomPlot *plt, QWidget *parent) : QWidget(parent)
     setFixedSize(xDim, yDim);
     //save button
     save_button = new QPushButton("Save", this);
-    save_button->setGeometry(xDim-(padX+xWidth*3/4), yDim-yHeight-padY, xWidth*3/4, yHeight);
-    connect(save_button, SIGNAL (clicked()), this, SLOT (onSave()));
+    save_button->setGeometry(xDim-(padX/2+xWidth*3/4), yDim-yHeight-padY, xWidth*3/4, yHeight);
+    //connect(save_button, SIGNAL(clicked()), this, SLOT(onSave()));
+    connect(save_button, &QPushButton::clicked, [=](){this->onSave(plt);});
     //apply button
     apply_button = new QPushButton("Apply", this);
-    apply_button->setGeometry(xDim-2*(padX+xWidth*3/4), yDim-yHeight-padY, xWidth*3/4, yHeight);
-    connect(apply_button, SIGNAL (clicked()), this, SLOT (onApply(QCustomPlot)));
+    apply_button->setGeometry(xDim-2*(padX/2+xWidth*3/4), yDim-yHeight-padY, xWidth*3/4, yHeight);
+    connect(apply_button, &QPushButton::clicked, [=](){this->onApply(plt);});
     //close button
     close_button = new QPushButton("Close", this);
-    close_button->setGeometry(xDim-3*(padX+xWidth*3/4), yDim-yHeight-padY, xWidth*3/4, yHeight);
-    connect(close_button, SIGNAL (clicked()), this, SLOT (close()));
+    close_button->setGeometry(xDim-3*(padX/2+xWidth*3/4), yDim-yHeight-padY, xWidth*3/4, yHeight);
+    connect(close_button, SIGNAL(clicked()), this, SLOT(close()));
     //ranges
     xlim = new QLabel("x limits\n(comma-separated)", this);
     xlim->setGeometry(padX, padY, xWidth, yHeight);
@@ -43,7 +44,7 @@ SaveWindow::SaveWindow(QCustomPlot *plt, QWidget *parent) : QWidget(parent)
     ylabelTxt = new QTextEdit(this);
     ylabelTxt->setGeometry(2*padX+xWidth, 5*padY+4*yHeight, 2*xWidth, yHeight);
     //legend
-    legend = new QLabel("Legend", this);
+    legend = new QLabel("Legend\n(semicolon-separated)", this);
     legend->setGeometry(padX, 6*padY+5*yHeight, xWidth, yHeight);
     legendTxt = new QTextEdit(this);
     legendTxt->setGeometry(2*padX+xWidth, 6*padY+5*yHeight, 2*xWidth, 3*yHeight);
@@ -52,19 +53,41 @@ SaveWindow::SaveWindow(QCustomPlot *plt, QWidget *parent) : QWidget(parent)
 SaveWindow::~SaveWindow(){}
 
 void SaveWindow::SetDimensions(){
-    xDim = 400;
+    xDim = 450;
     yDim = 350;
-    xWidth = 125;
+    xWidth = 140;
     yHeight = 30;
-    padX = 5;
+    padX = 10;
     padY = 5;
 }
 
 void SaveWindow::onApply(QCustomPlot *plt){
-    plt->xAxis->setRange(xlimTxt->toPlainText().split(",").first().trimmed().toDouble(),
-                         xlimTxt->toPlainText().split(",").last().trimmed().toDouble());
+    QStringList xl = xlimTxt->toPlainText().split(",");
+    QStringList yl = ylimTxt->toPlainText().split(",");
+    QStringList lg = legendTxt->toPlainText().split(";");
+    QStringList save_alert;
+    if(xl.size() != 2)
+        save_alert.append("- x limits");
+    if(yl.size() != 2)
+        save_alert.append("- y limits");
+    if(lg.size() != plt->legend->itemCount())
+        save_alert.append("- legend");
+    if(save_alert.size() > 0)
+        plt->xAxis->setRange(xl.first().trimmed().toDouble(), xl.last().trimmed().toDouble());
+        plt->yAxis->setRange(yl.first().trimmed().toDouble(), yl.last().trimmed().toDouble());
+        plt->xAxis->setLabel(xlabelTxt->toPlainText().trimmed());
+        plt->yAxis->setLabel(ylabelTxt->toPlainText().trimmed());
+        plt->xAxis2->setLabel(titleTxt->toPlainText().trimmed());
+        for(int i = 0; i < plt->legend->itemCount(); i++)
+            plt->graph(i)->setName(lg[i].trimmed());
+        plt->replot();
+    //else
+        //messaggio di errore con la lista
 }
 
-void SaveWindow::onSave(){
-
+void SaveWindow::onSave(QCustomPlot *plt){
+    QString save_file;
+    QFileDialog save_dialog;
+    save_file = save_dialog.getSaveFileName();
+    plt->savePdf(save_file);
 }

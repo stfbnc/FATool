@@ -764,6 +764,11 @@ moc_main_window.cpp: /Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/He
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qapplication.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QWidget \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
+		../savewindow.h \
+		../qcustomplot.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qmath.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qnumeric.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/QtNumeric \
 		../main_window.h \
 		moc_predefs.h \
 		/Applications/Qt/5.12.0/clang_64/bin/moc
@@ -804,7 +809,12 @@ main.o: ../main.cpp /Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Hea
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qapplication.h \
 		../main_window.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QWidget \
-		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwidget.h
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
+		../savewindow.h \
+		../qcustomplot.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qmath.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qnumeric.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/QtNumeric
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../main.cpp
 
 plot_window.o: ../plot_window.cpp ../plot_window.h \
@@ -838,12 +848,6 @@ main_window.o: ../main_window.cpp /Applications/Qt/5.12.0/clang_64/lib/QtCore.fr
 		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qmath.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qnumeric.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/QtNumeric \
-		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QPushButton \
-		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qpushbutton.h \
-		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QLabel \
-		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qlabel.h \
-		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QComboBox \
-		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qcombobox.h \
 		../FAGlobs.h \
 		../ArrayOps.h \
 		../MathOps.h \
@@ -863,9 +867,7 @@ savewindow.o: ../savewindow.cpp ../savewindow.h \
 		../qcustomplot.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qmath.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qnumeric.h \
-		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/QtNumeric \
-		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QPushButton \
-		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qpushbutton.h
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/QtNumeric
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o savewindow.o ../savewindow.cpp
 
 moc_qcustomplot.o: moc_qcustomplot.cpp 

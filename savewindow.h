@@ -10,15 +10,15 @@ class QLabel;
 class QTextEdit;
 class SaveWindow : public QWidget
 {
-Q_OBJECT
+//Q_OBJECT
 public:
     explicit SaveWindow(QCustomPlot *plt, QWidget *parent=nullptr);
     ~SaveWindow();
-private slots:
-    void onApply(QCustomPlot *plt);
-    void onSave();
+//private slots:
 private:
     void SetDimensions();
+    void onApply(QCustomPlot *plt);
+    void onSave(QCustomPlot *plt);
     QPushButton *save_button;
     QPushButton *apply_button;
     QPushButton *close_button;

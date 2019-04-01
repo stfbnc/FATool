@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     //load button
     load_button = new QPushButton("Load file(s)", this);
     load_button->setGeometry(padX, padY/2, xWidth, yHeight);
-    connect(load_button, SIGNAL (clicked()), this, SLOT (onLoadClick()));
+    connect(load_button, SIGNAL(clicked()), this, SLOT(onLoadClick()));
     //plot section
     qplot = new QCustomPlot(this);
     qplot->setGeometry(padX, padY+yHeight, xDim-2*padX, yDim-yHeight-2*padY);
@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     //save button
     save_button = new QPushButton("Save plot", this);
     save_button->setGeometry(2*padX+xWidth, padY/2, xWidth, yHeight);
-    connect(save_button, SIGNAL (clicked()), this, SLOT (onSaveClick()));
+    connect(save_button, SIGNAL(clicked()), this, SLOT(onSaveClick()));
     //text
     fluct_txt = new QLabel("Type of analysis:", this);
     fluct_txt->setGeometry((xDim+padX+xWidth)/2-padX-xWidth*3/2, padY/2, xWidth, yHeight);
@@ -48,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     //close button
     quit_button = new QPushButton("Quit", this);
     quit_button->setGeometry(xDim-xWidth-padX, padY/2, xWidth, yHeight);
-    connect(quit_button, SIGNAL (clicked()), QApplication::instance(), SLOT (quit()));
+    connect(quit_button, SIGNAL(clicked()), QApplication::instance(), SLOT(quit()));
 }
 
 MainWindow::~MainWindow(){}

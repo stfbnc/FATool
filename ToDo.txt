@@ -2,3 +2,9 @@
 - calcolo delle soglie
 - mfdfa può anche fare lo spettro multifrattale
 - nanDFA che estende dfa (e lo stesso con le altre classi)
+
+
+- messaggio di errore con lista
+- messaggio errore per formati plot non supportati
+- assi grafico più spessi
+- titolo in grassetto e font più grande

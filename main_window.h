@@ -15,6 +15,7 @@ Q_OBJECT
 public:
     explicit MainWindow(QWidget *parent=nullptr);
     ~MainWindow();
+    QCustomPlot *qplot;
 private slots:
     void onLoadClick();
     void onSaveClick();
@@ -27,7 +28,6 @@ private:
     QPushButton *save_button;
     QLabel *fluct_txt;
     QComboBox *dd_list;
-    QCustomPlot *qplot;
     QStringList fileNames;
     SaveWindow *save_win;
     int xDim;
