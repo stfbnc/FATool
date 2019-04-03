@@ -24,29 +24,32 @@ SaveWindow::SaveWindow(QCustomPlot *plt, QWidget *parent) : QWidget(parent)
     //ranges
     xlim = new QLabel("x limits\n(comma-separated)", this);
     xlim->setGeometry(padX, padY, xWidth, yHeight);
-    xlimTxt = new QTextEdit(this);
+    xlimTxt = new QTextEdit(QString::number(plt->xAxis->range().lower)+","+QString::number(plt->xAxis->range().upper), this);
     xlimTxt->setGeometry(2*padX+xWidth, padY, 2*xWidth, yHeight);
     ylim = new QLabel("y limits\n(comma-separated)", this);
     ylim->setGeometry(padX, 2*padY+yHeight, xWidth, yHeight);
-    ylimTxt = new QTextEdit(this);
+    ylimTxt = new QTextEdit(QString::number(plt->yAxis->range().lower)+","+QString::number(plt->yAxis->range().upper), this);
     ylimTxt->setGeometry(2*padX+xWidth, 2*padY+yHeight, 2*xWidth, yHeight);
     //labels
     title = new QLabel("Title", this);
     title->setGeometry(padX, 3*padY+2*yHeight, xWidth, yHeight);
-    titleTxt = new QTextEdit(this);
+    titleTxt = new QTextEdit(plt->xAxis2->label(), this);
     titleTxt->setGeometry(2*padX+xWidth, 3*padY+2*yHeight, 2*xWidth, yHeight);
     xlabel = new QLabel("x label", this);
     xlabel->setGeometry(padX, 4*padY+3*yHeight, xWidth, yHeight);
-    xlabelTxt = new QTextEdit(this);
+    xlabelTxt = new QTextEdit(plt->xAxis->label(), this);
     xlabelTxt->setGeometry(2*padX+xWidth, 4*padY+3*yHeight, 2*xWidth, yHeight);
     ylabel = new QLabel("y label", this);
     ylabel->setGeometry(padX, 5*padY+4*yHeight, xWidth, yHeight);
-    ylabelTxt = new QTextEdit(this);
+    ylabelTxt = new QTextEdit(plt->yAxis->label(), this);
     ylabelTxt->setGeometry(2*padX+xWidth, 5*padY+4*yHeight, 2*xWidth, yHeight);
     //legend
     legend = new QLabel("Legend\n(semicolon-separated)", this);
     legend->setGeometry(padX, 6*padY+5*yHeight, xWidth, yHeight);
-    legendTxt = new QTextEdit(this);
+    QString lgnd = plt->graph(0)->name();
+    for(int i = 1; i < plt->legend->itemCount(); i++)
+        lgnd += ";"+plt->graph(i)->name();
+    legendTxt = new QTextEdit(lgnd, this);
     legendTxt->setGeometry(2*padX+xWidth, 6*padY+5*yHeight, 2*xWidth, 3*yHeight);
 }
 
@@ -72,7 +75,7 @@ void SaveWindow::onApply(QCustomPlot *plt){
         save_alert.append("- y limits");
     if(lg.size() != plt->legend->itemCount())
         save_alert.append("- legend");
-    if(save_alert.size() > 0)
+    if(save_alert.size() == 0)
         plt->xAxis->setRange(xl.first().trimmed().toDouble(), xl.last().trimmed().toDouble());
         plt->yAxis->setRange(yl.first().trimmed().toDouble(), yl.last().trimmed().toDouble());
         plt->xAxis->setLabel(xlabelTxt->toPlainText().trimmed());

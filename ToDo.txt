@@ -6,5 +6,4 @@
 
 - messaggio di errore con lista
 - messaggio errore per formati plot non supportati
-- assi grafico più spessi
-- titolo in grassetto e font più grande
+- classe BasePlot con le impostazioni principali

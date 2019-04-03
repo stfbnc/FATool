@@ -10,11 +10,9 @@ class QLabel;
 class QTextEdit;
 class SaveWindow : public QWidget
 {
-//Q_OBJECT
 public:
     explicit SaveWindow(QCustomPlot *plt, QWidget *parent=nullptr);
     ~SaveWindow();
-//private slots:
 private:
     void SetDimensions();
     void onApply(QCustomPlot *plt);
