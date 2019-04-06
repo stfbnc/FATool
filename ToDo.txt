@@ -4,6 +4,4 @@
 - nanDFA che estende dfa (e lo stesso con le altre classi)
 
 
-- messaggio di errore con lista
 - messaggio errore per formati plot non supportati
-- classe BasePlot con le impostazioni principali

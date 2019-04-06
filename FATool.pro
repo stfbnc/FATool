@@ -10,7 +10,8 @@ SOURCES +=  main.cpp \
     qcustomplot.cpp \
     main_window.cpp \
     FileOps.cpp \
-    savewindow.cpp
+    savewindow.cpp \
+    base_plot.cpp
 
 HEADERS += \
     plot_window.h \
@@ -18,4 +19,5 @@ HEADERS += \
     main_window.h \
     FAGlobs.h \
     FileOps.h \
-    savewindow.h
+    savewindow.h \
+    base_plot.h

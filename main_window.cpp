@@ -18,33 +18,11 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     load_button->setGeometry(padX, padY/2, xWidth, yHeight);
     connect(load_button, SIGNAL(clicked()), this, SLOT(onLoadClick()));
     //plot section
-    qplot = new QCustomPlot(this);
+    qplot = new BasePlot(this);
     qplot->setGeometry(padX, padY+yHeight, xDim-2*padX, yDim-yHeight-2*padY);
-    qplot->xAxis2->setVisible(true);
-    qplot->xAxis2->setTickLabels(false);
-    qplot->yAxis2->setVisible(true);
-    qplot->yAxis2->setTickLabels(false);
-    connect(qplot->xAxis, SIGNAL(rangeChanged(QCPRange)), qplot->xAxis2, SLOT(setRange(QCPRange)));
-    connect(qplot->yAxis, SIGNAL(rangeChanged(QCPRange)), qplot->yAxis2, SLOT(setRange(QCPRange)));
+    qplot->SetBasePlot();
     qplot->xAxis->setLabel("time");
     qplot->yAxis->setLabel("Time series");
-    qplot->setFont(QFont("sans", 12));
-    qplot->xAxis2->setLabelFont(QFont("sans", 14, QFont::Bold));
-    QPen plt_pen, grid_pen;
-    plt_pen.setColor(QColor(Qt::black));
-    grid_pen.setColor(QColor(220, 220, 220));
-    grid_pen.setStyle(Qt::DashLine);
-    qplot->xAxis->setBasePen(plt_pen);
-    qplot->xAxis->setTickPen(plt_pen);
-    qplot->xAxis2->setBasePen(plt_pen);
-    qplot->xAxis2->setTickPen(plt_pen);
-    qplot->yAxis->setBasePen(plt_pen);
-    qplot->yAxis->setTickPen(plt_pen);
-    qplot->yAxis2->setBasePen(plt_pen);
-    qplot->yAxis2->setTickPen(plt_pen);
-    qplot->xAxis->grid()->setPen(grid_pen);
-    qplot->yAxis->grid()->setPen(grid_pen);
-    qplot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
     qplot->replot();
     //save button
     save_button = new QPushButton("Save plot", this);
@@ -122,15 +100,34 @@ void MainWindow::onLoadClick()
         qplot->graph(i)->setData(t, vec);
         i == 0 ? qplot->graph(i)->rescaleAxes() : qplot->graph(i)->rescaleAxes(true);
     }
-    qplot->legend->setVisible(true);
-    qplot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignLeft);
-    qplot->replot();
+    if(fileNames.size() > 0){
+        qplot->legend->setVisible(true);
+        qplot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignLeft);
+        qplot->replot();
+    }
 }
 
-void MainWindow::onSaveClick(){
+void MainWindow::onSaveClick()
+{
     if(qplot->graphCount() > 0){
+        DisableButtons();
         save_win = new SaveWindow(qplot);
         save_win->setAttribute(Qt::WA_DeleteOnClose);
         save_win->show();
+        connect(save_win, SIGNAL(destroyed()), this, SLOT(EnableButtons()));
     }
+}
+
+void MainWindow::DisableButtons()
+{
+    load_button->setEnabled(false);
+    go_button->setEnabled(false);
+    save_button->setEnabled(false);
+}
+
+void MainWindow::EnableButtons()
+{
+    load_button->setEnabled(true);
+    go_button->setEnabled(true);
+    save_button->setEnabled(true);
 }

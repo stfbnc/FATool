@@ -55,7 +55,8 @@ SaveWindow::SaveWindow(QCustomPlot *plt, QWidget *parent) : QWidget(parent)
 
 SaveWindow::~SaveWindow(){}
 
-void SaveWindow::SetDimensions(){
+void SaveWindow::SetDimensions()
+{
     xDim = 450;
     yDim = 350;
     xWidth = 140;
@@ -64,18 +65,19 @@ void SaveWindow::SetDimensions(){
     padY = 5;
 }
 
-void SaveWindow::onApply(QCustomPlot *plt){
+void SaveWindow::onApply(QCustomPlot *plt)
+{
     QStringList xl = xlimTxt->toPlainText().split(",");
     QStringList yl = ylimTxt->toPlainText().split(",");
     QStringList lg = legendTxt->toPlainText().split(";");
     QStringList save_alert;
     if(xl.size() != 2)
-        save_alert.append("- x limits");
+        save_alert.append("\n- x limits");
     if(yl.size() != 2)
-        save_alert.append("- y limits");
-    if(lg.size() != plt->legend->itemCount())
-        save_alert.append("- legend");
-    if(save_alert.size() == 0)
+        save_alert.append("\n- y limits");
+    if(lg.size() != plt->legend->itemCount() || (lg.size() == 1 && lg.first() == ""))
+        save_alert.append("\n- legend");
+    if(save_alert.size() == 0){
         plt->xAxis->setRange(xl.first().trimmed().toDouble(), xl.last().trimmed().toDouble());
         plt->yAxis->setRange(yl.first().trimmed().toDouble(), yl.last().trimmed().toDouble());
         plt->xAxis->setLabel(xlabelTxt->toPlainText().trimmed());
@@ -84,11 +86,18 @@ void SaveWindow::onApply(QCustomPlot *plt){
         for(int i = 0; i < plt->legend->itemCount(); i++)
             plt->graph(i)->setName(lg[i].trimmed());
         plt->replot();
-    //else
-        //messaggio di errore con la lista
+    }else{
+        QMessageBox messageBox;
+        QString errToShow = "An error has occured\nin the following fields:\n";
+        for(int i = 0; i < save_alert.size(); i++)
+            errToShow.append(save_alert[i]);
+        messageBox.critical(nullptr, "Error", errToShow);
+        messageBox.setFixedSize(200,200);
+    }
 }
 
-void SaveWindow::onSave(QCustomPlot *plt){
+void SaveWindow::onSave(QCustomPlot *plt)
+{
     QString save_file;
     QFileDialog save_dialog;
     save_file = save_dialog.getSaveFileName();
