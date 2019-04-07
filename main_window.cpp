@@ -3,10 +3,10 @@
 #include "FAGlobs.h"
 #include "FileOps.h"
 
-//qInfo() << dd_list->currentText();
-
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 {
+    //set parameters hash
+    initializeParamHash();
     //set dimensions
     SetDimensions();
     //set title
@@ -39,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     //go button
     go_button = new QPushButton("Go!", this);
     go_button->setGeometry((xDim+padX+xWidth)/2+padX+xWidth/2, padY/2, xWidth, yHeight);
+    connect(go_button, SIGNAL(clicked()), this, SLOT(onGoClick()));
     //close button
     quit_button = new QPushButton("Quit", this);
     quit_button->setGeometry(xDim-xWidth-padX, padY/2, xWidth, yHeight);
@@ -55,6 +56,24 @@ void MainWindow::SetDimensions()
     yHeight = 30;
     padX = 10;
     padY = 10;
+}
+
+void MainWindow::initializeParamHash()
+{
+    paramHash = new QHash<QString, QString>;
+    paramHash->insert("minWin", "");
+    paramHash->insert("maxWin", "");
+    paramHash->insert("polOrd", "");
+    paramHash->insert("winStep", "");
+    paramHash->insert("revSeg", "");
+    paramHash->insert("qIn", "");
+    paramHash->insert("Nq", "");
+    paramHash->insert("qStep", "");
+    paramHash->insert("isAbs", "");
+    paramHash->insert("scale", "");
+    paramHash->insert("Nscales", "");
+    paramHash->insert("stepScale", "");
+    paramHash->insert("strScales", "");
 }
 
 void MainWindow::FillList()
@@ -130,4 +149,32 @@ void MainWindow::EnableButtons()
     load_button->setEnabled(true);
     go_button->setEnabled(true);
     save_button->setEnabled(true);
+}
+
+void MainWindow::onGoClick()
+{
+    qInfo() << paramHash->value("minWin");
+    qInfo() << paramHash->value("maxWin");
+    qInfo() << paramHash->value("winStep");
+    qInfo() << paramHash->value("polOrd");
+    qInfo() << paramHash->value("revSeg");
+    QString analysisType = dd_list->currentText();
+    if(analysisType != "-" && qplot->graphCount() > 0){
+        DisableButtons();
+        inpt_win = new InputsWindow(analysisType, paramHash);
+        inpt_win->setAttribute(Qt::WA_DeleteOnClose);
+        inpt_win->show();
+        //mettere un connect sul close e tutto il resto lo fa un'altra funzione
+        connect(inpt_win, SIGNAL(destroyed()), this, SLOT(onCloseInputWin()));
+    }
+}
+
+void MainWindow::onCloseInputWin()
+{
+    EnableButtons();
+    qInfo() << paramHash->value("minWin");
+    qInfo() << paramHash->value("maxWin");
+    qInfo() << paramHash->value("winStep");
+    qInfo() << paramHash->value("polOrd");
+    qInfo() << paramHash->value("revSeg");
 }

@@ -11,7 +11,11 @@ SOURCES +=  main.cpp \
     main_window.cpp \
     FileOps.cpp \
     savewindow.cpp \
-    base_plot.cpp
+    base_plot.cpp \
+    inputs_window.cpp \
+    DFA.cpp \
+    ArrayOps.cpp \
+    MathOps.cpp
 
 HEADERS += \
     plot_window.h \
@@ -20,4 +24,8 @@ HEADERS += \
     FAGlobs.h \
     FileOps.h \
     savewindow.h \
-    base_plot.h
+    base_plot.h \
+    inputs_window.h \
+    DFA.h \
+    ArrayOps.h \
+    MathOps.h

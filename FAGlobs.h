@@ -13,7 +13,6 @@
 #include "MathOps.h"
 #include "FileOps.h"
 //Qt
-#include <QString>
 #include "qcustomplot.h"
 //defines for parameters errors
 #define RANGE_FAILURE -99

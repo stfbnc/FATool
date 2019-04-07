@@ -3,5 +3,4 @@
 - mfdfa può anche fare lo spettro multifrattale
 - nanDFA che estende dfa (e lo stesso con le altre classi)
 
-
-- messaggio errore per formati plot non supportati
+textedits senza scrollbar e andare col tab al successivo

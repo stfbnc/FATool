@@ -11,7 +11,6 @@ SaveWindow::SaveWindow(QCustomPlot *plt, QWidget *parent) : QWidget(parent)
     //save button
     save_button = new QPushButton("Save", this);
     save_button->setGeometry(xDim-(padX/2+xWidth*3/4), yDim-yHeight-padY, xWidth*3/4, yHeight);
-    //connect(save_button, SIGNAL(clicked()), this, SLOT(onSave()));
     connect(save_button, &QPushButton::clicked, [=](){this->onSave(plt);});
     //apply button
     apply_button = new QPushButton("Apply", this);
@@ -101,5 +100,15 @@ void SaveWindow::onSave(QCustomPlot *plt)
     QString save_file;
     QFileDialog save_dialog;
     save_file = save_dialog.getSaveFileName();
-    plt->savePdf(save_file);
+    QString file_ext = save_file.split(".").last();
+    if(file_ext == "pdf")
+        plt->savePdf(save_file);
+    else if(file_ext == "png")
+        plt->savePng(save_file);
+    else{
+        QMessageBox messageBox;
+        QString errToShow = "Supported formats are:\n- pdf\n- png";
+        messageBox.critical(nullptr, "Error", errToShow);
+        messageBox.setFixedSize(200,200);
+    }
 }
