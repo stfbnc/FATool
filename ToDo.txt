@@ -4,3 +4,6 @@
 - nanDFA che estende dfa (e lo stesso con le altre classi)
 
 textedits senza scrollbar e andare col tab al successivo
+
+messaggio errore se non tutti gli input sono stati inseriti oppure bottone ok disabilitato se non tutti inseriti
+

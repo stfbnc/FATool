@@ -9,9 +9,12 @@
 //class QTextEdit;
 class InputsWindow : public QWidget
 {
+Q_OBJECT
 public:
     explicit InputsWindow(QString analysisStr, QHash<QString, QString> *pHash, QWidget *parent=nullptr);
     ~InputsWindow();
+signals:
+    void inputsInserted();
 private:
     void SetDimensions();
     void onOKClick(QHash<QString, QString> *pHash);

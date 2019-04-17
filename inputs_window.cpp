@@ -58,14 +58,6 @@ void InputsWindow::onOKClick(QHash<QString, QString> *pHash)
     pHash->insert("polOrd", polOrdTxt->toPlainText().trimmed());
     pHash->insert("winStep", winStepTxt->toPlainText().trimmed());
     pHash->insert("revSeg", revSegBox->isChecked() ? "1" : "0");
+    emit inputsInserted();
     close();
-//    for(int i = 0;  i < m_dataFiles.size(); i++){
-//        DFA dfa = DFA(m_dataFiles[i].toStdString(), mw, Mw, po, sw, rs);
-//        qInfo() << dfa.getTsLength();
-//        qInfo() << dfa.getRangeLength(mw, Mw);
-//        dfa.setFlucVectors();
-//        dfa.winFlucComp();
-//        dfa.H_loglogFit(mw, Mw);
-//        qInfo() << i << dfa.getH_intercept() << dfa.getH();
-//    }
 }

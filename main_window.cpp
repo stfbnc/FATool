@@ -2,6 +2,7 @@
 #include "main_window.h"
 #include "FAGlobs.h"
 #include "FileOps.h"
+#include "DFA.h"
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 {
@@ -153,28 +154,32 @@ void MainWindow::EnableButtons()
 
 void MainWindow::onGoClick()
 {
-    qInfo() << paramHash->value("minWin");
-    qInfo() << paramHash->value("maxWin");
-    qInfo() << paramHash->value("winStep");
-    qInfo() << paramHash->value("polOrd");
-    qInfo() << paramHash->value("revSeg");
     QString analysisType = dd_list->currentText();
     if(analysisType != "-" && qplot->graphCount() > 0){
         DisableButtons();
         inpt_win = new InputsWindow(analysisType, paramHash);
         inpt_win->setAttribute(Qt::WA_DeleteOnClose);
         inpt_win->show();
-        //mettere un connect sul close e tutto il resto lo fa un'altra funzione
-        connect(inpt_win, SIGNAL(destroyed()), this, SLOT(onCloseInputWin()));
+        connect(inpt_win, SIGNAL(destroyed()), this, SLOT(EnableButtons()));
+        connect(inpt_win, SIGNAL(inputsInserted()), this, SLOT(onCloseInputWin()));
     }
 }
 
 void MainWindow::onCloseInputWin()
 {
     EnableButtons();
-    qInfo() << paramHash->value("minWin");
-    qInfo() << paramHash->value("maxWin");
-    qInfo() << paramHash->value("winStep");
-    qInfo() << paramHash->value("polOrd");
-    qInfo() << paramHash->value("revSeg");
+    int mw = paramHash->value("minWin").toInt();
+    int Mw = paramHash->value("maxWin").toInt();
+    int po = paramHash->value("polOrd").toInt();
+    int sw = paramHash->value("winStep").toInt();
+    int rs = paramHash->value("revSeg").toInt();
+    for(int i = 0;  i < fileNames.size(); i++){
+        DFA dfa = DFA(fileNames[i].toStdString(), mw, Mw, po, sw, rs);
+        qInfo() << dfa.getTsLength();
+        qInfo() << dfa.getRangeLength(mw, Mw);
+        dfa.setFlucVectors();
+        dfa.winFlucComp();
+        dfa.H_loglogFit(mw, Mw);
+        qInfo() << i << dfa.getH_intercept() << dfa.getH();
+    }
 }
