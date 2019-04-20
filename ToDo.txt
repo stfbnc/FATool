@@ -3,7 +3,7 @@
 - mfdfa può anche fare lo spettro multifrattale
 - nanDFA che estende dfa (e lo stesso con le altre classi)
 
-textedits senza scrollbar e andare col tab al successivo
+textedits senza scrollbar e andare col tab al successivo e più grandi per numeri a tre cifre o più
 
-messaggio errore se non tutti gli input sono stati inseriti oppure bottone ok disabilitato se non tutti inseriti
+punti negli assi e non virgole
 

@@ -29,4 +29,5 @@ HEADERS += \
     inputs_window.h \
     DFA.h \
     ArrayOps.h \
-    MathOps.h
+    MathOps.h \
+    FA.h

@@ -2,6 +2,7 @@
 #define FA_H
 
 #include "FAGlobs.h"
+#include "qcustomplot.h"
 
 class FA
 {
@@ -72,6 +73,7 @@ public:
     virtual void H_loglogFit(int, int) = 0;
     virtual string outFileStr() = 0;
     virtual void saveFile(string) = 0;
+    virtual void plot(QCustomPlot *) = 0;
 protected:
     string file_name;
     int N;

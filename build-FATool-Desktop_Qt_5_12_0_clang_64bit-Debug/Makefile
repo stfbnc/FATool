@@ -241,6 +241,7 @@ DIST          = /Applications/Qt/5.12.0/clang_64/mkspecs/features/spec_pre.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/qt_config.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/macx-clang/qmake.conf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/spec_post.prf \
+		../.qmake.stash \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/exclusive_builds.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/mac/sdk.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/toolchain.prf \
@@ -278,7 +279,8 @@ DIST          = /Applications/Qt/5.12.0/clang_64/mkspecs/features/spec_pre.prf \
 		../inputs_window.h \
 		../DFA.h \
 		../ArrayOps.h \
-		../MathOps.h ../main.cpp \
+		../MathOps.h \
+		../FA.h ../main.cpp \
 		../plot_window.cpp \
 		../qcustomplot.cpp \
 		../main_window.cpp \
@@ -474,6 +476,7 @@ Makefile: ../FATool.pro /Applications/Qt/5.12.0/clang_64/mkspecs/macx-clang/qmak
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/qt_config.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/macx-clang/qmake.conf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/exclusive_builds.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/mac/sdk.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/toolchain.prf \
@@ -671,6 +674,7 @@ Makefile: ../FATool.pro /Applications/Qt/5.12.0/clang_64/mkspecs/macx-clang/qmak
 /Applications/Qt/5.12.0/clang_64/mkspecs/features/qt_config.prf:
 /Applications/Qt/5.12.0/clang_64/mkspecs/macx-clang/qmake.conf:
 /Applications/Qt/5.12.0/clang_64/mkspecs/features/spec_post.prf:
+.qmake.stash:
 /Applications/Qt/5.12.0/clang_64/mkspecs/features/exclusive_builds.prf:
 /Applications/Qt/5.12.0/clang_64/mkspecs/features/mac/sdk.prf:
 /Applications/Qt/5.12.0/clang_64/mkspecs/features/toolchain.prf:
@@ -738,7 +742,7 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /Applications/Qt/5.12.0/clang_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../plot_window.h ../qcustomplot.h ../main_window.h ../FAGlobs.h ../FileOps.h ../savewindow.h ../base_plot.h ../inputs_window.h ../DFA.h ../ArrayOps.h ../MathOps.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../plot_window.h ../qcustomplot.h ../main_window.h ../FAGlobs.h ../FileOps.h ../savewindow.h ../base_plot.h ../inputs_window.h ../DFA.h ../ArrayOps.h ../MathOps.h ../FA.h $(DISTDIR)/
 	$(COPY_FILE) --parents ../main.cpp ../plot_window.cpp ../qcustomplot.cpp ../main_window.cpp ../FileOps.cpp ../savewindow.cpp ../base_plot.cpp ../inputs_window.cpp ../DFA.cpp ../ArrayOps.cpp ../MathOps.cpp $(DISTDIR)/
 
 
@@ -749,6 +753,7 @@ clean: compiler_clean
 
 distclean: clean 
 	-$(DEL_FILE) -r FATool.app
+	-$(DEL_FILE) .qmake.stash
 	-$(DEL_FILE) Makefile
 
 

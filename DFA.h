@@ -3,7 +3,6 @@
 
 #include "FAGlobs.h"
 #include "FA.h"
-#include "qcustomplot.h"
 
 class DFA : public FA
 {
