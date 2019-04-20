@@ -53,11 +53,26 @@ void InputsWindow::SetDimensions()
 
 void InputsWindow::onOKClick(QHash<QString, QString> *pHash)
 {
-    pHash->insert("minWin", minWinTxt->toPlainText().trimmed());
-    pHash->insert("maxWin", maxWinTxt->toPlainText().trimmed());
-    pHash->insert("polOrd", polOrdTxt->toPlainText().trimmed());
-    pHash->insert("winStep", winStepTxt->toPlainText().trimmed());
-    pHash->insert("revSeg", revSegBox->isChecked() ? "1" : "0");
-    emit inputsInserted();
-    close();
+    QString mw = minWinTxt->toPlainText().trimmed();
+    QString Mw = maxWinTxt->toPlainText().trimmed();
+    QString po = polOrdTxt->toPlainText().trimmed();
+    QString ws = winStepTxt->toPlainText().trimmed();
+    QRegExp rgx("^[0-9]+$");
+    if((!mw.isEmpty() && mw.contains(rgx)) &&
+       (!Mw.isEmpty() && Mw.contains(rgx)) &&
+       (!po.isEmpty() && po.contains(rgx)) &&
+       (!ws.isEmpty() && ws.contains(rgx))){
+        pHash->insert("minWin", mw);
+        pHash->insert("maxWin", Mw);
+        pHash->insert("polOrd", po);
+        pHash->insert("winStep", ws);
+        pHash->insert("revSeg", revSegBox->isChecked() ? "1" : "0");
+        emit inputsInserted();
+        close();
+    }else{
+        QMessageBox messageBox;
+        QString errToShow = "Inputs must be numeric and not null!";
+        messageBox.critical(nullptr, "Error", errToShow);
+        messageBox.setFixedSize(200,200);
+    }
 }

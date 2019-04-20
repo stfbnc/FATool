@@ -3,6 +3,7 @@
 
 #include "FAGlobs.h"
 #include "FA.h"
+#include "qcustomplot.h"
 
 class DFA : public FA
 {
@@ -18,7 +19,7 @@ public:
 	void H_loglogFit(int, int);
 	string outFileStr();
 	void saveFile(string);
-	//void plot();
+    void plot(QCustomPlot *);
 private:
 	int min_win;
 	int max_win;

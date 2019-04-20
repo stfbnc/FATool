@@ -1,5 +1,6 @@
 TEMPLATE = app
 TARGET = FATool
+ICON = logo.icns
 
 QT = core gui
 

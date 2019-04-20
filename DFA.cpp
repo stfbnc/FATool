@@ -142,6 +142,13 @@ void DFA::saveFile(string path_tot){
     fclose(f);
 }
 
-/*void DFA::plot(){
-	
-}*/
+void DFA::plot(QCustomPlot *plt){
+    int len = getRangeLength(min_win, max_win, win_step);
+    QVector<double> plt_vec(len), n(len);
+    for(int i = 0; i < len; i++){
+        n[i] = s[i];
+        plt_vec[i] = F[i];
+    }
+    plt->addGraph();
+    plt->graph()->setData(n, plt_vec);
+}

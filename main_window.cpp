@@ -2,7 +2,6 @@
 #include "main_window.h"
 #include "FAGlobs.h"
 #include "FileOps.h"
-#include "DFA.h"
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 {
@@ -143,6 +142,7 @@ void MainWindow::DisableButtons()
     load_button->setEnabled(false);
     go_button->setEnabled(false);
     save_button->setEnabled(false);
+    dd_list->setEnabled(false);
 }
 
 void MainWindow::EnableButtons()
@@ -150,6 +150,7 @@ void MainWindow::EnableButtons()
     load_button->setEnabled(true);
     go_button->setEnabled(true);
     save_button->setEnabled(true);
+    dd_list->setEnabled(true);
 }
 
 void MainWindow::onGoClick()
@@ -168,18 +169,9 @@ void MainWindow::onGoClick()
 void MainWindow::onCloseInputWin()
 {
     EnableButtons();
-    int mw = paramHash->value("minWin").toInt();
-    int Mw = paramHash->value("maxWin").toInt();
-    int po = paramHash->value("polOrd").toInt();
-    int sw = paramHash->value("winStep").toInt();
-    int rs = paramHash->value("revSeg").toInt();
     for(int i = 0;  i < fileNames.size(); i++){
-        DFA dfa = DFA(fileNames[i].toStdString(), mw, Mw, po, sw, rs);
-        qInfo() << dfa.getTsLength();
-        qInfo() << dfa.getRangeLength(mw, Mw);
-        dfa.setFlucVectors();
-        dfa.winFlucComp();
-        dfa.H_loglogFit(mw, Mw);
-        qInfo() << i << dfa.getH_intercept() << dfa.getH();
+        plot_win = new PlotWindow(fileNames[i], dd_list->currentText(), paramHash);
+        plot_win->setAttribute(Qt::WA_DeleteOnClose);
+        plot_win->show();
     }
 }
