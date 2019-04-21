@@ -19,19 +19,19 @@ InputsWindow::InputsWindow(QString analysisStr, QHash<QString, QString> *pHash, 
     //windows sizes
     minWin = new QLabel("Windows size from", this);
     minWin->setGeometry(padX, padY, xWidth*4, yHeight);
-    minWinTxt = new QTextEdit(this);
+    minWinTxt = new QLineEdit(this);
     minWinTxt->setGeometry(padX+4*xWidth, padY, xWidth, yHeight);
     maxWin = new QLabel("to", this);
     maxWin->setGeometry(2*padX+5*xWidth, padY, xWidth, yHeight);
-    maxWinTxt = new QTextEdit(this);
+    maxWinTxt = new QLineEdit(this);
     maxWinTxt->setGeometry(4*padX+5*xWidth, padY, xWidth, yHeight);
     winStep = new QLabel("every", this);
     winStep->setGeometry(5*padX+6*xWidth, padY, xWidth*6/5, yHeight);
-    winStepTxt = new QTextEdit("1", this);
+    winStepTxt = new QLineEdit("1", this);
     winStepTxt->setGeometry(6*padX+7*xWidth, padY, xWidth, yHeight);
     polOrd = new QLabel("Polynomial order", this);
     polOrd->setGeometry(padX, 2*padY+yHeight, xWidth*4, yHeight);
-    polOrdTxt = new QTextEdit("1", this);
+    polOrdTxt = new QLineEdit("1", this);
     polOrdTxt->setGeometry(padX+4*xWidth, 2*padY+yHeight, xWidth, yHeight);
     revSeg = new QLabel("Backward computation", this);
     revSeg->setGeometry(padX, 3*padY+2*yHeight, xWidth*5, yHeight);
@@ -53,10 +53,10 @@ void InputsWindow::SetDimensions()
 
 void InputsWindow::onOKClick(QHash<QString, QString> *pHash)
 {
-    QString mw = minWinTxt->toPlainText().trimmed();
-    QString Mw = maxWinTxt->toPlainText().trimmed();
-    QString po = polOrdTxt->toPlainText().trimmed();
-    QString ws = winStepTxt->toPlainText().trimmed();
+    QString mw = minWinTxt->text().trimmed();
+    QString Mw = maxWinTxt->text().trimmed();
+    QString po = polOrdTxt->text().trimmed();
+    QString ws = winStepTxt->text().trimmed();
     QRegExp rgx("^[0-9]+$");
     if((!mw.isEmpty() && mw.contains(rgx)) &&
        (!Mw.isEmpty() && Mw.contains(rgx)) &&

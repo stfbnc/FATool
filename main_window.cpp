@@ -13,10 +13,6 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     setWindowTitle("FATool");
     //win size
     setFixedSize(xDim, yDim);
-    //load button
-    load_button = new QPushButton("Load file(s)", this);
-    load_button->setGeometry(padX, padY/2, xWidth, yHeight);
-    connect(load_button, SIGNAL(clicked()), this, SLOT(onLoadClick()));
     //plot section
     qplot = new BasePlot(this);
     qplot->setGeometry(padX, padY+yHeight, xDim-2*padX, yDim-yHeight-2*padY);
@@ -24,25 +20,33 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     qplot->xAxis->setLabel("time");
     qplot->yAxis->setLabel("Time series");
     qplot->replot();
+    //load button
+    load_button = new QPushButton("Load file(s)", this);
+    load_button->setGeometry(padX/2, padY/2, xWidth, yHeight);
+    connect(load_button, SIGNAL(clicked()), this, SLOT(onLoadClick()));
     //save button
     save_button = new QPushButton("Save plot", this);
-    save_button->setGeometry(2*padX+xWidth, padY/2, xWidth, yHeight);
+    save_button->setGeometry(padX/2+xWidth, padY/2, xWidth, yHeight);
     connect(save_button, SIGNAL(clicked()), this, SLOT(onSaveClick()));
     //text
     fluct_txt = new QLabel("Type of analysis:", this);
-    fluct_txt->setGeometry((xDim+padX+xWidth)/2-padX-xWidth*3/2, padY/2, xWidth, yHeight);
+    fluct_txt->setGeometry(padX+2*xWidth, padY/2, xWidth, yHeight);
     fluct_txt->setStyleSheet("font-weight: bold");
     //dropdown list
     dd_list = new QComboBox(this);
     FillList();
-    dd_list->setGeometry((xDim+padX)/2+1, padY/2+2, xWidth, yHeight);
+    dd_list->setGeometry(padX*3/2+3*xWidth, padY/2+2, xWidth, yHeight);
     //go button
     go_button = new QPushButton("Go!", this);
-    go_button->setGeometry((xDim+padX+xWidth)/2+padX+xWidth/2, padY/2, xWidth, yHeight);
+    go_button->setGeometry(padX*2+4*xWidth, padY/2, xWidth, yHeight);
     connect(go_button, SIGNAL(clicked()), this, SLOT(onGoClick()));
-    //close button
+    //clear button
+    clear_button = new QPushButton("Clear all", this);
+    clear_button->setGeometry(padX*5/2+5*xWidth, padY/2, xWidth, yHeight);
+    connect(clear_button, SIGNAL(clicked()), this, SLOT(onClearClick()));
+    //quit button
     quit_button = new QPushButton("Quit", this);
-    quit_button->setGeometry(xDim-xWidth-padX, padY/2, xWidth, yHeight);
+    quit_button->setGeometry(xDim-xWidth-padX/2, padY/2, xWidth, yHeight);
     connect(quit_button, SIGNAL(clicked()), QApplication::instance(), SLOT(quit()));
 }
 
@@ -143,6 +147,7 @@ void MainWindow::DisableButtons()
     go_button->setEnabled(false);
     save_button->setEnabled(false);
     dd_list->setEnabled(false);
+    clear_button->setEnabled(false);
 }
 
 void MainWindow::EnableButtons()
@@ -151,6 +156,7 @@ void MainWindow::EnableButtons()
     go_button->setEnabled(true);
     save_button->setEnabled(true);
     dd_list->setEnabled(true);
+    clear_button->setEnabled(true);
 }
 
 void MainWindow::onGoClick()
@@ -173,5 +179,16 @@ void MainWindow::onCloseInputWin()
         plot_win = new PlotWindow(fileNames[i], dd_list->currentText(), paramHash);
         plot_win->setAttribute(Qt::WA_DeleteOnClose);
         plot_win->show();
+    }
+}
+
+void MainWindow::onClearClick()
+{
+    if(qplot->graphCount() > 0){
+        fileNames.clear();
+        qplot->legend->setVisible(false);
+        qplot->legend->clearItems();
+        qplot->clearGraphs();
+        qplot->replot();
     }
 }

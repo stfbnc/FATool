@@ -13,6 +13,7 @@ public:
 	void allocateMemory();
 	int getTsLength();
 	void winFlucComp();
+    int getWinStep();
 	double getH();
 	double getH_intercept();
 	void H_loglogFit(int, int);

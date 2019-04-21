@@ -25,12 +25,14 @@ private slots:
     void onGoClick();
     void onCloseInputWin();
     void EnableButtons();
+    void onClearClick();
 private:
     void SetDimensions();
     void initializeParamHash();
     void FillList();
     void DisableButtons();
     QPushButton *quit_button;
+    QPushButton *clear_button;
     QPushButton *load_button;
     QPushButton *go_button;
     QPushButton *save_button;

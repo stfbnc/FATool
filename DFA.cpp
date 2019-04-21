@@ -108,6 +108,10 @@ void DFA::winFlucComp(){
     }
 }
 
+int DFA::getWinStep(){
+    return win_step;
+}
+
 double DFA::getH(){
 	return H;
 }
@@ -121,15 +125,17 @@ void DFA::H_loglogFit(int start, int end){
     MathOps mo = MathOps();
 	int range = getRangeLength(start, end, win_step);
     double log_s[range], log_F[range];
+    int idx = 0;
     for(int i = (start-min_win)/win_step; i <= (end-min_win)/win_step; i++){
-        log_s[i] = log(s[i]);
-        log_F[i] = log(F[i]);
+        log_s[idx] = log(s[i]);
+        log_F[idx] = log(F[i]);
+        idx++;
     }
     mo.lin_fit(range, log_s, log_F, &H, &H_intercept);
 }
 
 string DFA::outFileStr(){
-	return "/"+DFA_FN_START+"_"+to_string(min_win)+"_"+to_string(min_win)+"_"+file_name.substr(file_name.find_last_of("/")+1);
+    return "/"+DFA_FN_START+"_"+to_string(min_win)+"_"+to_string(max_win)+"_"+file_name.substr(file_name.find_last_of("/")+1);
 }
 // posso salvare il file di tutto il range per poi eventualmente ricaricarlo per rifare e salvare il grafico in un altro range
 void DFA::saveFile(string path_tot){
@@ -155,7 +161,7 @@ void DFA::plot(QCustomPlot *plt){
     plt->yAxis->setLabel("log[F(n)]");
     plt->graph(0)->setData(n, plt_vec);
     plt->graph(0)->setLineStyle(QCPGraph::lsNone);
-    plt->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, 10));
+    plt->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, Qt::red, 10));
     QString fn = QString::fromStdString(file_name).split("/").last();
     fn.truncate(fn.lastIndexOf("."));
     plt->graph(0)->setName(fn+"_"+QString::number(min_win)+"_"+QString::number(max_win));

@@ -83,10 +83,11 @@ void MathOps::lin_fit(int L, const double *x, const double *y, double *m, double
         sumy2 += y[i] * y[i];
     }
     double denom = (L * sumx2 - sumx * sumx);
-    if(denom == 0){
-        *m = 0;
-        *q = 0;
+    if(denom == 0.0){
+        *m = 0.0;
+        *q = 0.0;
+    }else{
+        *m = (L * sumxy - sumx * sumy) / denom;
+        *q = (sumy * sumx2 - sumx * sumxy) / denom;
     }
-    *m = (L * sumxy - sumx * sumy) / denom;
-    *q = (sumy * sumx2 - sumx * sumxy) / denom;
 }

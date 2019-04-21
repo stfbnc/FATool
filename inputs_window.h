@@ -1,5 +1,5 @@
-#ifndef INPUTSWINDOW_H
-#define INPUTSWINDOW_H
+#ifndef INPUTS_WINDOW_H
+#define INPUTS_WINDOW_H
 
 #include <QApplication>
 #include <QtWidgets>
@@ -25,10 +25,10 @@ private:
     QLabel *winStep;
     QLabel *polOrd;
     QLabel *revSeg;
-    QTextEdit *minWinTxt;
-    QTextEdit *maxWinTxt;
-    QTextEdit *winStepTxt;
-    QTextEdit *polOrdTxt;
+    QLineEdit *minWinTxt;
+    QLineEdit *maxWinTxt;
+    QLineEdit *winStepTxt;
+    QLineEdit *polOrdTxt;
     QCheckBox *revSegBox;
     int xDim;
     int yDim;
@@ -38,4 +38,4 @@ private:
     int padY;
 };
 
-#endif // INPUTSWINDOW_H
+#endif // INPUTS_WINDOW_H

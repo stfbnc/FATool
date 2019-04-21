@@ -26,11 +26,11 @@ private:
     QLabel *xlabel;
     QLabel *ylabel;
     QLabel *legend;
-    QTextEdit *xlimTxt;
-    QTextEdit *ylimTxt;
-    QTextEdit *titleTxt;
-    QTextEdit *xlabelTxt;
-    QTextEdit *ylabelTxt;
+    QLineEdit *xlimTxt;
+    QLineEdit *ylimTxt;
+    QLineEdit *titleTxt;
+    QLineEdit *xlabelTxt;
+    QLineEdit *ylabelTxt;
     QTextEdit *legendTxt;
     int xDim;
     int yDim;

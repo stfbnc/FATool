@@ -4,38 +4,50 @@
 #include <QApplication>
 #include <QtWidgets>
 #include "base_plot.h"
+#include "refit_window.h"
+#include "FAGlobs.h"
+#include "DFA.h"
 
-//class QPushButton;
-//class QCustomPlot;
 class PlotWindow : public QWidget
 {
+Q_OBJECT
 public:
     explicit PlotWindow(QString fileName, QString analysisType, QHash<QString, QString> *pHash, QWidget *parent=nullptr);
     ~PlotWindow();
     BasePlot *plt;
+private slots:
+    void onYorNLegend();
+    void onRefitClick();
+    void onReplotClick();
+    void onSavePlotClick();
+    void onSaveTxtClick();
+    void newFit(int start, int end);
 private:
     void SetDimensions();
     void PerformAnalysis(QString fileName, QString analysisType, QHash<QString, QString> *pHash);
+    void DisableButtons();
+    void EnableButtons();
     QLabel *xlim;
     QLabel *ylim;
     QLabel *title;
     QLabel *xlabel;
     QLabel *ylabel;
     QLabel *legend;
-    QTextEdit *xlimTxt;
-    QTextEdit *ylimTxt;
-    QTextEdit *titleTxt;
-    QTextEdit *xlabelTxt;
-    QTextEdit *ylabelTxt;
+    QLabel *legendYorN;
+    QLineEdit *xlimTxt;
+    QLineEdit *ylimTxt;
+    QLineEdit *titleTxt;
+    QLineEdit *xlabelTxt;
+    QLineEdit *ylabelTxt;
     QTextEdit *legendTxt;
+    QCheckBox *legendYorNBox;
     QPushButton *refit;
     QPushButton *replot;
     QPushButton *save_plot;
     QPushButton *save_txt;
     QPushButton *close_button;
-    double H;
-    double H_intercept;
-
+    RefitWindow *refit_win;
+    DFA *dfa;
     int xDim;
     int yDim;
     int xWidth;

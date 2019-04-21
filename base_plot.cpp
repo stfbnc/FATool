@@ -6,7 +6,7 @@ BasePlot::BasePlot(QWidget *parent) : QCustomPlot(parent)
 
 BasePlot::~BasePlot(){}
 
-void BasePlot::SetBasePlot()//QCustomPlot *plt)
+void BasePlot::SetBasePlot()
 {
     xAxis2->setVisible(true);
     xAxis2->setTickLabels(false);
@@ -31,4 +31,5 @@ void BasePlot::SetBasePlot()//QCustomPlot *plt)
     xAxis->grid()->setPen(grid_pen);
     yAxis->grid()->setPen(grid_pen);
     setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    setLocale(QLocale(QLocale::English, QLocale::UnitedKingdom));
 }
