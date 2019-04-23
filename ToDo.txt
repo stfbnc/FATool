@@ -6,13 +6,11 @@
 
 linestyles per i fit
 
-aggiustare dimensioni maschera refit
-
-enable/disable bottoni quando si apre la maschera refit
-
-cambiare errori in dfa con una dialog
+cambiare errori in dfa con una dialog e spostare tutto in plot_window (controllare gli input ancor prima di istanziare dfa)
 
 generalizzare alle altre *FA
+
+se è più grande di 10000 punti il grafico iniziale chiedere se si vuole plottare
 
 permettere di conservare i fit precedenti nel plot (checkbox nella maschera da refit)
 

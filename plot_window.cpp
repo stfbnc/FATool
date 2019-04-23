@@ -130,12 +130,12 @@ void PlotWindow::onRefitClick()
     refit_win = new RefitWindow();
     refit_win->setAttribute(Qt::WA_DeleteOnClose);
     refit_win->show();
+    DisableButtons();
     connect(refit_win, SIGNAL(inputsInserted(int, int)), this, SLOT(newFit(int, int)));
 }
 
 void PlotWindow::newFit(int start, int end)
 {
-    qInfo() << start << " - " << end;
     dfa->H_loglogFit(start, end);
     double H_intercept = dfa->getH_intercept();
     double H = dfa->getH();
@@ -160,6 +160,7 @@ void PlotWindow::newFit(int start, int end)
         lgnd += ";"+plt->graph(i)->name();
     legendTxt->clear();
     legendTxt->setText(lgnd);
+    EnableButtons();
 }
 
 void PlotWindow::onReplotClick()
@@ -167,17 +168,17 @@ void PlotWindow::onReplotClick()
     QStringList xl = xlimTxt->text().split(",");
     QStringList yl = ylimTxt->text().split(",");
     QStringList lg = legendTxt->toPlainText().split(";");
-    QStringList save_alert;
+    QStringList rep_alert;
     QRegExp rgx("^[-]?[0-9]+[.]?[0-9]*$");
     if(xl.size() != 2 ||
        (!xl.first().contains(rgx) || !xl.last().contains(rgx)))
-        save_alert.append("\n- x limits");
+        rep_alert.append("\n- x limits");
     if(yl.size() != 2 ||
        (!yl.first().contains(rgx) || !yl.last().contains(rgx)))
-        save_alert.append("\n- y limits");
+        rep_alert.append("\n- y limits");
     if(lg.size() != plt->legend->itemCount() || (lg.size() == 1 && lg.first() == ""))
-        save_alert.append("\n- legend");
-    if(save_alert.size() == 0){
+        rep_alert.append("\n- legend");
+    if(rep_alert.size() == 0){
         plt->xAxis->setRange(xl.first().trimmed().toDouble(), xl.last().trimmed().toDouble());
         plt->yAxis->setRange(yl.first().trimmed().toDouble(), yl.last().trimmed().toDouble());
         plt->xAxis->setLabel(xlabelTxt->text().trimmed());
@@ -189,8 +190,8 @@ void PlotWindow::onReplotClick()
     }else{
         QMessageBox messageBox;
         QString errToShow = "An error occured in\n the following fields:\n";
-        for(int i = 0; i < save_alert.size(); i++)
-            errToShow.append(save_alert[i]);
+        for(int i = 0; i < rep_alert.size(); i++)
+            errToShow.append(rep_alert[i]);
         messageBox.critical(nullptr, "Error", errToShow);
         messageBox.setFixedSize(200,200);
     }

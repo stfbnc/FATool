@@ -48,7 +48,7 @@ public:
     }
     
     virtual void checkInputs() = 0;
-	virtual void allocateMemory() = 0;
+    virtual void allocateMemory() = 0;
 
 	void setFlucVectors(){
 	    MathOps mo = MathOps();

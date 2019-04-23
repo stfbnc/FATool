@@ -31,8 +31,8 @@ RefitWindow::~RefitWindow(){}
 
 void RefitWindow::SetDimensions()
 {
-    xDim = 310;
-    yDim = 145;
+    xDim = 240;
+    yDim = 80;
     xWidth = 30;
     yHeight = 30;
     padX = 10;

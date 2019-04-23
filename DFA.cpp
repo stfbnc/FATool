@@ -23,27 +23,25 @@ DFA::~DFA(){
 }
 
 void DFA::checkInputs(){
+    QStringList inpt_errs;
 	//windows size
-	if(max_win < min_win){
-		fprintf(stdout, "ERROR %d: biggest scale must be greater than smallest scale\n", RANGE_FAILURE);
-		exit(RANGE_FAILURE);
-	}else if(min_win < 3){
-		fprintf(stdout, "ERROR %d: smallest scale must be greater than 2\n", WIN_SIZE_FAILURE);
-		exit(WIN_SIZE_FAILURE);
-	}else if(max_win > N){
-		fprintf(stdout, "ERROR %d: biggest scale must be smaller than time series length\n", WIN_SIZE_FAILURE);
-		exit(WIN_SIZE_FAILURE);
-	}
+    if(max_win < min_win)
+        inpt_errs.append("- biggest scale must be greater than smallest scale\n");
+    else if(min_win < 3)
+        inpt_errs.append("- smallest scale must be greater than 2\n");
+    else if(max_win > N)
+        inpt_errs.append("- biggest scale must be smaller than time series length\n");
 	//polynomial order
-	if(ord < 1){
-		fprintf(stdout, "ERROR %d: polynomial order must be greater than 0\n", POL_FAILURE);
-		exit(POL_FAILURE);
-	}
-	//rev_seg
-	if(rev_seg != 0 && rev_seg != 1){
-		fprintf(stdout, "ERROR %d: parameter for backward computation must be 0 or 1\n", REV_SEG_FAILURE);
-		exit(REV_SEG_FAILURE);
-	}
+    if(ord < 1)
+        inpt_errs.append("- polynomial order must be greater than 0\n");
+    if(inpt_errs.size() > 0){
+        QMessageBox messageBox;
+        QString errToShow = "The following errors occurred:\n\n";
+        for(int i = 0; i < inpt_errs.size(); i++)
+            errToShow.append(inpt_errs[i]);
+        messageBox.critical(nullptr, "Error", errToShow);
+        messageBox.setFixedSize(200,200);
+    }
 }
 
 void DFA::allocateMemory(){

@@ -3,13 +3,14 @@
 
 #include "FAGlobs.h"
 #include "FA.h"
+#include <QtWidgets>
 
 class DFA : public FA
 {
 public:
     DFA(string, int, int, int, int=1, int=1);
 	~DFA();
-	void checkInputs();
+    void checkInputs();
 	void allocateMemory();
 	int getTsLength();
 	void winFlucComp();
