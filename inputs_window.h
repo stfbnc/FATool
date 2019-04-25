@@ -3,10 +3,8 @@
 
 #include <QApplication>
 #include <QtWidgets>
+#include "FAGlobs.h"
 
-//class QPushButton;
-//class QLabel;
-//class QTextEdit;
 class InputsWindow : public QWidget
 {
 Q_OBJECT
@@ -17,7 +15,8 @@ signals:
     void inputsInserted();
 private:
     void SetDimensions();
-    void onOKClick(QHash<QString, QString> *pHash);
+    void onOKClick(QString analysisStr, QHash<QString, QString> *pHash);
+    bool CheckInputs(QString analysisStr, QHash<QString, QString> *pHash);
     QPushButton *ok_button;
     QPushButton *close_button;
     QLabel *minWin;

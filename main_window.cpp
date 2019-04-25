@@ -163,22 +163,41 @@ void MainWindow::onGoClick()
 {
     QString analysisType = dd_list->currentText();
     if(analysisType != "-" && qplot->graphCount() > 0){
-        DisableButtons();
-        inpt_win = new InputsWindow(analysisType, paramHash);
-        inpt_win->setAttribute(Qt::WA_DeleteOnClose);
-        inpt_win->show();
-        connect(inpt_win, SIGNAL(destroyed()), this, SLOT(EnableButtons()));
-        connect(inpt_win, SIGNAL(inputsInserted()), this, SLOT(onCloseInputWin()));
+        if(analysisType == strDCCA && fileNames.size() < 2){
+            QMessageBox messageBox;
+            QString errToShow = "This type of analysis requires\nat least two data files";
+            messageBox.critical(nullptr, "Error", errToShow);
+            messageBox.setFixedSize(200,200);
+        }else{
+            DisableButtons();
+            inpt_win = new InputsWindow(analysisType, paramHash);
+            inpt_win->setAttribute(Qt::WA_DeleteOnClose);
+            inpt_win->show();
+            connect(inpt_win, SIGNAL(destroyed()), this, SLOT(EnableButtons()));
+            connect(inpt_win, SIGNAL(inputsInserted()), this, SLOT(onCloseInputWin()));
+        }
     }
 }
 
 void MainWindow::onCloseInputWin()
 {
     EnableButtons();
-    for(int i = 0;  i < fileNames.size(); i++){
-        plot_win = new PlotWindow(fileNames[i], dd_list->currentText(), paramHash);
-        plot_win->setAttribute(Qt::WA_DeleteOnClose);
-        plot_win->show();
+    QString analysisType = dd_list->currentText();
+    if(analysisType == strDFA){
+        for(int i = 0;  i < fileNames.size(); i++){
+            plot_win = new PlotWindow(analysisType, paramHash, fileNames[i]);
+            plot_win->setAttribute(Qt::WA_DeleteOnClose);
+            plot_win->show();
+        }
+    }
+    if(analysisType == strDCCA){
+        for(int i = 0;  i < fileNames.size()-1; i++){
+            for(int j = i+1; j < fileNames.size(); j++){
+                plot_win = new PlotWindow(analysisType, paramHash, fileNames[i], fileNames[j]);
+                plot_win->setAttribute(Qt::WA_DeleteOnClose);
+                plot_win->show();
+            }
+        }
     }
 }
 

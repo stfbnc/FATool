@@ -6,8 +6,6 @@
 
 linestyles per i fit
 
-cambiare errori in dfa con una dialog e spostare tutto in plot_window (controllare gli input ancor prima di istanziare dfa)
-
 generalizzare alle altre *FA
 
 se è più grande di 10000 punti il grafico iniziale chiedere se si vuole plottare

@@ -7,12 +7,13 @@
 #include "refit_window.h"
 #include "FAGlobs.h"
 #include "DFA.h"
+#include "FileOps.h"
 
 class PlotWindow : public QWidget
 {
 Q_OBJECT
 public:
-    explicit PlotWindow(QString fileName, QString analysisType, QHash<QString, QString> *pHash, QWidget *parent=nullptr);
+    explicit PlotWindow(QString analysisType, QHash<QString, QString> *pHash, QString fileName, QString fileName2="", QWidget *parent=nullptr);
     ~PlotWindow();
     BasePlot *plt;
 private slots:
@@ -22,11 +23,11 @@ private slots:
     void onSavePlotClick();
     void onSaveTxtClick();
     void newFit(int start, int end);
+    void EnableButtons();
 private:
     void SetDimensions();
     void PerformAnalysis(QString fileName, QString analysisType, QHash<QString, QString> *pHash);
     void DisableButtons();
-    void EnableButtons();
     QLabel *xlim;
     QLabel *ylim;
     QLabel *title;

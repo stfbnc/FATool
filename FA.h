@@ -9,9 +9,9 @@ class FA
 public:
 	FA(){
 		N = 0;
-		t = NULL;
-		y = NULL;
-		F = NULL;
+        t = nullptr;
+        y = nullptr;
+        F = nullptr;
 	}
 	virtual ~FA(){}
 
@@ -47,7 +47,6 @@ public:
         return (end - start) / step + 1;
     }
     
-    virtual void checkInputs() = 0;
     virtual void allocateMemory() = 0;
 
 	void setFlucVectors(){

@@ -138,9 +138,11 @@ void MFDFAsingleQ::H_loglogFit(int start, int end){
     MathOps mo = MathOps();
 	int range = getRangeLength(start, end, win_step);
     double log_s[range], log_F[range];
+    int idx = 0;
     for(int i = (start-min_win)/win_step; i <= (end-min_win)/win_step; i++){
-        log_s[i] = log(s[i]);
-        log_F[i] = log(F[i]);
+        log_s[idx] = log(s[i]);
+        log_F[idx] = log(F[i]);
+        idx++;
     }
     mo.lin_fit(range, log_s, log_F, &H, &H_intercept);
 }

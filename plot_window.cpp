@@ -1,11 +1,14 @@
 #include "plot_window.h"
 
-PlotWindow::PlotWindow(QString fileName, QString analysisType, QHash<QString, QString> *pHash, QWidget *parent) : QWidget(parent)
+PlotWindow::PlotWindow(QString analysisType, QHash<QString, QString> *pHash, QString fileName, QString fileName2, QWidget *parent) : QWidget(parent)
 {
     //set dimensions
     SetDimensions();
     //set title
-    setWindowTitle(analysisType+" - "+fileName.split("/").last());
+    QString win_title = analysisType+" - "+fileName.split("/").last();
+    if(!fileName2.isEmpty())
+        win_title.append(" & "+fileName2.split("/").last());
+    setWindowTitle(win_title);
     //win size
     setFixedSize(xDim, yDim);
     //plot section
@@ -86,12 +89,17 @@ void PlotWindow::SetDimensions()
 
 void PlotWindow::PerformAnalysis(QString fileName, QString analysisType, QHash<QString, QString> *pHash)
 {
+    FileOps fo;
+    string fn = fileName.toStdString();
+    int N = fo.rows_number(fn);
     int mw = pHash->value("minWin").toInt();
     int Mw = pHash->value("maxWin").toInt();
     int po = pHash->value("polOrd").toInt();
-    int sw = pHash->value("winStep").toInt();
+    int ws = pHash->value("winStep").toInt();
     int rs = pHash->value("revSeg").toInt();
-    dfa = new DFA(fileName.toStdString(), mw, Mw, po, sw, rs);
+    if(Mw > N)
+        Mw = N;
+    dfa = new DFA(fn, mw, Mw, po, ws, rs);
     dfa->setFlucVectors();
     dfa->winFlucComp();
     dfa->H_loglogFit(mw, Mw);
@@ -132,10 +140,16 @@ void PlotWindow::onRefitClick()
     refit_win->show();
     DisableButtons();
     connect(refit_win, SIGNAL(inputsInserted(int, int)), this, SLOT(newFit(int, int)));
+    connect(refit_win, SIGNAL(destroyed()), this, SLOT(EnableButtons()));
 }
 
 void PlotWindow::newFit(int start, int end)
 {
+    if(end < start){
+        int tmp = end;
+        end = start;
+        start = tmp;
+    }
     dfa->H_loglogFit(start, end);
     double H_intercept = dfa->getH_intercept();
     double H = dfa->getH();
@@ -148,19 +162,18 @@ void PlotWindow::newFit(int start, int end)
         Hfit[i] = H_intercept + H * n[i];
     }
     plt->addGraph();
-    plt->graph(1)->setData(n, Hfit);
+    plt->graph(plt->graphCount()-1)->setData(n, Hfit);
     QPen pen;
     pen.setWidth(2);
-    plt->graph(1)->setPen(pen);
-    plt->graph(1)->setName("H = "+QString::number(H));
-    plt->graph(1)->rescaleAxes(true);
+    plt->graph(plt->graphCount()-1)->setPen(pen);
+    plt->graph(plt->graphCount()-1)->setName("H = "+QString::number(H));
+    plt->graph(plt->graphCount()-1)->rescaleAxes(true);
     plt->replot();
     QString lgnd = plt->graph(0)->name();
     for(int i = 1; i < plt->legend->itemCount(); i++)
         lgnd += ";"+plt->graph(i)->name();
     legendTxt->clear();
     legendTxt->setText(lgnd);
-    EnableButtons();
 }
 
 void PlotWindow::onReplotClick()

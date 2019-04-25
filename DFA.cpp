@@ -11,7 +11,6 @@ DFA::DFA(string file_name_, int min_win_, int max_win_, int ord_, int win_step_,
 	win_step = win_step_;
     checkFileExistence(file_name);
 	N = setTsLength(file_name);
-    checkInputs();
     allocateMemory();
 }
 
@@ -20,28 +19,6 @@ DFA::~DFA(){
 	delAlloc<double>(y);
 	delAlloc<int>(s);
 	delAlloc<double>(F);
-}
-
-void DFA::checkInputs(){
-    QStringList inpt_errs;
-	//windows size
-    if(max_win < min_win)
-        inpt_errs.append("- biggest scale must be greater than smallest scale\n");
-    else if(min_win < 3)
-        inpt_errs.append("- smallest scale must be greater than 2\n");
-    else if(max_win > N)
-        inpt_errs.append("- biggest scale must be smaller than time series length\n");
-	//polynomial order
-    if(ord < 1)
-        inpt_errs.append("- polynomial order must be greater than 0\n");
-    if(inpt_errs.size() > 0){
-        QMessageBox messageBox;
-        QString errToShow = "The following errors occurred:\n\n";
-        for(int i = 0; i < inpt_errs.size(); i++)
-            errToShow.append(inpt_errs[i]);
-        messageBox.critical(nullptr, "Error", errToShow);
-        messageBox.setFixedSize(200,200);
-    }
 }
 
 void DFA::allocateMemory(){
@@ -61,8 +38,14 @@ void DFA::winFlucComp(){
 	int range = getRangeLength(min_win, max_win, win_step);
     ao.int_range(s, range, min_win, win_step);
 	int F_len = N / min_win;
-    double F_nu1[F_len], F_nu2[F_len];
-    double t_fit[max_win], y_fit[max_win], diff_vec[max_win];
+    //double F_nu1[F_len], F_nu2[F_len];
+    //double t_fit[max_win], y_fit[max_win], diff_vec[max_win];
+    double *F_nu1, *F_nu2, *t_fit, *y_fit, *diff_vec;
+    F_nu1 = new double [F_len];
+    F_nu2 = new double [F_len];
+    t_fit = new double [max_win];
+    y_fit = new double [max_win];
+    diff_vec = new double [max_win];
     //computation
     int N_s, curr_win_size;
     int start_lim, end_lim;
@@ -104,6 +87,11 @@ void DFA::winFlucComp(){
             F[i] = sqrt(mo.mean(F_nu1, N_s));
         }
     }
+    delAlloc<double>(F_nu1);
+    delAlloc<double>(F_nu2);
+    delAlloc<double>(t_fit);
+    delAlloc<double>(y_fit);
+    delAlloc<double>(diff_vec);
 }
 
 int DFA::getWinStep(){
@@ -122,7 +110,10 @@ void DFA::H_loglogFit(int start, int end){
 	//if start < min_win || end > max_win -> error
     MathOps mo = MathOps();
 	int range = getRangeLength(start, end, win_step);
-    double log_s[range], log_F[range];
+    double *log_s, *log_F;
+    log_s = new double [range];
+    log_F = new double [range];
+    //double log_s[range], log_F[range];
     int idx = 0;
     for(int i = (start-min_win)/win_step; i <= (end-min_win)/win_step; i++){
         log_s[idx] = log(s[i]);
@@ -130,6 +121,8 @@ void DFA::H_loglogFit(int start, int end){
         idx++;
     }
     mo.lin_fit(range, log_s, log_F, &H, &H_intercept);
+    delAlloc<double>(log_s);
+    delAlloc<double>(log_F);
 }
 
 string DFA::outFileStr(){
