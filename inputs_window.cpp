@@ -4,6 +4,8 @@ InputsWindow::InputsWindow(QString analysisStr, QHash<QString, QString> *pHash, 
 {
     //set dimensions
     SetDimensions();
+    //set analysis
+    analysis = analysisStr;
     //set title
     setWindowTitle(analysisStr);
     //win size
@@ -11,7 +13,7 @@ InputsWindow::InputsWindow(QString analysisStr, QHash<QString, QString> *pHash, 
     //apply button
     ok_button = new QPushButton("OK", this);
     ok_button->setGeometry(xDim-padX/2-xWidth*3, yDim-yHeight-padY, xWidth*3, yHeight);
-    connect(ok_button, &QPushButton::clicked, [=](){this->onOKClick(analysisStr, pHash);});
+    connect(ok_button, &QPushButton::clicked, [=](){this->onOKClick(pHash);});
     //close button
     close_button = new QPushButton("Close", this);
     close_button->setGeometry(xDim-padX-xWidth*6, yDim-yHeight-padY, xWidth*3, yHeight);
@@ -33,10 +35,20 @@ InputsWindow::InputsWindow(QString analysisStr, QHash<QString, QString> *pHash, 
     polOrd->setGeometry(padX, 2*padY+yHeight, xWidth*4, yHeight);
     polOrdTxt = new QLineEdit("1", this);
     polOrdTxt->setGeometry(padX+4*xWidth, 2*padY+yHeight, xWidth, yHeight);
-    revSeg = new QLabel("Backward computation", this);
-    revSeg->setGeometry(padX, 3*padY+2*yHeight, xWidth*5, yHeight);
-    revSegBox = new QCheckBox(this);
-    revSegBox->setGeometry(padX+5*xWidth, 3*padY+2*yHeight, 2*xWidth, yHeight);
+    if(analysis == strDFA){
+        revSeg = new QLabel("Backward computation", this);
+        revSeg->setGeometry(padX, 3*padY+2*yHeight, xWidth*5, yHeight);
+        revSegBox = new QCheckBox(this);
+        revSegBox->setGeometry(padX+5*xWidth, 3*padY+2*yHeight, 2*xWidth, yHeight);
+    }
+    if(analysis == strDCCA){
+        isAbs = new QLabel("Computation type:", this);
+        isAbs->setGeometry(padX, 3*padY+2*yHeight, xWidth*5, yHeight);
+        absList = new QComboBox(this);
+        absList->setGeometry(padX+5*xWidth, 3*padY+2*yHeight, 2*xWidth, yHeight);
+        absList->addItem("absolute");
+        absList->addItem("signed");
+    }
 }
 
 InputsWindow::~InputsWindow(){}
@@ -51,7 +63,7 @@ void InputsWindow::SetDimensions()
     padY = 5;
 }
 
-bool InputsWindow::CheckInputs(QString analysisStr, QHash<QString, QString> *pHash)
+bool InputsWindow::CheckInputs(QHash<QString, QString> *pHash)
 {
     bool chk = false;
     QStringList inpt_errs;
@@ -104,7 +116,7 @@ bool InputsWindow::CheckInputs(QString analysisStr, QHash<QString, QString> *pHa
 //    //controllare anche sts che ogni singola scala soddisfi la singole condizioni
 
     //DFA, DCCA
-    if(analysisStr == strDFA || analysisStr == strDCCA){
+    if(analysis == strDFA || analysis == strDCCA){
         //windows size
         if(Mw < mw)
             inpt_errs.append("- biggest scale must be greater than smallest scale\n");
@@ -130,7 +142,7 @@ bool InputsWindow::CheckInputs(QString analysisStr, QHash<QString, QString> *pHa
     return chk;
 }
 
-void InputsWindow::onOKClick(QString analysisStr, QHash<QString, QString> *pHash)
+void InputsWindow::onOKClick(QHash<QString, QString> *pHash)
 {
     QString mw = minWinTxt->text().trimmed();
     QString Mw = maxWinTxt->text().trimmed();
@@ -145,8 +157,11 @@ void InputsWindow::onOKClick(QString analysisStr, QHash<QString, QString> *pHash
         pHash->insert("maxWin", Mw);
         pHash->insert("polOrd", po);
         pHash->insert("winStep", ws);
-        pHash->insert("revSeg", revSegBox->isChecked() ? "1" : "0");
-        if(CheckInputs(analysisStr, pHash)){
+        if(analysis == strDFA)
+            pHash->insert("revSeg", revSegBox->isChecked() ? "1" : "0");
+        if(analysis == strDCCA)
+            pHash->insert("isAbs", absList->currentText()=="absolute" ? DEFAULT_DCCA : CORR_DCCA);
+        if(CheckInputs(pHash)){
             emit inputsInserted();
             close();
         }

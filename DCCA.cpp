@@ -13,7 +13,7 @@ DCCA::DCCA(string file_name_, string file_name2_, int min_win_, int max_win_, in
     checkFileExistence(file_name);
     checkFileExistence(file_name2);
 	getEqualLength(file_name, file_name2);
-    checkInputs();
+//    checkInputs();
     allocateMemory();
 }
 
@@ -25,29 +25,29 @@ DCCA::~DCCA(){
 	delAlloc<double>(F);
 }
 
-void DCCA::checkInputs(){
-	//windows size
-	if(max_win < min_win){
-		fprintf(stdout, "ERROR %d: biggest scale must be greater than smallest scale\n", RANGE_FAILURE);
-		exit(RANGE_FAILURE);
-	}else if(min_win < 3){
-		fprintf(stdout, "ERROR %d: smallest scale must be greater than 2\n", WIN_SIZE_FAILURE);
-		exit(WIN_SIZE_FAILURE);
-	}else if(max_win > N){
-		fprintf(stdout, "ERROR %d: biggest scale must be smaller than time series length\n", WIN_SIZE_FAILURE);
-		exit(WIN_SIZE_FAILURE);
-	}
-	//polynomial order
-	if(ord < 1){
-		fprintf(stdout, "ERROR %d: polynomial order must be greater than 0\n", POL_FAILURE);
-		exit(POL_FAILURE);
-	}
-    //dcca computation type
-    if(isAbs.compare(DEFAULT_DCCA) != 0 && isAbs.compare(CORR_DCCA) != 0){
-        fprintf(stdout, "ERROR %d: computation type must be %s or %s\n", REV_SEG_FAILURE, DEFAULT_DCCA, CORR_DCCA);
-        exit(REV_SEG_FAILURE);
-    }
-}
+//void DCCA::checkInputs(){
+//	//windows size
+//	if(max_win < min_win){
+//		fprintf(stdout, "ERROR %d: biggest scale must be greater than smallest scale\n", RANGE_FAILURE);
+//		exit(RANGE_FAILURE);
+//	}else if(min_win < 3){
+//		fprintf(stdout, "ERROR %d: smallest scale must be greater than 2\n", WIN_SIZE_FAILURE);
+//		exit(WIN_SIZE_FAILURE);
+//	}else if(max_win > N){
+//		fprintf(stdout, "ERROR %d: biggest scale must be smaller than time series length\n", WIN_SIZE_FAILURE);
+//		exit(WIN_SIZE_FAILURE);
+//	}
+//	//polynomial order
+//	if(ord < 1){
+//		fprintf(stdout, "ERROR %d: polynomial order must be greater than 0\n", POL_FAILURE);
+//		exit(POL_FAILURE);
+//	}
+//    //dcca computation type
+//    if(isAbs.compare(DEFAULT_DCCA) != 0 && isAbs.compare(CORR_DCCA) != 0){
+//        fprintf(stdout, "ERROR %d: computation type must be %s or %s\n", REV_SEG_FAILURE, DEFAULT_DCCA, CORR_DCCA);
+//        exit(REV_SEG_FAILURE);
+//    }
+//}
 
 void DCCA::allocateMemory(){
 	t = new double [N];
@@ -173,6 +173,33 @@ void DCCA::saveFile(string path_tot){
     fclose(f);
 }
 
-/*void DCCA::plot(){
-	
-}*/
+void DCCA::plot(QCustomPlot *plt){
+    int len = getRangeLength(min_win, max_win, win_step);
+    QVector<double> plt_vec(len), n(len), Hfit(len);
+    for(int i = 0; i < len; i++){
+        n[i] = log(s[i]);
+        plt_vec[i] = log(F[i]);
+        Hfit[i] = H_intercept + H * n[i];
+    }
+    plt->addGraph();
+    plt->xAxis->setLabel("log[n]");
+    plt->yAxis->setLabel("log[F(n)]");
+    plt->graph(0)->setData(n, plt_vec);
+    plt->graph(0)->setLineStyle(QCPGraph::lsNone);
+    plt->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, Qt::red, 10));
+    QString fn = QString::fromStdString(file_name).split("/").last();
+    fn.truncate(fn.lastIndexOf("."));
+    QString fn2 = QString::fromStdString(file_name2).split("/").last();
+    fn2.truncate(fn2.lastIndexOf("."));
+    plt->graph(0)->setName(fn+"_"+fn2+"_"+QString::number(min_win)+"_"+QString::number(max_win));
+    plt->graph(0)->rescaleAxes();
+    plt->addGraph();
+    plt->graph(1)->setData(n, Hfit);
+    QPen pen;
+    pen.setWidth(2);
+    plt->graph(1)->setPen(pen);
+    plt->graph(1)->setName("H = "+QString::number(H));
+    plt->graph(1)->rescaleAxes(true);
+    plt->legend->setVisible(true);
+    plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignLeft);
+}

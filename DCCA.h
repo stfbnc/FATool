@@ -3,11 +3,12 @@
 
 #include "FAGlobs.h"
 #include "FA.h"
+#include <QtWidgets>
 
 class DCCA : public FA
 {
 public:
-    DCCA(string, string, int, int, int, string=DEFAULT_DCCA, int=1);
+    DCCA(string, string, int, int, int, string, int);
 	~DCCA();
 	void checkInputs();
 	void allocateMemory();
@@ -21,7 +22,7 @@ public:
 	void H_loglogFit(int, int);
 	string outFileStr();
 	void saveFile(string);
-    //void plot();
+    void plot(QCustomPlot *);
 private:
 	string file_name2;
 	int min_win;

@@ -11,6 +11,7 @@ public:
     double custom_mean(double *, int, int);
 	void subtract_mean(double *, int, double *);
 	int vec_min(int *, int);
+    int min_val(int, int);
 	void cumsum(double *, double *, int);
 	void nan_cumsum(double *, double *, int);
 	void lin_fit(int, const double *, const double *, double *, double *);

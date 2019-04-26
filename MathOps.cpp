@@ -12,7 +12,8 @@ double MathOps::mean(double *vec, int L){
     double avg = 0.0;
     for(int i = 0; i < L; i++)
         avg += vec[i];
-    avg /= (double)L;
+    //avg /= (double)L;
+    avg /= static_cast<double>(L);
     return avg;
 }
 
@@ -26,7 +27,8 @@ double MathOps::nan_mean(double *vec, int L){
 			avg += vec[i];
 		}
 	}	
-    avg /= (double)(L - cnt);
+    //avg /= (double)(L - cnt);
+    avg /= static_cast<double>(L - cnt);
     return avg;
 }
 
@@ -34,7 +36,8 @@ double MathOps::custom_mean(double *vec, int vecL, int L){
     double avg = 0.0;
     for(int i = 0; i < vecL; i++)
         avg += vec[i];
-    avg /= (double)L;
+    //avg /= (double)L;
+    avg /= static_cast<double>(L);
     return avg;
 }
 
@@ -50,6 +53,13 @@ int MathOps::vec_min(int *vec, int len){
         if(vec[i] < m)
             m = vec[i];
     return m;
+}
+
+int MathOps::min_val(int a, int b){
+    if(a <= b)
+        return a;
+    else
+        return b;
 }
 	
 void MathOps::cumsum(double *vec, double *sum_vec, int L){

@@ -4,8 +4,10 @@ PlotWindow::PlotWindow(QString analysisType, QHash<QString, QString> *pHash, QSt
 {
     //set dimensions
     SetDimensions();
+    //set analysis
+    analysis = analysisType;
     //set title
-    QString win_title = analysisType+" - "+fileName.split("/").last();
+    QString win_title = analysis+" - "+fileName.split("/").last();
     if(!fileName2.isEmpty())
         win_title.append(" & "+fileName2.split("/").last());
     setWindowTitle(win_title);
@@ -15,7 +17,7 @@ PlotWindow::PlotWindow(QString analysisType, QHash<QString, QString> *pHash, QSt
     plt = new BasePlot(this);
     plt->setGeometry(xDim/4, padY, xDim*3/4-padX, yDim-yHeight-2*padY);
     plt->SetBasePlot();
-    PerformAnalysis(fileName, analysisType, pHash);
+    PerformAnalysis(pHash, fileName, fileName2);
     plt->replot();
     //refit button
     refit = new QPushButton("Refit", this);
@@ -87,7 +89,15 @@ void PlotWindow::SetDimensions()
     padY = 10;
 }
 
-void PlotWindow::PerformAnalysis(QString fileName, QString analysisType, QHash<QString, QString> *pHash)
+void PlotWindow::PerformAnalysis(QHash<QString, QString> *pHash, QString fileName, QString fileName2)
+{
+    if(analysis == strDFA)
+        DFAanalysis(pHash, fileName);
+    else if(analysis == strDCCA)
+        DCCAanalysis(pHash, fileName, fileName2);
+}
+
+void PlotWindow::DFAanalysis(QHash<QString, QString> *pHash, QString fileName)
 {
     FileOps fo;
     string fn = fileName.toStdString();
@@ -104,6 +114,29 @@ void PlotWindow::PerformAnalysis(QString fileName, QString analysisType, QHash<Q
     dfa->winFlucComp();
     dfa->H_loglogFit(mw, Mw);
     dfa->plot(plt);
+}
+
+void PlotWindow::DCCAanalysis(QHash<QString, QString> *pHash, QString fileName, QString fileName2)
+{
+    FileOps fo;
+    string fn = fileName.toStdString();
+    int N = fo.rows_number(fn);
+    string fn2 = fileName2.toStdString();
+    int N2 = fo.rows_number(fn2);
+    MathOps mo;
+    int val = mo.min_val(N, N2);
+    int mw = pHash->value("minWin").toInt();
+    int Mw = pHash->value("maxWin").toInt();
+    int po = pHash->value("polOrd").toInt();
+    int ws = pHash->value("winStep").toInt();
+    QString ia = pHash->value("isAbs");
+    if(Mw > val)
+        Mw = val;
+    dcca = new DCCA(fn, fn2, mw, Mw, po, ia.toStdString(), ws);
+    dcca->setFlucVectors();
+    dcca->winFlucComp();
+    dcca->H_loglogFit(mw, Mw);
+    dcca->plot(plt);
 }
 
 void PlotWindow::DisableButtons()
@@ -150,9 +183,8 @@ void PlotWindow::newFit(int start, int end)
         end = start;
         start = tmp;
     }
-    dfa->H_loglogFit(start, end);
-    double H_intercept = dfa->getH_intercept();
-    double H = dfa->getH();
+    double H_intercept = 0.0, H = 0.0;
+    RefitByAnalysis(start, end, &H, &H_intercept);
     for(int i = 1; i < plt->graphCount(); i++)
         plt->removeGraph(i);
     int len = end - start + 1;
@@ -174,6 +206,19 @@ void PlotWindow::newFit(int start, int end)
         lgnd += ";"+plt->graph(i)->name();
     legendTxt->clear();
     legendTxt->setText(lgnd);
+}
+
+void PlotWindow::RefitByAnalysis(int start, int end, double *hSlope, double *hIntcpt)
+{
+    if(analysis == strDFA){
+        dfa->H_loglogFit(start, end);
+        *hIntcpt = dfa->getH_intercept();
+        *hSlope = dfa->getH();
+    }else if(analysis == strDCCA){
+        dcca->H_loglogFit(start, end);
+        *hIntcpt = dcca->getH_intercept();
+        *hSlope = dcca->getH();
+    }
 }
 
 void PlotWindow::onReplotClick()
@@ -231,5 +276,8 @@ void PlotWindow::onSavePlotClick()
 void PlotWindow::onSaveTxtClick()
 {
     QString pathToSave = QFileDialog::getExistingDirectory();
-    dfa->saveFile(pathToSave.toStdString());
+    if(analysis == strDFA)
+        dfa->saveFile(pathToSave.toStdString());
+    else if(analysis == strDCCA)
+        dcca->saveFile(pathToSave.toStdString());
 }

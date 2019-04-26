@@ -1,6 +1,8 @@
 #ifndef FILE_OPS_H
 #define FILE_OPS_H
 
+#include <iostream>
+#include <cstdio>
 #include <cstring>
 
 using namespace std;

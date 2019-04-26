@@ -17,7 +17,8 @@ SOURCES +=  main.cpp \
     DFA.cpp \
     ArrayOps.cpp \
     MathOps.cpp \
-    refit_window.cpp
+    refit_window.cpp \
+    DCCA.cpp
 
 HEADERS += \
     plot_window.h \
@@ -32,4 +33,5 @@ HEADERS += \
     ArrayOps.h \
     MathOps.h \
     FA.h \
-    refit_window.h
+    refit_window.h \
+    DCCA.h

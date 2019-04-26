@@ -15,8 +15,8 @@ signals:
     void inputsInserted();
 private:
     void SetDimensions();
-    void onOKClick(QString analysisStr, QHash<QString, QString> *pHash);
-    bool CheckInputs(QString analysisStr, QHash<QString, QString> *pHash);
+    void onOKClick(QHash<QString, QString> *pHash);
+    bool CheckInputs(QHash<QString, QString> *pHash);
     QPushButton *ok_button;
     QPushButton *close_button;
     QLabel *minWin;
@@ -24,11 +24,14 @@ private:
     QLabel *winStep;
     QLabel *polOrd;
     QLabel *revSeg;
+    QLabel *isAbs;
     QLineEdit *minWinTxt;
     QLineEdit *maxWinTxt;
     QLineEdit *winStepTxt;
     QLineEdit *polOrdTxt;
     QCheckBox *revSegBox;
+    QComboBox *absList;
+    QString analysis;
     int xDim;
     int yDim;
     int xWidth;

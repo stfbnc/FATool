@@ -61,7 +61,8 @@ SOURCES       = ../main.cpp \
 		../DFA.cpp \
 		../ArrayOps.cpp \
 		../MathOps.cpp \
-		../refit_window.cpp moc_plot_window.cpp \
+		../refit_window.cpp \
+		../DCCA.cpp moc_plot_window.cpp \
 		moc_qcustomplot.cpp \
 		moc_main_window.cpp \
 		moc_inputs_window.cpp \
@@ -78,6 +79,7 @@ OBJECTS       = main.o \
 		ArrayOps.o \
 		MathOps.o \
 		refit_window.o \
+		DCCA.o \
 		moc_plot_window.o \
 		moc_qcustomplot.o \
 		moc_main_window.o \
@@ -287,7 +289,8 @@ DIST          = /Applications/Qt/5.12.0/clang_64/mkspecs/features/spec_pre.prf \
 		../ArrayOps.h \
 		../MathOps.h \
 		../FA.h \
-		../refit_window.h ../main.cpp \
+		../refit_window.h \
+		../DCCA.h ../main.cpp \
 		../plot_window.cpp \
 		../qcustomplot.cpp \
 		../main_window.cpp \
@@ -298,7 +301,8 @@ DIST          = /Applications/Qt/5.12.0/clang_64/mkspecs/features/spec_pre.prf \
 		../DFA.cpp \
 		../ArrayOps.cpp \
 		../MathOps.cpp \
-		../refit_window.cpp
+		../refit_window.cpp \
+		../DCCA.cpp
 QMAKE_TARGET  = FATool
 DESTDIR       = 
 TARGET        = FATool.app/Contents/MacOS/FATool
@@ -750,8 +754,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /Applications/Qt/5.12.0/clang_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../plot_window.h ../qcustomplot.h ../main_window.h ../FAGlobs.h ../FileOps.h ../savewindow.h ../base_plot.h ../inputs_window.h ../DFA.h ../ArrayOps.h ../MathOps.h ../FA.h ../refit_window.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../main.cpp ../plot_window.cpp ../qcustomplot.cpp ../main_window.cpp ../FileOps.cpp ../savewindow.cpp ../base_plot.cpp ../inputs_window.cpp ../DFA.cpp ../ArrayOps.cpp ../MathOps.cpp ../refit_window.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../plot_window.h ../qcustomplot.h ../main_window.h ../FAGlobs.h ../FileOps.h ../savewindow.h ../base_plot.h ../inputs_window.h ../DFA.h ../ArrayOps.h ../MathOps.h ../FA.h ../refit_window.h ../DCCA.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../main.cpp ../plot_window.cpp ../qcustomplot.cpp ../main_window.cpp ../FileOps.cpp ../savewindow.cpp ../base_plot.cpp ../inputs_window.cpp ../DFA.cpp ../ArrayOps.cpp ../MathOps.cpp ../refit_window.cpp ../DCCA.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -929,6 +933,7 @@ moc_plot_window.cpp: /Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/He
 		../FileOps.h \
 		../DFA.h \
 		../FA.h \
+		../DCCA.h \
 		../plot_window.h \
 		moc_predefs.h \
 		/Applications/Qt/5.12.0/clang_64/bin/moc
@@ -1080,14 +1085,15 @@ moc_main_window.cpp: /Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/He
 		../base_plot.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QWidget \
 		../inputs_window.h \
-		../plot_window.h \
-		../refit_window.h \
 		../FAGlobs.h \
 		../ArrayOps.h \
 		../MathOps.h \
 		../FileOps.h \
+		../plot_window.h \
+		../refit_window.h \
 		../DFA.h \
 		../FA.h \
+		../DCCA.h \
 		../main_window.h \
 		moc_predefs.h \
 		/Applications/Qt/5.12.0/clang_64/bin/moc
@@ -1223,6 +1229,14 @@ moc_inputs_window.cpp: /Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwidgetaction.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwizard.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtwidgetsversion.h \
+		../FAGlobs.h \
+		../ArrayOps.h \
+		../MathOps.h \
+		../FileOps.h \
+		../qcustomplot.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qmath.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qnumeric.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/QtNumeric \
 		../inputs_window.h \
 		moc_predefs.h \
 		/Applications/Qt/5.12.0/clang_64/bin/moc
@@ -1520,14 +1534,15 @@ main.o: ../main.cpp /Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Hea
 		../base_plot.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QWidget \
 		../inputs_window.h \
-		../plot_window.h \
-		../refit_window.h \
 		../FAGlobs.h \
 		../ArrayOps.h \
 		../MathOps.h \
 		../FileOps.h \
+		../plot_window.h \
+		../refit_window.h \
 		../DFA.h \
-		../FA.h
+		../FA.h \
+		../DCCA.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../main.cpp
 
 plot_window.o: ../plot_window.cpp ../plot_window.h \
@@ -1673,7 +1688,8 @@ plot_window.o: ../plot_window.cpp ../plot_window.h \
 		../MathOps.h \
 		../FileOps.h \
 		../DFA.h \
-		../FA.h
+		../FA.h \
+		../DCCA.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o plot_window.o ../plot_window.cpp
 
 qcustomplot.o: ../qcustomplot.cpp ../qcustomplot.h \
@@ -1823,14 +1839,15 @@ main_window.o: ../main_window.cpp /Applications/Qt/5.12.0/clang_64/lib/QtCore.fr
 		../base_plot.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QWidget \
 		../inputs_window.h \
-		../plot_window.h \
-		../refit_window.h \
 		../FAGlobs.h \
 		../ArrayOps.h \
 		../MathOps.h \
 		../FileOps.h \
+		../plot_window.h \
+		../refit_window.h \
 		../DFA.h \
-		../FA.h
+		../FA.h \
+		../DCCA.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main_window.o ../main_window.cpp
 
 FileOps.o: ../FileOps.cpp ../FileOps.h
@@ -2112,7 +2129,15 @@ inputs_window.o: ../inputs_window.cpp ../inputs_window.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwidgetaction.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwizard.h \
-		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtwidgetsversion.h
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtwidgetsversion.h \
+		../FAGlobs.h \
+		../ArrayOps.h \
+		../MathOps.h \
+		../FileOps.h \
+		../qcustomplot.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qmath.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qnumeric.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/QtNumeric
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o inputs_window.o ../inputs_window.cpp
 
 DFA.o: ../DFA.cpp ../DFA.h \
@@ -2394,6 +2419,147 @@ refit_window.o: ../refit_window.cpp ../refit_window.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwizard.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtwidgetsversion.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o refit_window.o ../refit_window.cpp
+
+DCCA.o: ../DCCA.cpp ../DCCA.h \
+		../FAGlobs.h \
+		../ArrayOps.h \
+		../MathOps.h \
+		../FileOps.h \
+		../qcustomplot.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qmath.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qnumeric.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/QtNumeric \
+		../FA.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/QtWidgets \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtwidgetsglobal.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qabstractbutton.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qabstractitemdelegate.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qabstractitemview.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qabstractscrollarea.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qabstractslider.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qabstractspinbox.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qaccessiblewidget.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qaction.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qactiongroup.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qapplication.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qboxlayout.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qbuttongroup.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qcalendarwidget.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qcheckbox.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qcolordialog.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qcolormap.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qcolumnview.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qcombobox.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qcommandlinkbutton.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qcommonstyle.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qcompleter.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qdatawidgetmapper.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qdatetimeedit.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qdesktopwidget.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qdial.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qdialog.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qdialogbuttonbox.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qdirmodel.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qdockwidget.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qdrawutil.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qerrormessage.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qfiledialog.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qfileiconprovider.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qfilesystemmodel.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qfocusframe.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qfontcombobox.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qfontdialog.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qformlayout.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qframe.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qgesture.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qgesturerecognizer.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qgraphicsanchorlayout.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qgraphicseffect.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qgraphicsgridlayout.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qgraphicsitem.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qgraphicsitemanimation.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qgraphicslayout.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qgraphicslayoutitem.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qgraphicslinearlayout.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qgraphicsproxywidget.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qgraphicsscene.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qgraphicssceneevent.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qgraphicstransform.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qgraphicsview.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qgraphicswidget.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qgridlayout.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qgroupbox.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qheaderview.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qinputdialog.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qitemdelegate.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qitemeditorfactory.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qkeyeventtransition.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qkeysequenceedit.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qlabel.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qlayout.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qlayoutitem.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qlcdnumber.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qlineedit.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qlistview.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qlistwidget.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qmainwindow.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qmdiarea.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qmdisubwindow.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qmenu.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qmenubar.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qmessagebox.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qmouseeventtransition.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qopenglwidget.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qplaintextedit.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qprogressbar.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qprogressdialog.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qproxystyle.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qpushbutton.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qradiobutton.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qrubberband.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qscrollarea.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qscrollbar.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qscroller.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qscrollerproperties.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qshortcut.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qsizegrip.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qsizepolicy.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qslider.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qspinbox.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qsplashscreen.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qsplitter.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qstackedlayout.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qstackedwidget.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qstatusbar.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qstyle.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qstyleditemdelegate.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qstylefactory.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qstyleoption.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qstylepainter.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qstyleplugin.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qsystemtrayicon.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtabbar.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtableview.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtablewidget.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtabwidget.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtextbrowser.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtextedit.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtoolbar.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtoolbox.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtoolbutton.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtooltip.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtreeview.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtreewidget.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtreewidgetitemiterator.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qundogroup.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qundostack.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qundoview.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwhatsthis.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwidgetaction.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwizard.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtwidgetsversion.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o DCCA.o ../DCCA.cpp
 
 moc_plot_window.o: moc_plot_window.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_plot_window.o moc_plot_window.cpp

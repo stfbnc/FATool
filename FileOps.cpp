@@ -1,6 +1,3 @@
-#include <iostream>
-#include <cstdio>
-#include <cstring>
 #include "FileOps.h"
 
 using namespace std;

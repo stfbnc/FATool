@@ -4,6 +4,14 @@
 - nanDFA che estende dfa (e lo stesso con le altre classi)
 - aggiungere per polynomial fino a 10
 
+DCCA
+-----
+nome file savetxt
+c99 arrays
+controllare per input corr
+
+-----
+
 linestyles per i fit
 
 generalizzare alle altre *FA

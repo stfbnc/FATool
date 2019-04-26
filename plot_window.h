@@ -7,6 +7,7 @@
 #include "refit_window.h"
 #include "FAGlobs.h"
 #include "DFA.h"
+#include "DCCA.h"
 #include "FileOps.h"
 
 class PlotWindow : public QWidget
@@ -26,8 +27,11 @@ private slots:
     void EnableButtons();
 private:
     void SetDimensions();
-    void PerformAnalysis(QString fileName, QString analysisType, QHash<QString, QString> *pHash);
+    void PerformAnalysis(QHash<QString, QString> *pHash, QString fileName, QString fileName2);
     void DisableButtons();
+    void RefitByAnalysis(int start, int end, double *hSlope, double *hIntcpt);
+    void DFAanalysis(QHash<QString, QString> *pHash, QString fileName);
+    void DCCAanalysis(QHash<QString, QString> *pHash, QString fileName, QString fileName2);
     QLabel *xlim;
     QLabel *ylim;
     QLabel *title;
@@ -48,7 +52,9 @@ private:
     QPushButton *save_txt;
     QPushButton *close_button;
     RefitWindow *refit_win;
+    QString analysis;
     DFA *dfa;
+    DCCA *dcca;
     int xDim;
     int yDim;
     int xWidth;
