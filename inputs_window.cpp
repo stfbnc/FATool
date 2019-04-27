@@ -45,7 +45,7 @@ InputsWindow::InputsWindow(QString analysisStr, QHash<QString, QString> *pHash, 
         isAbs = new QLabel("Computation type:", this);
         isAbs->setGeometry(padX, 3*padY+2*yHeight, xWidth*5, yHeight);
         absList = new QComboBox(this);
-        absList->setGeometry(padX+5*xWidth, 3*padY+2*yHeight, 2*xWidth, yHeight);
+        absList->setGeometry(padX/2+4*xWidth, 3*padY+2*yHeight+1, xWidth*10/3, yHeight);
         absList->addItem("absolute");
         absList->addItem("signed");
     }
@@ -77,9 +77,6 @@ bool InputsWindow::CheckInputs(QHash<QString, QString> *pHash)
     int Ns = pHash->value("Nscales").toInt();
     int ss = pHash->value("stepScale").toInt();
     QString sts = pHash->value("strScales");
-
-//    //rhoDCCA
-//    //gli stessi per dcca ma per due file contemporaneamente
 
 //    //MFDFAss
 //    //windows size
@@ -115,8 +112,8 @@ bool InputsWindow::CheckInputs(QHash<QString, QString> *pHash)
 //        inpt_errs.append("- step must be strictly positive and such that scales are smaller than the time series length\n");
 //    //controllare anche sts che ogni singola scala soddisfi la singole condizioni
 
-    //DFA, DCCA
-    if(analysis == strDFA || analysis == strDCCA){
+    //DFA, DCCA, rhoDCCA
+    if(analysis == strDFA || analysis == strDCCA || analysis == strRHODCCA){
         //windows size
         if(Mw < mw)
             inpt_errs.append("- biggest scale must be greater than smallest scale\n");

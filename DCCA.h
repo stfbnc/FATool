@@ -10,7 +10,6 @@ class DCCA : public FA
 public:
     DCCA(string, string, int, int, int, string, int);
 	~DCCA();
-	void checkInputs();
 	void allocateMemory();
     void getEqualLength(string, string);
 	int getTsLength();

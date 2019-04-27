@@ -121,7 +121,7 @@ void MainWindow::onLoadClick()
         qplot->graph(i)->setPen(pen);
         qplot->graph(i)->setName(QString::fromStdString(fn).split("/").last());
         qplot->graph(i)->setData(t, vec);
-        i == 0 ? qplot->graph(i)->rescaleAxes() : qplot->graph(i)->rescaleAxes(true);
+        i==0 ? qplot->graph(i)->rescaleAxes() : qplot->graph(i)->rescaleAxes(true);
     }
     if(fileNames.size() > 0){
         qplot->legend->setVisible(true);
@@ -163,7 +163,7 @@ void MainWindow::onGoClick()
 {
     QString analysisType = dd_list->currentText();
     if(analysisType != "-" && qplot->graphCount() > 0){
-        if(analysisType == strDCCA && fileNames.size() < 2){
+        if((analysisType == strDCCA || analysisType == strRHODCCA) && fileNames.size() < 2){
             QMessageBox messageBox;
             QString errToShow = "This type of analysis requires\nat least two data files";
             messageBox.critical(nullptr, "Error", errToShow);
@@ -174,26 +174,25 @@ void MainWindow::onGoClick()
             inpt_win->setAttribute(Qt::WA_DeleteOnClose);
             inpt_win->show();
             connect(inpt_win, SIGNAL(destroyed()), this, SLOT(EnableButtons()));
-            connect(inpt_win, SIGNAL(inputsInserted()), this, SLOT(onCloseInputWin()));
+            connect(inpt_win, SIGNAL(inputsInserted()), this, SLOT(onCloseInputWin()), Qt::QueuedConnection);
         }
     }
 }
 
 void MainWindow::onCloseInputWin()
 {
-    EnableButtons();
     QString analysisType = dd_list->currentText();
     if(analysisType == strDFA){
         for(int i = 0;  i < fileNames.size(); i++){
-            plot_win = new PlotWindow(analysisType, paramHash, fileNames[i]);
+            PlotWindow *plot_win = new PlotWindow(analysisType, paramHash, fileNames[i]);
             plot_win->setAttribute(Qt::WA_DeleteOnClose);
             plot_win->show();
         }
     }
-    if(analysisType == strDCCA){
+    if(analysisType == strDCCA || analysisType == strRHODCCA){
         for(int i = 0;  i < fileNames.size()-1; i++){
             for(int j = i+1; j < fileNames.size(); j++){
-                plot_win = new PlotWindow(analysisType, paramHash, fileNames[i], fileNames[j]);
+                PlotWindow *plot_win = new PlotWindow(analysisType, paramHash, fileNames[i], fileNames[j]);
                 plot_win->setAttribute(Qt::WA_DeleteOnClose);
                 plot_win->show();
             }

@@ -8,7 +8,7 @@ rhoDCCA::rhoDCCA(string file_name_, string file_name2_, int min_win_, int max_wi
 	ord = ord_;
 	win_step = win_step_;
 	L = 0;
-	rho = NULL;
+    rho = nullptr;
 }
 
 rhoDCCA::~rhoDCCA() {
@@ -31,7 +31,7 @@ void rhoDCCA::computeRho(){
     L = dccaXY.getRangeLength(min_win, max_win, win_step);
     rho = new double [L];
     for(int i = 0; i < L; i++)
-        rho[i] = Fxy[i] / (double)(Fxx[i] * Fyy[i]);
+        rho[i] = Fxy[i] / static_cast<double>(Fxx[i] * Fyy[i]);
 }
 
 int rhoDCCA::getRhoLength(){
@@ -39,8 +39,10 @@ int rhoDCCA::getRhoLength(){
 }
 
 string rhoDCCA::outFileStr(){
-	return "/"+RHODCCA_FN_START+"_"+to_string(min_win)+"_"+to_string(min_win)+"_"
-			+file_name.substr(file_name.find_last_of("/")+1)+"_"
+    size_t a = file_name.find_last_of("/");
+    size_t b = file_name.find_last_of(".");
+    return "/"+RHODCCA_FN_START+"_"+to_string(min_win)+"_"+to_string(max_win)+"_"
+            +file_name.substr(a+1, b-a-1)+"_"
 			+file_name2.substr(file_name2.find_last_of("/")+1);
 }
 
@@ -53,6 +55,26 @@ void rhoDCCA::saveFile(string path_tot){
     fclose(f);
 }
 
-//void rhoDCCA::plot(){
-//
-//}
+void rhoDCCA::plot(QCustomPlot *plt){
+    QVector<double> n(L), corrs(L);
+    for(int i = 0; i < L; i++){
+        n[i] = (i * win_step) + min_win;
+        corrs[i] = rho[i];
+    }
+    plt->addGraph();
+    plt->xAxis->setLabel("n");
+    plt->yAxis->setLabel("rhoDCCA(n)");
+    plt->graph(0)->setData(n, corrs);
+    QPen pen;
+    pen.setColor(Qt::red);
+    plt->graph(0)->setPen(pen);
+    plt->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, 10));
+    QString fn = QString::fromStdString(file_name).split("/").last();
+    fn.truncate(fn.lastIndexOf("."));
+    QString fn2 = QString::fromStdString(file_name2).split("/").last();
+    fn2.truncate(fn2.lastIndexOf("."));
+    plt->graph(0)->setName(fn+"_"+fn2+"_"+QString::number(min_win)+"_"+QString::number(max_win));
+    plt->graph(0)->rescaleAxes();
+    plt->legend->setVisible(true);
+    plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignLeft);
+}

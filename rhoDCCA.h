@@ -3,6 +3,7 @@
 
 #include "FAGlobs.h"
 #include "DCCA.h"
+#include <QtWidgets>
 
 class rhoDCCA
 {
@@ -13,7 +14,7 @@ public:
     int getRhoLength();
     string outFileStr();
     void saveFile(string);
-    //void plot();
+    void plot(QCustomPlot *);
 private:
 	string file_name;
 	string file_name2;

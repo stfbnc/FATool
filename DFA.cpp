@@ -38,8 +38,6 @@ void DFA::winFlucComp(){
 	int range = getRangeLength(min_win, max_win, win_step);
     ao.int_range(s, range, min_win, win_step);
 	int F_len = N / min_win;
-    //double F_nu1[F_len], F_nu2[F_len];
-    //double t_fit[max_win], y_fit[max_win], diff_vec[max_win];
     double *F_nu1, *F_nu2, *t_fit, *y_fit, *diff_vec;
     F_nu1 = new double [F_len];
     F_nu2 = new double [F_len];
@@ -50,7 +48,15 @@ void DFA::winFlucComp(){
     int N_s, curr_win_size;
     int start_lim, end_lim;
     double ang_coeff, intercept;
+    QProgressDialog progress(strDFA+" - "+QString::fromStdString(file_name.substr(file_name.find_last_of("/")+1)), "Stop", 0, range);
+    progress.setWindowModality(Qt::WindowModal);
     for(int i = 0; i < range; i++){
+        progress.setValue(i);
+        if(progress.wasCanceled()){
+            break;
+            //emit a signal
+            //plot window listens to it and stops execution
+        }
         curr_win_size = s[i];
         N_s = N / curr_win_size;
         ao.zero_vec(F_nu1, F_len);

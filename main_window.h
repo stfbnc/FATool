@@ -8,9 +8,6 @@
 #include "inputs_window.h"
 #include "plot_window.h"
 
-//class QPushButton;
-//class QLabel;
-//class QComboBox;
 class MainWindow : public QWidget
 {
 Q_OBJECT
@@ -41,7 +38,7 @@ private:
     QStringList fileNames;
     SaveWindow *save_win;
     InputsWindow *inpt_win;
-    PlotWindow *plot_win;
+    //PlotWindow plot_win;
     int xDim;
     int yDim;
     int xWidth;

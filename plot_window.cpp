@@ -20,9 +20,11 @@ PlotWindow::PlotWindow(QString analysisType, QHash<QString, QString> *pHash, QSt
     PerformAnalysis(pHash, fileName, fileName2);
     plt->replot();
     //refit button
-    refit = new QPushButton("Refit", this);
-    refit->setGeometry(xDim-5*xWidth-padX*5/2, yDim-yHeight-padY/2, xWidth, yHeight);
-    connect(refit, SIGNAL(clicked()), this, SLOT(onRefitClick()));
+    if(analysis != strRHODCCA && analysis != strHT){
+        refit = new QPushButton("Refit", this);
+        refit->setGeometry(xDim-5*xWidth-padX*5/2, yDim-yHeight-padY/2, xWidth, yHeight);
+        connect(refit, SIGNAL(clicked()), this, SLOT(onRefitClick()));
+    }
     //replot button
     replot = new QPushButton("Replot", this);
     replot->setGeometry(xDim-4*xWidth-padX*2, yDim-yHeight-padY/2, xWidth, yHeight);
@@ -95,6 +97,8 @@ void PlotWindow::PerformAnalysis(QHash<QString, QString> *pHash, QString fileNam
         DFAanalysis(pHash, fileName);
     else if(analysis == strDCCA)
         DCCAanalysis(pHash, fileName, fileName2);
+    else if(analysis == strRHODCCA)
+        rhoDCCAanalysis(pHash, fileName, fileName2);
 }
 
 void PlotWindow::DFAanalysis(QHash<QString, QString> *pHash, QString fileName)
@@ -137,6 +141,26 @@ void PlotWindow::DCCAanalysis(QHash<QString, QString> *pHash, QString fileName, 
     dcca->winFlucComp();
     dcca->H_loglogFit(mw, Mw);
     dcca->plot(plt);
+}
+
+void PlotWindow::rhoDCCAanalysis(QHash<QString, QString> *pHash, QString fileName, QString fileName2)
+{
+    FileOps fo;
+    string fn = fileName.toStdString();
+    int N = fo.rows_number(fn);
+    string fn2 = fileName2.toStdString();
+    int N2 = fo.rows_number(fn2);
+    MathOps mo;
+    int val = mo.min_val(N, N2);
+    int mw = pHash->value("minWin").toInt();
+    int Mw = pHash->value("maxWin").toInt();
+    int po = pHash->value("polOrd").toInt();
+    int ws = pHash->value("winStep").toInt();
+    if(Mw > val)
+        Mw = val;
+    rhodcca = new rhoDCCA(fn, fn2, mw, Mw, po, ws);
+    rhodcca->computeRho();
+    rhodcca->plot(plt);
 }
 
 void PlotWindow::DisableButtons()
@@ -280,4 +304,6 @@ void PlotWindow::onSaveTxtClick()
         dfa->saveFile(pathToSave.toStdString());
     else if(analysis == strDCCA)
         dcca->saveFile(pathToSave.toStdString());
+    else if(analysis == strRHODCCA)
+        rhodcca->saveFile(pathToSave.toStdString());
 }

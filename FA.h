@@ -54,7 +54,9 @@ public:
 	    ArrayOps ao = ArrayOps();
 	    FileOps fo = FileOps();
 		//time series vector
-		double pn[N], pn_nomean[N];
+        double *pn, *pn_nomean;
+        pn = new double [N];
+        pn_nomean = new double [N];
 	    FILE *f;
 	    f = fo.open_file(file_name, "r");
 	    for(int i = 0; i < N; i++)
@@ -66,6 +68,8 @@ public:
 	    mo.subtract_mean(pn, N, pn_nomean);
 	    //cumulative sum
 	    mo.cumsum(pn_nomean, y, N);
+        delAlloc<double>(pn);
+        delAlloc<double>(pn_nomean);
 	}
 
 	virtual void winFlucComp() = 0;

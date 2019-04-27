@@ -18,7 +18,8 @@ SOURCES +=  main.cpp \
     ArrayOps.cpp \
     MathOps.cpp \
     refit_window.cpp \
-    DCCA.cpp
+    DCCA.cpp \
+    rhoDCCA.cpp
 
 HEADERS += \
     plot_window.h \
@@ -34,4 +35,5 @@ HEADERS += \
     MathOps.h \
     FA.h \
     refit_window.h \
-    DCCA.h
+    DCCA.h \
+    rhoDCCA.h

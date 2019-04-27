@@ -13,7 +13,6 @@ DCCA::DCCA(string file_name_, string file_name2_, int min_win_, int max_win_, in
     checkFileExistence(file_name);
     checkFileExistence(file_name2);
 	getEqualLength(file_name, file_name2);
-//    checkInputs();
     allocateMemory();
 }
 
@@ -24,30 +23,6 @@ DCCA::~DCCA(){
 	delAlloc<int>(s);
 	delAlloc<double>(F);
 }
-
-//void DCCA::checkInputs(){
-//	//windows size
-//	if(max_win < min_win){
-//		fprintf(stdout, "ERROR %d: biggest scale must be greater than smallest scale\n", RANGE_FAILURE);
-//		exit(RANGE_FAILURE);
-//	}else if(min_win < 3){
-//		fprintf(stdout, "ERROR %d: smallest scale must be greater than 2\n", WIN_SIZE_FAILURE);
-//		exit(WIN_SIZE_FAILURE);
-//	}else if(max_win > N){
-//		fprintf(stdout, "ERROR %d: biggest scale must be smaller than time series length\n", WIN_SIZE_FAILURE);
-//		exit(WIN_SIZE_FAILURE);
-//	}
-//	//polynomial order
-//	if(ord < 1){
-//		fprintf(stdout, "ERROR %d: polynomial order must be greater than 0\n", POL_FAILURE);
-//		exit(POL_FAILURE);
-//	}
-//    //dcca computation type
-//    if(isAbs.compare(DEFAULT_DCCA) != 0 && isAbs.compare(CORR_DCCA) != 0){
-//        fprintf(stdout, "ERROR %d: computation type must be %s or %s\n", REV_SEG_FAILURE, DEFAULT_DCCA, CORR_DCCA);
-//        exit(REV_SEG_FAILURE);
-//    }
-//}
 
 void DCCA::allocateMemory(){
 	t = new double [N];
@@ -75,7 +50,9 @@ void DCCA::setFlucVectors(){
 	FA::setFlucVectors();
     MathOps mo = MathOps();
     FileOps fo = FileOps();
-	double pn2[N], pn2_nomean[N];
+    double *pn2, *pn2_nomean;
+    pn2 = new double [N];
+    pn2_nomean = new double [N];
 	FILE *f;
 	f = fo.open_file(file_name2, "r");
 	for(int i = 0; i < N; i++)
@@ -83,6 +60,8 @@ void DCCA::setFlucVectors(){
 	fclose(f);
 	mo.subtract_mean(pn2, N, pn2_nomean);
 	mo.cumsum(pn2_nomean, y2, N);
+    delAlloc<double>(pn2);
+    delAlloc<double>(pn2_nomean);
 }
     
 void DCCA::winFlucComp(){
@@ -91,8 +70,12 @@ void DCCA::winFlucComp(){
 	int range = getRangeLength(min_win, max_win, win_step);
     ao.int_range(s, range, min_win, win_step);
 	int F_len = N - min_win;
-    double F_nu[F_len];
-    double t_fit[max_win+1], y_fit1[max_win+1], y_fit2[max_win+1], diff_vec[max_win+1];
+    double *F_nu, *t_fit, *y_fit1, *y_fit2, *diff_vec;
+    F_nu = new double [F_len];
+    t_fit = new double [max_win+1];
+    y_fit1 = new double [max_win+1];
+    y_fit2 = new double [max_win+1];
+    diff_vec = new double [max_win+1];
     //computation
     int N_s, curr_win_size;
     int start_lim, end_lim;
@@ -128,6 +111,11 @@ void DCCA::winFlucComp(){
             F[i] = sqrt(mo.mean(F_nu, N_s));
         }
     }
+    delAlloc<double>(F_nu);
+    delAlloc<double>(t_fit);
+    delAlloc<double>(y_fit1);
+    delAlloc<double>(y_fit2);
+    delAlloc<double>(diff_vec);
 }
 
 double* DCCA::getF(){
@@ -142,12 +130,12 @@ double DCCA::getH_intercept(){
 	return H_intercept;
 }
 
-// l'interfaccia puo' calcolare H facendo un fit in un untervallo qualsiasi, anche dopo aver fatto l'analisi
 void DCCA::H_loglogFit(int start, int end){
-	//if start < min_win || end > max_win -> error
     MathOps mo = MathOps();
 	int range = getRangeLength(start, end, win_step);
-    double log_s[range], log_F[range];
+    double *log_s, *log_F;
+    log_s = new double [range];
+    log_F = new double [range];
     int idx = 0;
     for(int i = (start-min_win)/win_step; i <= (end-min_win)/win_step; i++){
         log_s[idx] = log(s[i]);
@@ -155,14 +143,18 @@ void DCCA::H_loglogFit(int start, int end){
         idx++;
     }
     mo.lin_fit(range, log_s, log_F, &H, &H_intercept);
+    delAlloc<double>(log_s);
+    delAlloc<double>(log_F);
 }
 
 string DCCA::outFileStr(){
-	return "/"+DCCA_FN_START+"_"+to_string(min_win)+"_"+to_string(min_win)+"_"
-			+file_name.substr(file_name.find_last_of("/")+1)+"_"
+    size_t a = file_name.find_last_of("/");
+    size_t b = file_name.find_last_of(".");
+    return "/"+DCCA_FN_START+"_"+to_string(min_win)+"_"+to_string(max_win)+"_"
+            +file_name.substr(a+1, b-a-1)+"_"
 			+file_name2.substr(file_name2.find_last_of("/")+1);
 }
-// posso salvare il file di tutto il range per poi eventualmente ricaricarlo per rifare e salvare il grafico in un altro range
+
 void DCCA::saveFile(string path_tot){
     FileOps fo = FileOps();
 	int range = getRangeLength(min_win, max_win, win_step);
