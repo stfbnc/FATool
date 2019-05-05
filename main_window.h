@@ -7,6 +7,7 @@
 #include "base_plot.h"
 #include "inputs_window.h"
 #include "plot_window.h"
+#include "starting_window.h"
 
 class MainWindow : public QWidget
 {
@@ -38,7 +39,7 @@ private:
     QStringList fileNames;
     SaveWindow *save_win;
     InputsWindow *inpt_win;
-    //PlotWindow plot_win;
+    StartingWindow *start_win;
     int xDim;
     int yDim;
     int xWidth;

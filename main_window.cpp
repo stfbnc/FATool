@@ -48,6 +48,8 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     quit_button = new QPushButton("Quit", this);
     quit_button->setGeometry(xDim-xWidth-padX/2, padY/2, xWidth, yHeight);
     connect(quit_button, SIGNAL(clicked()), QApplication::instance(), SLOT(quit()));
+    //instructions window
+    start_win = new StartingWindow();
 }
 
 MainWindow::~MainWindow(){}
