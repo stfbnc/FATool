@@ -39,6 +39,12 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     //go button
     go_button = new QPushButton("Go!", this);
     go_button->setGeometry(padX*2+4*xWidth, padY/2, xWidth, yHeight);
+    //go_button->setDefault(true);
+    //go_button->setShortcut(QKeySequence(Qt::Key_Enter));
+    shortcut = new QShortcut(QKeySequence(Qt::Key_Enter), go_button, SLOT(click()));
+    shortcut->setAutoRepeat(false);
+    //shortcut = new QShortcut(QKeySequence(Qt::Key_Enter), this);
+    //connect(shortcut, SIGNAL(activated()), go_button, SIGNAL(clicked()));
     connect(go_button, SIGNAL(clicked()), this, SLOT(onGoClick()));
     //clear button
     clear_button = new QPushButton("Clear all", this);
@@ -49,7 +55,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     quit_button->setGeometry(xDim-xWidth-padX/2, padY/2, xWidth, yHeight);
     connect(quit_button, SIGNAL(clicked()), QApplication::instance(), SLOT(quit()));
     //instructions window
-    start_win = new StartingWindow();
+    InstrWindow();
 }
 
 MainWindow::~MainWindow(){}
@@ -80,6 +86,19 @@ void MainWindow::initializeParamHash()
     paramHash->insert("Nscales", "");
     paramHash->insert("stepScale", "");
     paramHash->insert("strScales", "");
+}
+
+void MainWindow::InstrWindow()
+{
+    QFile f(prefsFile);
+    QTextStream in(&f);
+    QString str;
+    if(f.open(QFile::ReadWrite)){
+        str = in.readLine();
+        f.close();
+    }
+    if(str == showStartWin)
+        start_win = new StartingWindow();
 }
 
 void MainWindow::FillList()

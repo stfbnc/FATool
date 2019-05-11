@@ -7,8 +7,6 @@
 1.0
 ----
 
-finire startingwindow (ok e checkbox)
-
 bottoni predefiniti per l'invio
 
 generalizzare alle altre *FA

@@ -3,6 +3,7 @@
 
 #include <QApplication>
 #include <QtWidgets>
+#include "FAGlobs.h"
 
 class StartingWindow
 {
@@ -12,6 +13,7 @@ public:
 private:
     QString getInstrText();
     void onOKClick();
+    QCheckBox *cb;
 };
 
 #endif // STARTING_WINDOW_H

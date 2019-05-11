@@ -25,6 +25,10 @@
 #define CORR_DCCA "sign"
 //namespaces
 using namespace std;
+//preferences file
+const QString prefsFile = "prefs.txt";
+const QString showStartWin = "Y";
+const QString hideStartWin = "N";
 //strings
 const string STR_SEP = ",";
 const string HT_FN_START = "HT";

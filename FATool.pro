@@ -39,3 +39,6 @@ HEADERS += \
     DCCA.h \
     rhoDCCA.h \
     starting_window.h
+
+DISTFILES += \
+    prefs.txt

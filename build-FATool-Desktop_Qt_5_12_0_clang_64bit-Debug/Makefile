@@ -89,7 +89,8 @@ OBJECTS       = main.o \
 		moc_main_window.o \
 		moc_inputs_window.o \
 		moc_refit_window.o
-DIST          = /Applications/Qt/5.12.0/clang_64/mkspecs/features/spec_pre.prf \
+DIST          = ../prefs.txt \
+		/Applications/Qt/5.12.0/clang_64/mkspecs/features/spec_pre.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/qdevice.pri \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/features/device_config.prf \
 		/Applications/Qt/5.12.0/clang_64/mkspecs/common/unix.conf \
@@ -1104,6 +1105,7 @@ moc_main_window.cpp: /Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/He
 		../FA.h \
 		../DCCA.h \
 		../rhoDCCA.h \
+		../starting_window.h \
 		../main_window.h \
 		moc_predefs.h \
 		/Applications/Qt/5.12.0/clang_64/bin/moc
@@ -1861,7 +1863,8 @@ main_window.o: ../main_window.cpp /Applications/Qt/5.12.0/clang_64/lib/QtCore.fr
 		../DFA.h \
 		../FA.h \
 		../DCCA.h \
-		../rhoDCCA.h
+		../rhoDCCA.h \
+		../starting_window.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main_window.o ../main_window.cpp
 
 FileOps.o: ../FileOps.cpp ../FileOps.h
@@ -2847,7 +2850,15 @@ starting_window.o: ../starting_window.cpp ../starting_window.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwidgetaction.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwizard.h \
-		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtwidgetsversion.h
+		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtwidgetsversion.h \
+		../FileOps.h \
+		../FAGlobs.h \
+		../ArrayOps.h \
+		../MathOps.h \
+		../qcustomplot.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qmath.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qnumeric.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/QtNumeric
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o starting_window.o ../starting_window.cpp
 
 moc_plot_window.o: moc_plot_window.cpp 

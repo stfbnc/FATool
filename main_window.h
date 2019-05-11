@@ -3,6 +3,7 @@
 
 #include <QApplication>
 #include <QtWidgets>
+#include <QShortcut>
 #include "savewindow.h"
 #include "base_plot.h"
 #include "inputs_window.h"
@@ -27,6 +28,7 @@ private slots:
 private:
     void SetDimensions();
     void initializeParamHash();
+    void InstrWindow();
     void FillList();
     void DisableButtons();
     QPushButton *quit_button;
@@ -34,6 +36,7 @@ private:
     QPushButton *load_button;
     QPushButton *go_button;
     QPushButton *save_button;
+    QShortcut *shortcut;
     QLabel *fluct_txt;
     QComboBox *dd_list;
     QStringList fileNames;
