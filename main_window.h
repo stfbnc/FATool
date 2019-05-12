@@ -3,7 +3,6 @@
 
 #include <QApplication>
 #include <QtWidgets>
-#include <QShortcut>
 #include "savewindow.h"
 #include "base_plot.h"
 #include "inputs_window.h"
@@ -36,7 +35,6 @@ private:
     QPushButton *load_button;
     QPushButton *go_button;
     QPushButton *save_button;
-    QShortcut *shortcut;
     QLabel *fluct_txt;
     QComboBox *dd_list;
     QStringList fileNames;

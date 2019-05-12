@@ -9,7 +9,6 @@ class MFDFAsingleQ : public FA
 public:
     MFDFAsingleQ(string, int, int, int, double, int=1, int=1);
 	~MFDFAsingleQ();
-	void checkInputs();
 	void allocateMemory();
 	int getTsLength();
 	void winFlucComp();
@@ -18,7 +17,7 @@ public:
 	void H_loglogFit(int, int);
 	string outFileStr();
 	void saveFile(string);
-	//void plot();
+    void plot(QCustomPlot *);
 protected:
 	int min_win;
 	int max_win;

@@ -20,7 +20,7 @@ PlotWindow::PlotWindow(QString analysisType, QHash<QString, QString> *pHash, QSt
     PerformAnalysis(pHash, fileName, fileName2);
     plt->replot();
     //refit button
-    if(analysis != strRHODCCA && analysis != strHT){
+    if(analysis != strRHODCCA && analysis != strHT && analysis != strMFDFA){
         refit = new QPushButton("Refit", this);
         refit->setGeometry(xDim-5*xWidth-padX*5/2, yDim-yHeight-padY/2, xWidth, yHeight);
         connect(refit, SIGNAL(clicked()), this, SLOT(onRefitClick()));
@@ -99,6 +99,8 @@ void PlotWindow::PerformAnalysis(QHash<QString, QString> *pHash, QString fileNam
         DCCAanalysis(pHash, fileName, fileName2);
     else if(analysis == strRHODCCA)
         rhoDCCAanalysis(pHash, fileName, fileName2);
+    else if(analysis == strMFDFA)
+        MFDFAanalysis(pHash, fileName);
 }
 
 void PlotWindow::DFAanalysis(QHash<QString, QString> *pHash, QString fileName)
@@ -161,6 +163,27 @@ void PlotWindow::rhoDCCAanalysis(QHash<QString, QString> *pHash, QString fileNam
     rhodcca = new rhoDCCA(fn, fn2, mw, Mw, po, ws);
     rhodcca->computeRho();
     rhodcca->plot(plt);
+}
+
+void PlotWindow::MFDFAanalysis(QHash<QString, QString> *pHash, QString fileName)
+{
+    FileOps fo;
+    string fn = fileName.toStdString();
+    int N = fo.rows_number(fn);
+    int mw = pHash->value("minWin").toInt();
+    int Mw = pHash->value("maxWin").toInt();
+    int po = pHash->value("polOrd").toInt();
+    int ws = pHash->value("winStep").toInt();
+    int rs = pHash->value("revSeg").toInt();
+    double qi = pHash->value("qIn").toDouble();
+    int nq = pHash->value("Nq").toInt();
+    double qs = pHash->value("qStep").toDouble();
+    if(Mw > N)
+        Mw = N;
+    mfdfa = new MFDFA(fn, mw, Mw, po, qi, nq, ws, qs, rs);
+    mfdfa->setFlucVectors();
+    mfdfa->winFlucComp();
+    mfdfa->plot(plt);
 }
 
 void PlotWindow::DisableButtons()
@@ -306,4 +329,8 @@ void PlotWindow::onSaveTxtClick()
         dcca->saveFile(pathToSave.toStdString());
     else if(analysis == strRHODCCA)
         rhodcca->saveFile(pathToSave.toStdString());
+    else if(analysis == strMFDFA){
+        mfdfa->saveFile(pathToSave.toStdString());
+        mfdfa->qsaveFile(pathToSave.toStdString());
+    }
 }

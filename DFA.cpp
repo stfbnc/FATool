@@ -119,7 +119,6 @@ void DFA::H_loglogFit(int start, int end){
     double *log_s, *log_F;
     log_s = new double [range];
     log_F = new double [range];
-    //double log_s[range], log_F[range];
     int idx = 0;
     for(int i = (start-min_win)/win_step; i <= (end-min_win)/win_step; i++){
         log_s[idx] = log(s[i]);

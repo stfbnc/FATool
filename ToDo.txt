@@ -7,14 +7,12 @@
 1.0
 ----
 
-bottoni predefiniti per l'invio
-
 generalizzare alle altre *FA
 
 1.1
 ----
 
-possibilità di poter spostare la legenda ai 4 angoli (o anche inserire coordinate)
+possibilità di poter spostare la legenda ai 4 angoli (o anche inserire coordinate) (bottone sx)
 
 se è più grande di 10000 punti il grafico iniziale chiedere se si vuole plottare
 
@@ -27,4 +25,4 @@ permettere di conservare i fit precedenti nel plot (checkbox nella maschera da r
 
 linestyles per i fit
 
-ricaricare il file da plot_win per rifare il fit (forse, non mi piace molto)
+caricare il file delle fluttuazioni per rifare il fit (tipo la matrice per MFDFA e vari q)

@@ -25,12 +25,18 @@ private:
     QLabel *polOrd;
     QLabel *revSeg;
     QLabel *isAbs;
+    QLabel *qIn;
+    QLabel *Nq;
+    QLabel *qStep;
     QLineEdit *minWinTxt;
     QLineEdit *maxWinTxt;
     QLineEdit *winStepTxt;
     QLineEdit *polOrdTxt;
     QCheckBox *revSegBox;
     QComboBox *absList;
+    QLineEdit *qInTxt;
+    QLineEdit *NqTxt;
+    QLineEdit *qStepTxt;
     QString analysis;
     int xDim;
     int yDim;

@@ -64,7 +64,9 @@ SOURCES       = ../main.cpp \
 		../refit_window.cpp \
 		../DCCA.cpp \
 		../rhoDCCA.cpp \
-		../starting_window.cpp moc_plot_window.cpp \
+		../starting_window.cpp \
+		../MFDFA.cpp \
+		../MFDFAsingleQ.cpp moc_plot_window.cpp \
 		moc_qcustomplot.cpp \
 		moc_main_window.cpp \
 		moc_inputs_window.cpp \
@@ -84,6 +86,8 @@ OBJECTS       = main.o \
 		DCCA.o \
 		rhoDCCA.o \
 		starting_window.o \
+		MFDFA.o \
+		MFDFAsingleQ.o \
 		moc_plot_window.o \
 		moc_qcustomplot.o \
 		moc_main_window.o \
@@ -297,7 +301,9 @@ DIST          = ../prefs.txt \
 		../refit_window.h \
 		../DCCA.h \
 		../rhoDCCA.h \
-		../starting_window.h ../main.cpp \
+		../starting_window.h \
+		../MFDFA.h \
+		../MFDFAsingleQ.h ../main.cpp \
 		../plot_window.cpp \
 		../qcustomplot.cpp \
 		../main_window.cpp \
@@ -311,7 +317,9 @@ DIST          = ../prefs.txt \
 		../refit_window.cpp \
 		../DCCA.cpp \
 		../rhoDCCA.cpp \
-		../starting_window.cpp
+		../starting_window.cpp \
+		../MFDFA.cpp \
+		../MFDFAsingleQ.cpp
 QMAKE_TARGET  = FATool
 DESTDIR       = 
 TARGET        = FATool.app/Contents/MacOS/FATool
@@ -763,8 +771,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /Applications/Qt/5.12.0/clang_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../plot_window.h ../qcustomplot.h ../main_window.h ../FAGlobs.h ../FileOps.h ../savewindow.h ../base_plot.h ../inputs_window.h ../DFA.h ../ArrayOps.h ../MathOps.h ../FA.h ../refit_window.h ../DCCA.h ../rhoDCCA.h ../starting_window.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../main.cpp ../plot_window.cpp ../qcustomplot.cpp ../main_window.cpp ../FileOps.cpp ../savewindow.cpp ../base_plot.cpp ../inputs_window.cpp ../DFA.cpp ../ArrayOps.cpp ../MathOps.cpp ../refit_window.cpp ../DCCA.cpp ../rhoDCCA.cpp ../starting_window.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../plot_window.h ../qcustomplot.h ../main_window.h ../FAGlobs.h ../FileOps.h ../savewindow.h ../base_plot.h ../inputs_window.h ../DFA.h ../ArrayOps.h ../MathOps.h ../FA.h ../refit_window.h ../DCCA.h ../rhoDCCA.h ../starting_window.h ../MFDFA.h ../MFDFAsingleQ.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../main.cpp ../plot_window.cpp ../qcustomplot.cpp ../main_window.cpp ../FileOps.cpp ../savewindow.cpp ../base_plot.cpp ../inputs_window.cpp ../DFA.cpp ../ArrayOps.cpp ../MathOps.cpp ../refit_window.cpp ../DCCA.cpp ../rhoDCCA.cpp ../starting_window.cpp ../MFDFA.cpp ../MFDFAsingleQ.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -2851,15 +2859,40 @@ starting_window.o: ../starting_window.cpp ../starting_window.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwidgetaction.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qwizard.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtWidgets.framework/Headers/qtwidgetsversion.h \
-		../FileOps.h \
 		../FAGlobs.h \
 		../ArrayOps.h \
 		../MathOps.h \
+		../FileOps.h \
 		../qcustomplot.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qmath.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qnumeric.h \
 		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/QtNumeric
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o starting_window.o ../starting_window.cpp
+
+MFDFA.o: ../MFDFA.cpp ../MFDFA.h \
+		../FAGlobs.h \
+		../ArrayOps.h \
+		../MathOps.h \
+		../FileOps.h \
+		../qcustomplot.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qmath.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qnumeric.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/QtNumeric \
+		../MFDFAsingleQ.h \
+		../FA.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MFDFA.o ../MFDFA.cpp
+
+MFDFAsingleQ.o: ../MFDFAsingleQ.cpp ../MFDFAsingleQ.h \
+		../FAGlobs.h \
+		../ArrayOps.h \
+		../MathOps.h \
+		../FileOps.h \
+		../qcustomplot.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qmath.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/qnumeric.h \
+		/Applications/Qt/5.12.0/clang_64/lib/QtCore.framework/Headers/QtNumeric \
+		../FA.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o MFDFAsingleQ.o ../MFDFAsingleQ.cpp
 
 moc_plot_window.o: moc_plot_window.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_plot_window.o moc_plot_window.cpp

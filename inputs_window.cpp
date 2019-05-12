@@ -35,7 +35,7 @@ InputsWindow::InputsWindow(QString analysisStr, QHash<QString, QString> *pHash, 
     polOrd->setGeometry(padX, 2*padY+yHeight, xWidth*4, yHeight);
     polOrdTxt = new QLineEdit("1", this);
     polOrdTxt->setGeometry(padX+4*xWidth, 2*padY+yHeight, xWidth, yHeight);
-    if(analysis == strDFA){
+    if(analysis == strDFA || analysis == strMFDFA){
         revSeg = new QLabel("Backward computation", this);
         revSeg->setGeometry(padX, 3*padY+2*yHeight, xWidth*5, yHeight);
         revSegBox = new QCheckBox(this);
@@ -49,6 +49,20 @@ InputsWindow::InputsWindow(QString analysisStr, QHash<QString, QString> *pHash, 
         absList->addItem("absolute");
         absList->addItem("signed");
     }
+    if(analysis == strMFDFA){
+        Nq = new QLabel("Total q orders", this);
+        Nq->setGeometry(padX, 4*padY+3*yHeight, xWidth*4, yHeight);
+        NqTxt = new QLineEdit(this);
+        NqTxt->setGeometry(padX+3*xWidth, 4*padY+3*yHeight, xWidth, yHeight);
+        qIn = new QLabel("   from", this);
+        qIn->setGeometry(2*padX+xWidth*4, 4*padY+3*yHeight, xWidth*2, yHeight);
+        qInTxt = new QLineEdit(this);
+        qInTxt->setGeometry(4*padX+5*xWidth, 4*padY+3*yHeight, xWidth, yHeight);
+        qStep = new QLabel("every", this);
+        qStep->setGeometry(5*padX+6*xWidth, 4*padY+3*yHeight, xWidth*6/5, yHeight);
+        qStepTxt = new QLineEdit("1.0", this);
+        qStepTxt->setGeometry(6*padX+7*xWidth, 4*padY+3*yHeight, xWidth, yHeight);
+    }
 }
 
 InputsWindow::~InputsWindow(){}
@@ -56,7 +70,7 @@ InputsWindow::~InputsWindow(){}
 void InputsWindow::SetDimensions()
 {
     xDim = 310;
-    yDim = 145;
+    yDim = 180;
     xWidth = 30;
     yHeight = 30;
     padX = 10;
@@ -72,30 +86,11 @@ bool InputsWindow::CheckInputs(QHash<QString, QString> *pHash)
     int po = pHash->value("polOrd").toInt();
     int ws = pHash->value("winStep").toInt();
     int Nq = pHash->value("Nq").toInt();
-    //double qs = pHash->value("qStep").toDouble(); //controllare se funziona anche per step negativi
+    double qs = pHash->value("qStep").toDouble();
     int sc = pHash->value("scale").toInt();
     int Ns = pHash->value("Nscales").toInt();
     int ss = pHash->value("stepScale").toInt();
     QString sts = pHash->value("strScales");
-
-//    //MFDFAss
-//    //windows size
-//    if(Mw < mw)
-//        inpt_errs.append("- biggest scale must be greater than smallest scale\n");
-//    if(mw < 3)
-//        inpt_errs.append("- smallest scale must be greater than 2\n");
-//    //if(Mw > N)
-//    //    fprintf(stdout, "ERROR %d: biggest scale must be smaller than time series length\n", WIN_SIZE_FAILURE);
-//    if(ws < 1)
-//        inpt_errs.append("- step must be greater than 0\n");
-//    //polynomial order
-//    if(po < 1)
-//        inpt_errs.append("- polynomial order must be greater than 0\n");
-
-//    //MFDFA
-//    //windows size
-//    if(Nq < 1)
-//        inpt_errs.append("- number of qs must be greater than 0\n");
 
 //    //HTss
 //    //windows size
@@ -113,7 +108,8 @@ bool InputsWindow::CheckInputs(QHash<QString, QString> *pHash)
 //    //controllare anche sts che ogni singola scala soddisfi la singole condizioni
 
     //DFA, DCCA, rhoDCCA
-    if(analysis == strDFA || analysis == strDCCA || analysis == strRHODCCA){
+    if(analysis == strDFA || analysis == strDCCA || analysis == strRHODCCA
+       || analysis == strMFDFA){
         //windows size
         if(Mw < mw)
             inpt_errs.append("- biggest scale must be greater than smallest scale\n");
@@ -125,6 +121,13 @@ bool InputsWindow::CheckInputs(QHash<QString, QString> *pHash)
         //polynomial order
         if(po < 1)
             inpt_errs.append("- polynomial order must be greater than 0\n");
+    }
+    if(analysis == strMFDFA){
+        //number of q orders
+        if(Nq < 1)
+            inpt_errs.append("- number of q orders must be greater than 0\n");
+        if(qs <= 0.0)
+            inpt_errs.append("- step for q orders must be greater than 0\n");
     }
     if(inpt_errs.size() > 0){
         QMessageBox messageBox;
@@ -141,11 +144,12 @@ bool InputsWindow::CheckInputs(QHash<QString, QString> *pHash)
 
 void InputsWindow::onOKClick(QHash<QString, QString> *pHash)
 {
+    bool inptOk;
     QString mw = minWinTxt->text().trimmed();
     QString Mw = maxWinTxt->text().trimmed();
     QString po = polOrdTxt->text().trimmed();
     QString ws = winStepTxt->text().trimmed();
-    QRegExp rgx("^[0-9]+$");
+    QRegExp rgx("^[-]?[0-9]+[.]?[0-9]*$");
     if((!mw.isEmpty() && mw.contains(rgx)) &&
        (!Mw.isEmpty() && Mw.contains(rgx)) &&
        (!po.isEmpty() && po.contains(rgx)) &&
@@ -154,10 +158,30 @@ void InputsWindow::onOKClick(QHash<QString, QString> *pHash)
         pHash->insert("maxWin", Mw);
         pHash->insert("polOrd", po);
         pHash->insert("winStep", ws);
-        if(analysis == strDFA)
+        if(analysis == strDFA || analysis == strMFDFA)
             pHash->insert("revSeg", revSegBox->isChecked() ? "1" : "0");
         if(analysis == strDCCA)
             pHash->insert("isAbs", absList->currentText()=="absolute" ? DEFAULT_DCCA : CORR_DCCA);
+        inptOk = true;
+    }else{
+        inptOk = false;
+    }
+    if(analysis == strMFDFA){
+        QString qi = qInTxt->text().trimmed();
+        QString nq = NqTxt->text().trimmed();
+        QString qs = qStepTxt->text().trimmed();
+        if((!qi.isEmpty() && qi.contains(rgx)) &&
+           (!nq.isEmpty() && nq.contains(rgx)) &&
+           (!qs.isEmpty() && qs.contains(rgx))){
+            pHash->insert("qIn", qi);
+            pHash->insert("Nq", nq);
+            pHash->insert("qStep", qs);
+            inptOk = true;
+        }else{
+            inptOk = false;
+        }
+    }
+    if(inptOk){
         if(CheckInputs(pHash)){
             emit inputsInserted();
             close();

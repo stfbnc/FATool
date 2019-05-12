@@ -8,8 +8,7 @@ class MFDFA : public MFDFAsingleQ
 {
 public:
     MFDFA(string, int, int, int, double, int, int=1, double=1.0, int=1);
-	~MFDFA();
-	void checkInputs() override;
+    ~MFDFA() override;
     void allocateQmemory();
     void setQrange(double, int, double);
 	void winFlucComp() override;
@@ -17,8 +16,7 @@ public:
 	void saveFile(string) override;
 	string qoutFileStr();
 	void qsaveFile(string);
-	//void plot();
-	//void qplot();
+    void plot(QCustomPlot *) override;
 private:
     int Nq;
     double stepq;

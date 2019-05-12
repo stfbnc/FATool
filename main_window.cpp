@@ -39,12 +39,6 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     //go button
     go_button = new QPushButton("Go!", this);
     go_button->setGeometry(padX*2+4*xWidth, padY/2, xWidth, yHeight);
-    //go_button->setDefault(true);
-    //go_button->setShortcut(QKeySequence(Qt::Key_Enter));
-    shortcut = new QShortcut(QKeySequence(Qt::Key_Enter), go_button, SLOT(click()));
-    shortcut->setAutoRepeat(false);
-    //shortcut = new QShortcut(QKeySequence(Qt::Key_Enter), this);
-    //connect(shortcut, SIGNAL(activated()), go_button, SIGNAL(clicked()));
     connect(go_button, SIGNAL(clicked()), this, SLOT(onGoClick()));
     //clear button
     clear_button = new QPushButton("Clear all", this);
@@ -203,7 +197,7 @@ void MainWindow::onGoClick()
 void MainWindow::onCloseInputWin()
 {
     QString analysisType = dd_list->currentText();
-    if(analysisType == strDFA){
+    if(analysisType == strDFA || analysisType == strMFDFA){
         for(int i = 0;  i < fileNames.size(); i++){
             PlotWindow *plot_win = new PlotWindow(analysisType, paramHash, fileNames[i]);
             plot_win->setAttribute(Qt::WA_DeleteOnClose);

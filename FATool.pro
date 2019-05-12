@@ -20,7 +20,9 @@ SOURCES +=  main.cpp \
     refit_window.cpp \
     DCCA.cpp \
     rhoDCCA.cpp \
-    starting_window.cpp
+    starting_window.cpp \
+    MFDFA.cpp \
+    MFDFAsingleQ.cpp
 
 HEADERS += \
     plot_window.h \
@@ -38,7 +40,9 @@ HEADERS += \
     refit_window.h \
     DCCA.h \
     rhoDCCA.h \
-    starting_window.h
+    starting_window.h \
+    MFDFA.h \
+    MFDFAsingleQ.h
 
 DISTFILES += \
     prefs.txt
