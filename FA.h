@@ -17,7 +17,7 @@ public:
 
 	template <class T>
 	void delAlloc(T *p){
-		if(p != NULL)
+        if(p != nullptr)
 			delete [] p;
 	}
 

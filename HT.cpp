@@ -6,9 +6,8 @@ HT::HT(string file_name_, int scale_, int Nscales_, int stepScale_)
 	Nscales = Nscales_;
 	minScale = scale_;
 	stepScale = stepScale_;
-	scales = NULL;
-	HTmtx = NULL;
-    checkInputs();
+    scales = nullptr;
+    HTmtx = nullptr;
     allocateScalesMemory();
     ArrayOps ao = ArrayOps();
     ao.int_range(scales, Nscales, minScale, stepScale);
@@ -18,8 +17,8 @@ HT::HT(string fileName, string strScales)
 		: HTsingleScale(fileName, stoi(strScales.substr(0, strScales.find_first_of(STR_SEP))))
 {
 	Nscales = getNumScales(strScales);
-	scales = NULL;
-	HTmtx = NULL;
+    scales = nullptr;
+    HTmtx = nullptr;
 	allocateScalesMemory();
 	getScales(strScales);
 	MathOps mo = MathOps();
@@ -29,17 +28,6 @@ HT::HT(string fileName, string strScales)
 HT::~HT(){
 	delAlloc<int>(scales);
 	del2Alloc<double>(HTmtx, getRangeLength(minScale, N));
-}
-
-void HT::checkInputs(){
-	//windows size
-	if(Nscales < 1 || Nscales > N){
-		fprintf(stdout, "ERROR %d: number of scales must be included between 1 and time series length\n", WIN_SIZE_FAILURE);
-		exit(WIN_SIZE_FAILURE);
-	}else if(stepScale < 1 || (minScale+(Nscales-1)*stepScale) > N){
-		fprintf(stdout, "ERROR %d: step must be strictly positive and such that scales are smaller than the time series length\n", WIN_SIZE_FAILURE);
-		exit(WIN_SIZE_FAILURE);
-	}
 }
 
 void HT::allocateScalesMemory(){
@@ -52,7 +40,7 @@ void HT::allocateScalesMemory(){
 
 int HT::getNumScales(string str){
 	int count = 0;
-	int pos = 0;
+    size_t pos = 0;
 	while((pos = str.find(STR_SEP, pos)) != string::npos){
 	    count++;
 	    pos++;
@@ -63,7 +51,7 @@ int HT::getNumScales(string str){
 
 void HT::getScales(string str){
 	int i = 0;
-	int pos = 0;
+    size_t pos = 0;
 	string token;
 	while((pos = str.find(STR_SEP)) != string::npos){
 	    token = str.substr(0, pos);
@@ -83,7 +71,7 @@ void HT::winFlucComp(){
 		int Lscale = getRangeLength(scale, N);
 		ao.zero_vec(Ht, L);
 		HTsingleScale::winFlucComp();
-		H_loglogFit(1, 1);
+        Ht_fit();
 		for(int j = 0; j < Lscale; j++)
 			HTmtx[j][i] = Ht[j];
 		for(int j = Lscale; j < L; j++)

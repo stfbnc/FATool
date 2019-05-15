@@ -22,7 +22,9 @@ SOURCES +=  main.cpp \
     rhoDCCA.cpp \
     starting_window.cpp \
     MFDFA.cpp \
-    MFDFAsingleQ.cpp
+    MFDFAsingleQ.cpp \
+    HT.cpp \
+    HTsingleScale.cpp
 
 HEADERS += \
     plot_window.h \
@@ -42,7 +44,9 @@ HEADERS += \
     rhoDCCA.h \
     starting_window.h \
     MFDFA.h \
-    MFDFAsingleQ.h
+    MFDFAsingleQ.h \
+    HT.h \
+    HTsingleScale.h
 
 DISTFILES += \
     prefs.txt

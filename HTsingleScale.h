@@ -9,13 +9,14 @@ class HTsingleScale : public FA
 public:
 	HTsingleScale(string, int);
 	~HTsingleScale();
-	void checkInputs();
 	void allocateMemory();
 	int getTsLength();
 	void winFlucComp();
-	void H_loglogFit(int, int);
+    void H_loglogFit(int , int);
+    void Ht_fit();
 	string outFileStr();
 	void saveFile(string);
+    void plot(QCustomPlot *);
 protected:
 	int scale;
 	double *Ht;

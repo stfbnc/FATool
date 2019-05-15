@@ -9,8 +9,7 @@ class HT : public HTsingleScale
 public:
 	HT(string, int, int, int);
 	HT(string, string);
-	~HT();
-	void checkInputs() override;
+    ~HT() override;
 	void allocateScalesMemory();
 	int getNumScales(string);
 	void getScales(string);

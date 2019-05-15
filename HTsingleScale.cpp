@@ -8,7 +8,6 @@ HTsingleScale::HTsingleScale(string file_name_, int scale_)
 	scale = scale_;
     checkFileExistence(file_name);
 	N = setTsLength(file_name);
-    checkInputs();
     allocateMemory();
 }
 
@@ -17,17 +16,6 @@ HTsingleScale::~HTsingleScale(){
 	delAlloc<double>(y);
 	delAlloc<double>(F);
 	delAlloc<double>(Ht);
-}
-
-void HTsingleScale::checkInputs(){
-	//windows size
-	if(scale < 3){
-		fprintf(stdout, "ERROR %d: scale must be greater than 2\n", WIN_SIZE_FAILURE);
-		exit(WIN_SIZE_FAILURE);
-	}else if(scale > N){
-		fprintf(stdout, "ERROR %d: scale must be smaller than time series length\n", WIN_SIZE_FAILURE);
-		exit(WIN_SIZE_FAILURE);
-	}
 }
 
 void HTsingleScale::allocateMemory(){
@@ -45,7 +33,10 @@ void HTsingleScale::winFlucComp(){
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
 	int range = getRangeLength(scale, N);
-    double t_fit[scale], y_fit[scale], diff_vec[scale];
+    double *t_fit, *y_fit, *diff_vec;
+    t_fit = new double [scale];
+    y_fit = new double [scale];
+    diff_vec = new double [scale];
     //computation
     int start_lim, end_lim;
     double ang_coeff, intercept;
@@ -66,25 +57,31 @@ void HTsingleScale::winFlucComp(){
 }
 // l'interfaccia puo' calcolare H facendo un fit in un untervallo qualsiasi, anche dopo aver fatto l'analisi
 void HTsingleScale::H_loglogFit(int a, int b){
-	int start = 4;
-	int end = N / 5;
-	int step = N / 20;
-	if(step == 0)
-		step = 1;
-	MFDFAsingleQ dfaQ0 = MFDFAsingleQ(file_name, start, end, 1, 0.0, step);
-	dfaQ0.setFlucVectors();
-	dfaQ0.winFlucComp();
-	dfaQ0.H_loglogFit(start, end);
-	double Hq0 = dfaQ0.getH();
-	double Hq0_intercept = dfaQ0.getH_intercept();
-	
+    a = 0;
+    b = 0;
+}
+
+void HTsingleScale::Ht_fit()
+{
+    int start = 4;
+    int end = N / 5;
+    int step = N / 20;
+    if(step == 0)
+        step = 1;
+    MFDFAsingleQ dfaQ0 = MFDFAsingleQ(file_name, start, end, 1, 0.0, step);
+    dfaQ0.setFlucVectors();
+    dfaQ0.winFlucComp();
+    dfaQ0.H_loglogFit(start, end);
+    double Hq0 = dfaQ0.getH();
+    double Hq0_intercept = dfaQ0.getH_intercept();
+
     MathOps mo = MathOps();
-	int range = getRangeLength(scale, N);
-	double Regfit, logscale;
-	Regfit = Hq0_intercept + Hq0 * log(scale);
+    int range = getRangeLength(scale, N);
+    double Regfit, logscale;
+    Regfit = Hq0_intercept + Hq0 * log(scale);
     logscale = log(range) - log(scale);
     for(int i = 0; i < range; i++){
-        Ht[i] = (Regfit - log(F[i]))/(double) logscale + Hq0;
+        Ht[i] = (Regfit - log(F[i])) / static_cast<double>(logscale) + Hq0;
     }
 }
 
@@ -101,4 +98,9 @@ void HTsingleScale::saveFile(string path_tot){
     for(int i = 0; i < range; i++)
         fprintf(f, "%lf\n", Ht[i]);
     fclose(f);
+}
+
+void HTsingleScale::plot(QCustomPlot *)
+{
+
 }
