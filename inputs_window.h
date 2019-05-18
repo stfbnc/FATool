@@ -13,8 +13,17 @@ public:
     ~InputsWindow();
 signals:
     void inputsInserted();
+private slots:
+    void onRangeChkBoxClick();
+    void onStringChkBoxClick();
 private:
     void SetDimensions();
+    void setInptWindow();
+    void DFAInptWindow();
+    void DCCAInptWindow();
+    void MFDFAInptWindow();
+    void rhoDCCAInptWindow();
+    void HTInptWindow();
     void onOKClick(QHash<QString, QString> *pHash);
     bool CheckInputs(QHash<QString, QString> *pHash);
     QPushButton *ok_button;
@@ -37,6 +46,8 @@ private:
     QLineEdit *qInTxt;
     QLineEdit *NqTxt;
     QLineEdit *qStepTxt;
+    QCheckBox *rangeBox;
+    QCheckBox *stringBox;
     QString analysis;
     int xDim;
     int yDim;

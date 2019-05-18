@@ -101,6 +101,8 @@ void PlotWindow::PerformAnalysis(QHash<QString, QString> *pHash, QString fileNam
         rhoDCCAanalysis(pHash, fileName, fileName2);
     else if(analysis == strMFDFA)
         MFDFAanalysis(pHash, fileName);
+    else if(analysis == strHT)
+        HTanalysis(pHash, fileName);
 }
 
 void PlotWindow::DFAanalysis(QHash<QString, QString> *pHash, QString fileName)
@@ -184,6 +186,22 @@ void PlotWindow::MFDFAanalysis(QHash<QString, QString> *pHash, QString fileName)
     mfdfa->setFlucVectors();
     mfdfa->winFlucComp();
     mfdfa->plot(plt);
+}
+
+void PlotWindow::HTanalysis(QHash<QString, QString> *pHash, QString fileName)
+{
+    FileOps fo;
+    string fn = fileName.toStdString();
+    int N = fo.rows_number(fn);
+    int sc = pHash->value("scale").toInt();
+    int Ns = pHash->value("Nscales").toInt();
+    int ss = pHash->value("stepScale").toInt();
+    string ssc = pHash->value("strScales").toStdString();
+    if(sc > N)
+        sc = N;
+//    if((sc+(Ns-1)*ss) > N)
+//        Ns =
+
 }
 
 void PlotWindow::DisableButtons()

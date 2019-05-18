@@ -197,7 +197,7 @@ void MainWindow::onGoClick()
 void MainWindow::onCloseInputWin()
 {
     QString analysisType = dd_list->currentText();
-    if(analysisType == strDFA || analysisType == strMFDFA){
+    if(analysisType == strDFA || analysisType == strMFDFA || analysisType == strHT){
         for(int i = 0;  i < fileNames.size(); i++){
             PlotWindow *plot_win = new PlotWindow(analysisType, paramHash, fileNames[i]);
             plot_win->setAttribute(Qt::WA_DeleteOnClose);

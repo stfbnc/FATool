@@ -10,6 +10,7 @@
 #include "DCCA.h"
 #include "rhoDCCA.h"
 #include "MFDFA.h"
+#include "HT.h"
 #include "FileOps.h"
 
 class PlotWindow : public QWidget
@@ -34,6 +35,7 @@ private:
     void RefitByAnalysis(int start, int end, double *hSlope, double *hIntcpt);
     void DFAanalysis(QHash<QString, QString> *pHash, QString fileName);
     void MFDFAanalysis(QHash<QString, QString> *pHash, QString fileName);
+    void HTanalysis(QHash<QString, QString> *pHash, QString fileName);
     void DCCAanalysis(QHash<QString, QString> *pHash, QString fileName, QString fileName2);
     void rhoDCCAanalysis(QHash<QString, QString> *pHash, QString fileName, QString fileName2);
     QLabel *xlim;
@@ -61,6 +63,7 @@ private:
     DCCA *dcca;
     rhoDCCA *rhodcca;
     MFDFA *mfdfa;
+    HT *ht;
     int xDim;
     int yDim;
     int xWidth;
