@@ -15,23 +15,31 @@ rhoDCCA::~rhoDCCA() {
 	delete [] rho;
 }
 
-void rhoDCCA::computeRho(){
+bool rhoDCCA::computeRho(){
+    bool execStop = false;
     DCCA dccaXX = DCCA(file_name, file_name, min_win, max_win, ord, DEFAULT_DCCA, win_step);
     dccaXX.setFlucVectors();
-    dccaXX.winFlucComp();
-    double *Fxx = dccaXX.getF();
-    DCCA dccaYY = DCCA(file_name2, file_name2, min_win, max_win, ord, DEFAULT_DCCA, win_step);
-    dccaYY.setFlucVectors();
-    dccaYY.winFlucComp();
-    double *Fyy = dccaYY.getF();
-    DCCA dccaXY = DCCA(file_name, file_name2, min_win, max_win, ord, CORR_DCCA, win_step);
-    dccaXY.setFlucVectors();
-    dccaXY.winFlucComp();
-    double *Fxy = dccaXY.getF();
-    L = dccaXY.getRangeLength(min_win, max_win, win_step);
-    rho = new double [L];
-    for(int i = 0; i < L; i++)
-        rho[i] = Fxy[i] / static_cast<double>(Fxx[i] * Fyy[i]);
+    execStop = dccaXX.winFlucComp();
+    if(!execStop){
+        double *Fxx = dccaXX.getF();
+        DCCA dccaYY = DCCA(file_name2, file_name2, min_win, max_win, ord, DEFAULT_DCCA, win_step);
+        dccaYY.setFlucVectors();
+        execStop = dccaYY.winFlucComp();
+        if(!execStop){
+            double *Fyy = dccaYY.getF();
+            DCCA dccaXY = DCCA(file_name, file_name2, min_win, max_win, ord, CORR_DCCA, win_step);
+            dccaXY.setFlucVectors();
+            execStop = dccaXY.winFlucComp();
+            if(!execStop){
+                double *Fxy = dccaXY.getF();
+                L = dccaXY.getRangeLength(min_win, max_win, win_step);
+                rho = new double [L];
+                for(int i = 0; i < L; i++)
+                    rho[i] = Fxy[i] / static_cast<double>(Fxx[i] * Fyy[i]);
+            }
+        }
+    }
+    return execStop;
 }
 
 int rhoDCCA::getRhoLength(){

@@ -64,7 +64,8 @@ void DCCA::setFlucVectors(){
     delAlloc<double>(pn2_nomean);
 }
     
-void DCCA::winFlucComp(){
+bool DCCA::winFlucComp(){
+    bool execStop = false;
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
 	int range = getRangeLength(min_win, max_win, win_step);
@@ -80,7 +81,17 @@ void DCCA::winFlucComp(){
     int N_s, curr_win_size;
     int start_lim, end_lim;
     double ang_coeff1, intercept1, ang_coeff2, intercept2;
+    QProgressDialog progress(strDCCA+"\n"+QString::fromStdString(file_name.substr(file_name.find_last_of("/")+1))+
+                             " vs "+QString::fromStdString(file_name2.substr(file_name2.find_last_of("/")+1)), "Stop", 0, range-1);
+    progress.setWindowModality(Qt::WindowModal);
+    progress.setMinimumDuration(0);
+    progress.setFixedSize(300, 200);//da decidere
     for(int i = 0; i < range; i++){
+        progress.setValue(i);
+        if(progress.wasCanceled()){
+            execStop = true;
+            break;
+        }
         curr_win_size = s[i];
         N_s = N - curr_win_size;
         ao.zero_vec(F_nu, F_len);
@@ -116,6 +127,7 @@ void DCCA::winFlucComp(){
     delAlloc<double>(y_fit1);
     delAlloc<double>(y_fit2);
     delAlloc<double>(diff_vec);
+    return execStop;
 }
 
 double* DCCA::getF(){

@@ -55,28 +55,36 @@ void HT::getScales(string str){
 	string token;
 	while((pos = str.find(STR_SEP)) != string::npos){
 	    token = str.substr(0, pos);
-	    scales[i] = stoi(token);
+        int s = stoi(token);
+        if(s > N)
+            scales[i] = N;
+        else
+            scales[i] = s;
 	    str.erase(0, pos+STR_SEP.length());
 	    i++;
 	}
 	scales[i] = stoi(str);
 }
 
-//void HT::scalesWinFlucComp(){
-void HT::winFlucComp(){
+bool HT::winFlucComp(){
+    bool execStop = false;
 	int L = getRangeLength(minScale, N);
 	ArrayOps ao = ArrayOps();
 	for(int i = 0; i < Nscales; i++){
 		scale = scales[i];
 		int Lscale = getRangeLength(scale, N);
 		ao.zero_vec(Ht, L);
-		HTsingleScale::winFlucComp();
-        Ht_fit();
-		for(int j = 0; j < Lscale; j++)
-			HTmtx[j][i] = Ht[j];
-		for(int j = Lscale; j < L; j++)
-			HTmtx[j][i] = numeric_limits<double>::quiet_NaN();
+        execStop = HTsingleScale::winFlucComp();
+        if(!execStop){
+            Ht_fit();
+            for(int j = 0; j < Lscale; j++)
+                HTmtx[j][i] = Ht[j];
+            for(int j = Lscale; j < L; j++)
+                HTmtx[j][i] = numeric_limits<double>::quiet_NaN();
+        }else
+            break;
 	}
+    return execStop;
 }
 
 string HT::outFileStr(){
@@ -98,4 +106,50 @@ void HT::saveFile(string path_tot){
 		}
 	}
 	fclose(f);
+}
+
+void HT::plot(QCustomPlot *plt)
+{
+    QString fn = QString::fromStdString(file_name).split("/").last();
+    fn.truncate(fn.lastIndexOf("."));
+    int L = getRangeLength(minScale, N);
+//    QVector<double> w(L);
+//    for(int i = 0; i < L; i++)
+//        w[i] = i;
+    //QVector<double> plt_vec(L);
+    QVector<QCPGraphData> plt_vec(L);
+    double *vec;
+    vec = new double [L];
+    QVector<QCPAxisRect *> axRect(Nscales);
+    for(int j = 0; j < Nscales; j++){
+        axRect[j] = new QCPAxisRect(plt);
+        plt->plotLayout()->addElement(j, 0, axRect[j]);
+        for(int i = 0; i < L; i++){
+            plt_vec[i].key = i + 1;
+            plt_vec[i].value = HTmtx[i][j];
+            vec[i] = HTmtx[i][j];
+        }
+        QCPGraph *gr = plt->addGraph(axRect[j]->axis(QCPAxis::atBottom, j), axRect[j]->axis(QCPAxis::atLeft));
+        gr->data()->set(plt_vec);
+        gr->rescaleKeyAxis();
+        gr->setLineStyle(QCPGraph::lsLine);
+        QPen pen;
+        pen.setColor(colours[j%colours.size()]);
+        gr->setPen(pen);
+        MathOps mo;
+        gr->setName(fn+"_w"+QString::number(scales[j])+" - <Ht> = "+QString::number(mo.nan_mean(vec, L)));
+//        plt->graph(j)->setData(w, plt_vec);
+//        plt->graph(j)->setLineStyle(QCPGraph::lsLine);
+//        QPen pen;
+//        pen.setColor(colours[j%colours.size()]);
+//        plt->graph(j)->setPen(pen);
+//        MathOps mo;
+//        plt->graph(j)->setName(fn+"_w"+QString::number(scales[j])+" - <Ht> = "+QString::number(mo.nan_mean(vec, L)));
+//        j==0 ? plt->graph(j)->rescaleAxes() : plt->graph(j)->rescaleAxes(true);
+    }
+//    plt->xAxis->setLabel("w");
+//    plt->yAxis->setLabel("Ht");
+//    plt->legend->setVisible(true);
+//    plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignLeft);
+    delAlloc(vec);
 }

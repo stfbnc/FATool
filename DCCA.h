@@ -14,7 +14,7 @@ public:
     void getEqualLength(string, string);
 	int getTsLength();
 	void setFlucVectors();
-	void winFlucComp();
+    bool winFlucComp();
     double *getF();
 	double getH();
 	double getH_intercept();

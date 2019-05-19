@@ -12,7 +12,7 @@ public:
 	~DFA();
 	void allocateMemory();
 	int getTsLength();
-	void winFlucComp();
+    bool winFlucComp();
     int getWinStep();
 	double getH();
 	double getH_intercept();

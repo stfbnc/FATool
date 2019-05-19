@@ -34,19 +34,24 @@ void MFDFA::setQrange(double start, int len, double step){
     ao.double_range(qRange, len, start, step);
 }
 
-void MFDFA::winFlucComp(){
+bool MFDFA::winFlucComp(){
+    bool execStop = false;
 	setQrange(q, Nq, stepq);
 	int Lq = getRangeLength(min_win, max_win, win_step);
 	for(int i = 0; i < Nq; i++){
 		q = qRange[i];
-		MFDFAsingleQ::winFlucComp();
-		for(int j = 0; j < Lq; j++){
-			flucMtx[j][i] = F[j];
-		}
-		H_loglogFit(min_win, max_win);
-		Hq[i] = getH();
-		H_interceptq[i] = getH_intercept();
+        execStop = MFDFAsingleQ::winFlucComp();
+        if(!execStop){
+            for(int j = 0; j < Lq; j++){
+                flucMtx[j][i] = F[j];
+            }
+            H_loglogFit(min_win, max_win);
+            Hq[i] = getH();
+            H_interceptq[i] = getH_intercept();
+        }else
+            break;
 	}
+    return execStop;
 }
 
 string MFDFA::outFileStr(){

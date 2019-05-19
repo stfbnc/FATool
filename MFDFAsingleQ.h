@@ -3,6 +3,7 @@
 
 #include "FAGlobs.h"
 #include "FA.h"
+#include <QtWidgets>
 
 class MFDFAsingleQ : public FA
 {
@@ -11,7 +12,7 @@ public:
 	~MFDFAsingleQ();
 	void allocateMemory();
 	int getTsLength();
-	void winFlucComp();
+    bool winFlucComp();
 	double getH();
 	double getH_intercept();
 	void H_loglogFit(int, int);

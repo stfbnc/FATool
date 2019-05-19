@@ -5,9 +5,6 @@
 #include <QtWidgets>
 #include "qcustomplot.h"
 
-//class QPushButton;
-//class QLabel;
-//class QTextEdit;
 class SaveWindow : public QWidget
 {
 public:

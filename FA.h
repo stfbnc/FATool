@@ -72,7 +72,7 @@ public:
         delAlloc<double>(pn_nomean);
 	}
 
-	virtual void winFlucComp() = 0;
+    virtual bool winFlucComp() = 0;
     virtual void H_loglogFit(int, int) = 0;
     virtual string outFileStr() = 0;
     virtual void saveFile(string) = 0;

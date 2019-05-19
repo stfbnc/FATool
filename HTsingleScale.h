@@ -3,6 +3,7 @@
 
 #include "FAGlobs.h"
 #include "FA.h"
+#include <QtWidgets>
 
 class HTsingleScale : public FA
 {
@@ -11,7 +12,7 @@ public:
 	~HTsingleScale();
 	void allocateMemory();
 	int getTsLength();
-	void winFlucComp();
+    bool winFlucComp();
     void H_loglogFit(int , int);
     void Ht_fit();
 	string outFileStr();

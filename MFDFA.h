@@ -11,7 +11,7 @@ public:
     ~MFDFA() override;
     void allocateQmemory();
     void setQrange(double, int, double);
-	void winFlucComp() override;
+    bool winFlucComp() override;
 	string outFileStr() override;
 	void saveFile(string) override;
 	string qoutFileStr();

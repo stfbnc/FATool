@@ -10,7 +10,7 @@ class rhoDCCA
 public:
     rhoDCCA(string, string, int, int, int, int=1);
 	~rhoDCCA();
-    void computeRho();
+    bool computeRho();
     int getRhoLength();
     string outFileStr();
     void saveFile(string);

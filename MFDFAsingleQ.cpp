@@ -33,7 +33,8 @@ int MFDFAsingleQ::getTsLength(){
 	return N;
 }
     
-void MFDFAsingleQ::winFlucComp(){
+bool MFDFAsingleQ::winFlucComp(){
+    bool execStop = false;
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
 	int range = getRangeLength(min_win, max_win, win_step);
@@ -107,6 +108,7 @@ void MFDFAsingleQ::winFlucComp(){
     delAlloc<double>(t_fit);
     delAlloc<double>(y_fit);
     delAlloc<double>(diff_vec);
+    return execStop;
 }
 
 double MFDFAsingleQ::getH(){
@@ -116,9 +118,8 @@ double MFDFAsingleQ::getH(){
 double MFDFAsingleQ::getH_intercept(){
 	return H_intercept;
 }
-// l'interfaccia puo' calcolare H facendo un fit in un untervallo qualsiasi, anche dopo aver fatto l'analisi
+
 void MFDFAsingleQ::H_loglogFit(int start, int end){
-	//if start < min_win || end > max_win -> error
     MathOps mo = MathOps();
 	int range = getRangeLength(start, end, win_step);
     double *log_s, *log_F;
@@ -139,7 +140,7 @@ string MFDFAsingleQ::outFileStr(){
     return "/"+MFDFAsQ_FN_START+"_"+to_string(min_win)+"_"+to_string(max_win)+"_q"+to_string(static_cast<int>(q))+"_"+
 			file_name.substr(file_name.find_last_of("/")+1);
 }
-// posso salvare il file di tutto il range per poi eventualmente ricaricarlo per rifare e salvare il grafico in un altro range
+
 void MFDFAsingleQ::saveFile(string path_tot){
     FileOps fo = FileOps();
 	int range = getRangeLength(min_win, max_win, win_step);

@@ -21,9 +21,11 @@ int FileOps::rows_number(string f_name){
 }
 
 FILE* FileOps::open_file(string f_name, const char *mode){
-    char file_name[f_name.length()+1];
+    char *file_name;
+    file_name = new char [f_name.length()+1];
     strcpy(file_name, f_name.c_str());
     FILE *fl;
     fl = fopen(file_name, mode);
+    delete file_name;
     return fl;
 }

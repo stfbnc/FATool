@@ -67,8 +67,8 @@ void SaveWindow::SetDimensions()
 
 void SaveWindow::onApply(QCustomPlot *plt)
 {
-    QStringList xl = xlimTxt->text().split(",");
-    QStringList yl = ylimTxt->text().split(",");
+    QStringList xl = xlimTxt->text().replace(QRegExp("\\s+"), "").split(",");
+    QStringList yl = ylimTxt->text().replace(QRegExp("\\s+"), "").split(",");
     QStringList lg = legendTxt->toPlainText().split(";");
     QStringList save_alert;
     QRegExp rgx("^[-]?[0-9]+[.]?[0-9]*$");

@@ -29,7 +29,8 @@ int HTsingleScale::getTsLength(){
 	return N;
 }
     
-void HTsingleScale::winFlucComp(){
+bool HTsingleScale::winFlucComp(){
+    bool execStop = false;
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
 	int range = getRangeLength(scale, N);
@@ -54,8 +55,12 @@ void HTsingleScale::winFlucComp(){
 			diff_vec[j] = pow((y_fit[j] - (intercept + ang_coeff * t_fit[j])), 2.0);
 		F[v] = sqrt(mo.mean(diff_vec, scale));
 	}
+    delAlloc(t_fit);
+    delAlloc(y_fit);
+    delAlloc(diff_vec);
+    return execStop;
 }
-// l'interfaccia puo' calcolare H facendo un fit in un untervallo qualsiasi, anche dopo aver fatto l'analisi
+
 void HTsingleScale::H_loglogFit(int a, int b){
     a = 0;
     b = 0;
@@ -88,7 +93,7 @@ void HTsingleScale::Ht_fit()
 string HTsingleScale::outFileStr(){
 	return "/"+HTsS_FN_START+"_"+to_string(scale)+"_"+file_name.substr(file_name.find_last_of("/")+1);
 }
-// posso salvare il file di tutto il range per poi eventualmente ricaricarlo per rifare e salvare il grafico in un altro range
+
 void HTsingleScale::saveFile(string path_tot){
     FileOps fo = FileOps();
 	int range = getRangeLength(scale, N);
@@ -100,7 +105,27 @@ void HTsingleScale::saveFile(string path_tot){
     fclose(f);
 }
 
-void HTsingleScale::plot(QCustomPlot *)
+void HTsingleScale::plot(QCustomPlot *plt)
 {
-
+    int len = getRangeLength(scale, N);
+    QVector<double> plt_vec(len), w(len);
+    for(int i = 0; i < len; i++){
+        w[i] = i + 1;
+        plt_vec[i] = Ht[i];
+    }
+    plt->addGraph();
+    plt->xAxis->setLabel("w");
+    plt->yAxis->setLabel("Ht");
+    plt->graph(0)->setData(w, plt_vec);
+    plt->graph(0)->setLineStyle(QCPGraph::lsLine);
+    QPen pen;
+    pen.setColor(Qt::red);
+    plt->graph(0)->setPen(pen);
+    QString fn = QString::fromStdString(file_name).split("/").last();
+    fn.truncate(fn.lastIndexOf("."));
+    MathOps mo;
+    plt->graph(0)->setName(fn+" - <Ht> = "+QString::number(mo.mean(Ht, len)));
+    plt->graph(0)->rescaleAxes();
+    plt->legend->setVisible(true);
+    plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignLeft);
 }

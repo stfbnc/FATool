@@ -30,14 +30,15 @@ private slots:
     void EnableButtons();
 private:
     void SetDimensions();
-    void PerformAnalysis(QHash<QString, QString> *pHash, QString fileName, QString fileName2);
+    bool PerformAnalysis(QHash<QString, QString> *pHash, QString fileName, QString fileName2);
     void DisableButtons();
     void RefitByAnalysis(int start, int end, double *hSlope, double *hIntcpt);
-    void DFAanalysis(QHash<QString, QString> *pHash, QString fileName);
-    void MFDFAanalysis(QHash<QString, QString> *pHash, QString fileName);
-    void HTanalysis(QHash<QString, QString> *pHash, QString fileName);
-    void DCCAanalysis(QHash<QString, QString> *pHash, QString fileName, QString fileName2);
-    void rhoDCCAanalysis(QHash<QString, QString> *pHash, QString fileName, QString fileName2);
+    void PlotByAnalysis();
+    bool DFAanalysis(QHash<QString, QString> *pHash, QString fileName);
+    bool MFDFAanalysis(QHash<QString, QString> *pHash, QString fileName);
+    bool HTanalysis(QHash<QString, QString> *pHash, QString fileName);
+    bool DCCAanalysis(QHash<QString, QString> *pHash, QString fileName, QString fileName2);
+    bool rhoDCCAanalysis(QHash<QString, QString> *pHash, QString fileName, QString fileName2);
     QLabel *xlim;
     QLabel *ylim;
     QLabel *title;

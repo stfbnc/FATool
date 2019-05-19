@@ -32,7 +32,8 @@ int DFA::getTsLength(){
 	return N;
 }
     
-void DFA::winFlucComp(){
+bool DFA::winFlucComp(){
+    bool execStop = false;
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
 	int range = getRangeLength(min_win, max_win, win_step);
@@ -48,14 +49,14 @@ void DFA::winFlucComp(){
     int N_s, curr_win_size;
     int start_lim, end_lim;
     double ang_coeff, intercept;
-    QProgressDialog progress(strDFA+" - "+QString::fromStdString(file_name.substr(file_name.find_last_of("/")+1)), "Stop", 0, range);
+    QProgressDialog progress(strDFA+"\n"+QString::fromStdString(file_name.substr(file_name.find_last_of("/")+1)), "Stop", 0, range);
     progress.setWindowModality(Qt::WindowModal);
+    progress.setMinimumDuration(0);
     for(int i = 0; i < range; i++){
         progress.setValue(i);
         if(progress.wasCanceled()){
+            execStop = true;
             break;
-            //emit a signal
-            //plot window listens to it and stops execution
         }
         curr_win_size = s[i];
         N_s = N / curr_win_size;
@@ -98,6 +99,7 @@ void DFA::winFlucComp(){
     delAlloc<double>(t_fit);
     delAlloc<double>(y_fit);
     delAlloc<double>(diff_vec);
+    return execStop;
 }
 
 int DFA::getWinStep(){
@@ -111,9 +113,8 @@ double DFA::getH(){
 double DFA::getH_intercept(){
 	return H_intercept;
 }
-// l'interfaccia puo' calcolare H facendo un fit in un untervallo qualsiasi, anche dopo aver fatto l'analisi
+
 void DFA::H_loglogFit(int start, int end){
-	//if start < min_win || end > max_win -> error
     MathOps mo = MathOps();
 	int range = getRangeLength(start, end, win_step);
     double *log_s, *log_F;
@@ -133,7 +134,7 @@ void DFA::H_loglogFit(int start, int end){
 string DFA::outFileStr(){
     return "/"+DFA_FN_START+"_"+to_string(min_win)+"_"+to_string(max_win)+"_"+file_name.substr(file_name.find_last_of("/")+1);
 }
-// posso salvare il file di tutto il range per poi eventualmente ricaricarlo per rifare e salvare il grafico in un altro range
+
 void DFA::saveFile(string path_tot){
     FileOps fo = FileOps();
 	int range = getRangeLength(min_win, max_win, win_step);
