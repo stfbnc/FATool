@@ -52,6 +52,7 @@ bool DFA::winFlucComp(){
     QProgressDialog progress(strDFA+"\n"+QString::fromStdString(file_name.substr(file_name.find_last_of("/")+1)), "Stop", 0, range);
     progress.setWindowModality(Qt::WindowModal);
     progress.setMinimumDuration(0);
+    progress.setFixedSize(xPG, yPG);
     for(int i = 0; i < range; i++){
         progress.setValue(i);
         if(progress.wasCanceled()){
@@ -94,6 +95,7 @@ bool DFA::winFlucComp(){
             F[i] = sqrt(mo.mean(F_nu1, N_s));
         }
     }
+    progress.setValue(range);
     delAlloc<double>(F_nu1);
     delAlloc<double>(F_nu2);
     delAlloc<double>(t_fit);

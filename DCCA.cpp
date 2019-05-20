@@ -82,10 +82,10 @@ bool DCCA::winFlucComp(){
     int start_lim, end_lim;
     double ang_coeff1, intercept1, ang_coeff2, intercept2;
     QProgressDialog progress(strDCCA+"\n"+QString::fromStdString(file_name.substr(file_name.find_last_of("/")+1))+
-                             " vs "+QString::fromStdString(file_name2.substr(file_name2.find_last_of("/")+1)), "Stop", 0, range-1);
+                             " vs "+QString::fromStdString(file_name2.substr(file_name2.find_last_of("/")+1)), "Stop", 0, range);
     progress.setWindowModality(Qt::WindowModal);
     progress.setMinimumDuration(0);
-    progress.setFixedSize(300, 200);//da decidere
+    progress.setFixedSize(xPG, yPG);
     for(int i = 0; i < range; i++){
         progress.setValue(i);
         if(progress.wasCanceled()){
@@ -122,6 +122,7 @@ bool DCCA::winFlucComp(){
             F[i] = sqrt(mo.mean(F_nu, N_s));
         }
     }
+    progress.setValue(range);
     delAlloc<double>(F_nu);
     delAlloc<double>(t_fit);
     delAlloc<double>(y_fit1);

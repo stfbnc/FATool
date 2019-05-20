@@ -45,7 +45,18 @@ bool HTsingleScale::winFlucComp(){
 	ao.zero_vec(y_fit, scale);
 	ao.zero_vec(diff_vec, scale);
 	ao.zero_vec(F, range);
-	for(int v = 0; v <= N-scale; v++){
+    QProgressDialog progress(strHT+"\n"+"scale = "+QString::number(scale)+" -> "+
+                             QString::fromStdString(file_name.substr(file_name.find_last_of("/")+1)),
+                             "Stop", 0, range);
+    progress.setWindowModality(Qt::WindowModal);
+    progress.setMinimumDuration(0);
+    progress.setFixedSize(xPG, yPG);
+    for(int v = 0; v < range; v++){
+        progress.setValue(v);
+        if(progress.wasCanceled()){
+            execStop = true;
+            break;
+        }
 		start_lim = v;
 		end_lim = v + scale - 1;
 		ao.slice_vec(t, t_fit, start_lim, end_lim);
@@ -55,6 +66,7 @@ bool HTsingleScale::winFlucComp(){
 			diff_vec[j] = pow((y_fit[j] - (intercept + ang_coeff * t_fit[j])), 2.0);
 		F[v] = sqrt(mo.mean(diff_vec, scale));
 	}
+    progress.setValue(range);
     delAlloc(t_fit);
     delAlloc(y_fit);
     delAlloc(diff_vec);

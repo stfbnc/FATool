@@ -50,7 +50,18 @@ bool MFDFAsingleQ::winFlucComp(){
     int N_s, curr_win_size;
     int start_lim, end_lim;
     double ang_coeff, intercept;
+    QProgressDialog progress(strMFDFA+"\n"+"q = "+QString::number(q)+" -> "+
+                             QString::fromStdString(file_name.substr(file_name.find_last_of("/")+1)),
+                             "Stop", 0, range);
+    progress.setWindowModality(Qt::WindowModal);
+    progress.setMinimumDuration(0);
+    progress.setFixedSize(xPG, yPG);
     for(int i = 0; i < range; i++){
+        progress.setValue(i);
+        if(progress.wasCanceled()){
+            execStop = true;
+            break;
+        }
         curr_win_size = s[i];
         N_s = N / curr_win_size;
         ao.zero_vec(F_nu1, F_len);
@@ -103,6 +114,7 @@ bool MFDFAsingleQ::winFlucComp(){
             }
         }
     }
+    progress.setValue(range);
     delAlloc<double>(F_nu1);
     delAlloc<double>(F_nu2);
     delAlloc<double>(t_fit);

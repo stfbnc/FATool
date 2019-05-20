@@ -25,6 +25,9 @@
 #define CORR_DCCA "sign"
 //namespaces
 using namespace std;
+//progress bar dimensions
+const int xPG = 300;
+const int yPG = 120;
 //preferences file
 const QString prefsFile = "prefs.txt";
 const QString showStartWin = "Y";
