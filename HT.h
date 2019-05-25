@@ -12,6 +12,7 @@ public:
     ~HT() override;
 	void allocateScalesMemory();
 	int getNumScales(string);
+    int getMinScale(string);
 	void getScales(string);
     bool winFlucComp() override;
 	string outFileStr() override;

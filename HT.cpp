@@ -17,12 +17,11 @@ HT::HT(string fileName, string strScales)
 		: HTsingleScale(fileName, stoi(strScales.substr(0, strScales.find_first_of(STR_SEP))))
 {
 	Nscales = getNumScales(strScales);
+    minScale = getMinScale(strScales);
     scales = nullptr;
     HTmtx = nullptr;
 	allocateScalesMemory();
 	getScales(strScales);
-	MathOps mo = MathOps();
-	minScale = mo.vec_min(scales, Nscales);
 }
 
 HT::~HT(){
@@ -33,9 +32,8 @@ HT::~HT(){
 void HT::allocateScalesMemory(){
 	scales = new int [Nscales];
 	HTmtx = new double* [getRangeLength(minScale, N)];
-	for(int i = 0; i < getRangeLength(minScale, N); i++){
+    for(int i = 0; i < getRangeLength(minScale, N); i++)
 		HTmtx[i] = new double [Nscales];
-	}
 }
 
 int HT::getNumScales(string str){
@@ -47,6 +45,30 @@ int HT::getNumScales(string str){
 	}
 	count++;
 	return count;
+}
+
+int HT::getMinScale(string str){
+    string str_cpy = str;
+    int min = 0;
+    int i = 0;
+    size_t pos = 0;
+    string token;
+    if(str_cpy.find(STR_SEP) != string::npos){
+        while((pos = str_cpy.find(STR_SEP)) != string::npos){
+            token = str_cpy.substr(0, pos);
+            int s = stoi(token);
+            if(i == 0){
+                min = s;
+                i++;
+            }else{
+                if(s < min)
+                    min = s;
+            }
+            str_cpy.erase(0, pos+STR_SEP.length());
+        }
+    }else
+        min = stoi(str_cpy);
+    return min;
 }
 
 void HT::getScales(string str){
@@ -90,7 +112,7 @@ bool HT::winFlucComp(){
 string HT::outFileStr(){
 	return "/"+HT_FN_START+"_"+file_name.substr(file_name.find_last_of("/")+1);
 }
-// posso salvare il file di tutto il range per poi eventualmente ricaricarlo per rifare e salvare il grafico in un altro range
+
 void HT::saveFile(string path_tot){
 	FileOps fo = FileOps();
 	int L = getRangeLength(minScale, N);
@@ -113,43 +135,30 @@ void HT::plot(QCustomPlot *plt)
     QString fn = QString::fromStdString(file_name).split("/").last();
     fn.truncate(fn.lastIndexOf("."));
     int L = getRangeLength(minScale, N);
-//    QVector<double> w(L);
-//    for(int i = 0; i < L; i++)
-//        w[i] = i;
-//    //QVector<double> plt_vec(L);
-//    QVector<QCPGraphData> plt_vec(L);
-//    double *vec;
-//    vec = new double [L];
-//    QVector<QCPAxisRect *> axRect(Nscales);
-//    for(int j = 0; j < Nscales; j++){
-//        axRect[j] = new QCPAxisRect(plt);
-//        plt->plotLayout()->addElement(j, 0, axRect[j]);
-//        for(int i = 0; i < L; i++){
-//            plt_vec[i].key = i + 1;
-//            plt_vec[i].value = HTmtx[i][j];
-//            vec[i] = HTmtx[i][j];
-//        }
-//        QCPGraph *gr = plt->addGraph(axRect[j]->axis(QCPAxis::atBottom, j), axRect[j]->axis(QCPAxis::atLeft));
-//        gr->data()->set(plt_vec);
-//        gr->rescaleKeyAxis();
-//        gr->setLineStyle(QCPGraph::lsLine);
-//        QPen pen;
-//        pen.setColor(colours[j%colours.size()]);
-//        gr->setPen(pen);
-//        MathOps mo;
-//        gr->setName(fn+"_w"+QString::number(scales[j])+" - <Ht> = "+QString::number(mo.nan_mean(vec, L)));
-//        plt->graph(j)->setData(w, plt_vec);
-//        plt->graph(j)->setLineStyle(QCPGraph::lsLine);
-//        QPen pen;
-//        pen.setColor(colours[j%colours.size()]);
-//        plt->graph(j)->setPen(pen);
-//        MathOps mo;
-//        plt->graph(j)->setName(fn+"_w"+QString::number(scales[j])+" - <Ht> = "+QString::number(mo.nan_mean(vec, L)));
-//        j==0 ? plt->graph(j)->rescaleAxes() : plt->graph(j)->rescaleAxes(true);
-//    }
-//    plt->xAxis->setLabel("w");
-//    plt->yAxis->setLabel("Ht");
-//    plt->legend->setVisible(true);
-//    plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignLeft);
-//    delAlloc(vec);
+    QVector<double> w(L);
+    for(int i = 0; i < L; i++)
+        w[i] = i + 1;
+    QVector<double> plt_vec(L);
+    double *vec;
+    vec = new double [L];
+    for(int j = 0; j < Nscales; j++){
+        for(int i = 0; i < L; i++){
+            plt_vec[i] = HTmtx[i][j];
+            vec[i] = HTmtx[i][j];
+        }
+        plt->addGraph();
+        plt->graph(j)->setData(w, plt_vec);
+        plt->graph(j)->setLineStyle(QCPGraph::lsLine);
+        QPen pen;
+        pen.setColor(colours[j%colours.size()]);
+        plt->graph(j)->setPen(pen);
+        MathOps mo;
+        plt->graph(j)->setName(fn+"_w"+QString::number(scales[j])+" - <Ht> = "+QString::number(mo.nan_mean(vec, L)));
+        j==0 ? plt->graph(j)->rescaleAxes() : plt->graph(j)->rescaleAxes(true);
+    }
+    plt->xAxis->setLabel("w");
+    plt->yAxis->setLabel("Ht");
+    plt->legend->setVisible(true);
+    plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignLeft);
+    delAlloc(vec);
 }

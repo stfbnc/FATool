@@ -25,6 +25,7 @@ QString StartingWindow::getInstrText()
 {
     QString str = "Warnings:\n";
     str.append("\n- data files must have a single column and no header");
+    str.append("\n- data files must not contain missing values");
     str.append("\n- windows sizes will be automatically readjusted if they do not comply with time series limits");
     return str;
 }

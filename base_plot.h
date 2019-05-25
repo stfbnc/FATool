@@ -10,6 +10,10 @@ public:
     explicit BasePlot(QWidget *parent=nullptr);
     ~BasePlot();
     void SetBasePlot();
+private:
+    QCPItemText *textItem;
+private slots:
+    void onMouseMove(QMouseEvent* event);
 };
 
 #endif // BASE_PLOT_H

@@ -1,8 +1,3 @@
-- spostare la parte del fit in mfdfa e ht in un'altra funzione H_loglog override
-- calcolo delle soglie
-- mfdfa può anche fare lo spettro multifrattale
-- nanDFA che estende dfa (e lo stesso con le altre classi)
-- aggiungere per polynomial fino a 10
 
 1.0
 ----
@@ -16,7 +11,15 @@ possibilità di poter spostare la legenda ai 4 angoli (o anche inserire coordina
 
 se è più grande di 10000 punti il grafico iniziale chiedere se si vuole plottare
 
+1.2
+----
+
 bottone che apre il log dei fit con mw, Mw, h_intercept e h
+
+1.3
+----
+
+mfdfa può anche fare lo spettro multifrattale
 
 2.0
 ----
@@ -31,3 +34,15 @@ caricare il file delle fluttuazioni per rifare il fit (tipo la matrice per MFDFA
 ----
 
 fit polinomiale
+
+calcolo delle soglie
+
+3.0
+----
+
+file con più colonne (anche date)
+
+3.1
+----
+
+nanDFA che estende dfa (e lo stesso con le altre classi)

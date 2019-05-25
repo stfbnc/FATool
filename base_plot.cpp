@@ -32,4 +32,23 @@ void BasePlot::SetBasePlot()
     yAxis->grid()->setPen(grid_pen);
     setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
     setLocale(QLocale(QLocale::English, QLocale::UnitedKingdom));
+    textItem = new QCPItemText(this);
+    connect(this, &QCustomPlot::mouseMove, this, &BasePlot::onMouseMove);
+}
+
+void BasePlot::onMouseMove(QMouseEvent *event)
+{
+    double x = xAxis->pixelToCoord(event->pos().x());
+    double y = yAxis->pixelToCoord(event->pos().y());
+    QString xStr, yStr;
+    xStr.sprintf("%.2f", x);
+    yStr.sprintf("%.2f", y);
+    textItem->setText(QString("(%1, %2)").arg(xStr).arg(yStr));
+    qInfo() << axisRect()->outerRect().left();
+    qInfo() << axisRect()->outerRect().bottom();
+    textItem->position->setCoords(QPointF(axisRect()->outerRect().left()+5, axisRect()->outerRect().bottom()+10));
+    textItem->setFont(QFont(font().family(), 14));
+    textItem->setLayer("overlay");
+    textItem->setClipToAxisRect(false);
+    replot();
 }
