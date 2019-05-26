@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     //win size
     setFixedSize(xDim, yDim);
     //plot section
-    qplot = new BasePlot(this);
+    qplot = new BasePlot(false, this);
     qplot->setGeometry(padX, padY+yHeight, xDim-2*padX, yDim-yHeight-2*padY);
     qplot->SetBasePlot();
     qplot->xAxis->setLabel("time");

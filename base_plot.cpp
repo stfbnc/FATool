@@ -1,7 +1,8 @@
 #include "base_plot.h"
 
-BasePlot::BasePlot(QWidget *parent) : QCustomPlot(parent)
+BasePlot::BasePlot(bool logVars, QWidget *parent) : QCustomPlot(parent)
 {
+    isLog = logVars;
 }
 
 BasePlot::~BasePlot(){}
@@ -32,7 +33,14 @@ void BasePlot::SetBasePlot()
     yAxis->grid()->setPen(grid_pen);
     setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
     setLocale(QLocale(QLocale::English, QLocale::UnitedKingdom));
-    textItem = new QCPItemText(this);
+    textItem = new QLineEdit("", this);
+    textItem->setGeometry(0, 0, 0, 0);
+    textItem->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
+    textItem->setFrame(false);
+    textItem->setEnabled(false);
+    qFont = QFont(font().family(), 12);
+    textItem->setFont(qFont);
+    textItem->setStyleSheet("color: #000000");
     connect(this, &QCustomPlot::mouseMove, this, &BasePlot::onMouseMove);
 }
 
@@ -40,15 +48,20 @@ void BasePlot::onMouseMove(QMouseEvent *event)
 {
     double x = xAxis->pixelToCoord(event->pos().x());
     double y = yAxis->pixelToCoord(event->pos().y());
+    if(isLog){
+        x = exp(x);
+        y = exp(y);
+    }
     QString xStr, yStr;
-    xStr.sprintf("%.2f", x);
-    yStr.sprintf("%.2f", y);
-    textItem->setText(QString("(%1, %2)").arg(xStr).arg(yStr));
-    qInfo() << axisRect()->outerRect().left();
-    qInfo() << axisRect()->outerRect().bottom();
-    textItem->position->setCoords(QPointF(axisRect()->outerRect().left()+5, axisRect()->outerRect().bottom()+10));
-    textItem->setFont(QFont(font().family(), 14));
-    textItem->setLayer("overlay");
-    textItem->setClipToAxisRect(false);
-    replot();
+    xStr.sprintf("%.3f", x);
+    yStr.sprintf("%.3f", y);
+    QString text = QString("(%1, %2)").arg(xStr).arg(yStr);
+    textItem->setText(text);
+    int left_pxl = axisRect()->outerRect().left();
+    int bottom_pxl = axisRect()->outerRect().bottom();
+    int pad = 2;
+    QFontMetrics fm(qFont);
+    int pixelsWide = fm.width(text);
+    int pixelsHigh = fm.height();
+    textItem->setGeometry(left_pxl+pad, bottom_pxl-pad-pixelsHigh, pixelsWide+2*pad, pixelsHigh);
 }

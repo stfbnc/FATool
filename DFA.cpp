@@ -151,20 +151,13 @@ void DFA::plot(QCustomPlot *plt){
     int len = getRangeLength(min_win, max_win, win_step);
     QVector<double> plt_vec(len), n(len), Hfit(len);
     for(int i = 0; i < len; i++){
-        //n[i] = log(s[i]);
-        //plt_vec[i] = log(F[i]);
-        n[i] = s[i];
-        plt_vec[i] = F[i];
-        //Hfit[i] = H_intercept + H * n[i];
-        Hfit[i] = exp(H_intercept) * pow(n[i], H);
+        n[i] = log(s[i]);
+        plt_vec[i] = log(F[i]);
+        Hfit[i] = H_intercept + H * n[i];
     }
     plt->addGraph();
-    //plt->xAxis->setLabel("log[n]");
-    plt->xAxis->setLabel("n");
-    plt->xAxis->setScaleType(QCPAxis::stLogarithmic);
-    //plt->yAxis->setLabel("log[F(n)]");
-    plt->yAxis->setLabel("F(n)");
-    plt->yAxis->setScaleType(QCPAxis::stLogarithmic);
+    plt->xAxis->setLabel("log[n]");
+    plt->yAxis->setLabel("log[F(n)]");
     plt->graph(0)->setData(n, plt_vec);
     plt->graph(0)->setLineStyle(QCPGraph::lsNone);
     plt->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, Qt::red, 10));

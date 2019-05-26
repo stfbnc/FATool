@@ -32,6 +32,7 @@ private:
     void SetDimensions();
     bool PerformAnalysis(QHash<QString, QString> *pHash, QString fileName, QString fileName2);
     void DisableButtons();
+    bool setLogAxesByAnalysis();
     void RefitByAnalysis(int start, int end, double *hSlope, double *hIntcpt);
     void PlotByAnalysis();
     bool DFAanalysis(QHash<QString, QString> *pHash, QString fileName);

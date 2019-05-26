@@ -17,7 +17,7 @@ PlotWindow::PlotWindow(QString analysisType, QHash<QString, QString> *pHash, QSt
         //win size
         setFixedSize(xDim, yDim);
         //plot section
-        plt = new BasePlot(this);
+        plt = new BasePlot(setLogAxesByAnalysis(), this);
         plt->setGeometry(xDim/4, padY, xDim*3/4-padX, yDim-yHeight-2*padY);
         plt->SetBasePlot();
         PlotByAnalysis();
@@ -95,6 +95,14 @@ void PlotWindow::SetDimensions()
     yHeight = 30;
     padX = 10;
     padY = 10;
+}
+
+bool PlotWindow::setLogAxesByAnalysis()
+{
+    if(analysis == strDFA || analysis == strDCCA)
+        return true;
+    else
+        return false;
 }
 
 bool PlotWindow::PerformAnalysis(QHash<QString, QString> *pHash, QString fileName, QString fileName2)

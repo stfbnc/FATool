@@ -7,11 +7,13 @@
 class BasePlot : public QCustomPlot
 {
 public:
-    explicit BasePlot(QWidget *parent=nullptr);
+    explicit BasePlot(bool logVars, QWidget *parent=nullptr);
     ~BasePlot();
     void SetBasePlot();
 private:
-    QCPItemText *textItem;
+    QFont qFont;
+    QLineEdit *textItem;
+    bool isLog;
 private slots:
     void onMouseMove(QMouseEvent* event);
 };
