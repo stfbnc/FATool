@@ -5,6 +5,7 @@
 #include <QtWidgets>
 #include "base_plot.h"
 #include "refit_window.h"
+#include "legend_position_window.h"
 #include "FAGlobs.h"
 #include "DFA.h"
 #include "DCCA.h"
@@ -21,6 +22,7 @@ public:
     ~PlotWindow();
     BasePlot *plt;
 private slots:
+    void onMoveLegendClick();
     void onYorNLegend();
     void onRefitClick();
     void onReplotClick();
@@ -54,12 +56,14 @@ private:
     QLineEdit *ylabelTxt;
     QTextEdit *legendTxt;
     QCheckBox *legendYorNBox;
+    QPushButton *move_legend;
     QPushButton *refit;
     QPushButton *replot;
     QPushButton *save_plot;
     QPushButton *save_txt;
     QPushButton *close_button;
     RefitWindow *refit_win;
+    MoveLegendWindow *move_legend_win;
     QString analysis;
     DFA *dfa;
     DCCA *dcca;

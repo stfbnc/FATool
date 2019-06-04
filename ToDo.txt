@@ -23,8 +23,6 @@ permettere di conservare i fit precedenti nel plot (checkbox nella maschera da r
 
 linestyles per i fit
 
-caricare il file delle fluttuazioni per rifare il fit (tipo la matrice per MFDFA e vari q)
-
 2.1
 ----
 
@@ -36,6 +34,8 @@ calcolo delle soglie
 ----
 
 file con più colonne (anche date)
+
+caricare il file delle fluttuazioni per rifare il fit (tipo la matrice per MFDFA e vari q)
 
 3.1
 ----

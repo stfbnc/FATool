@@ -44,6 +44,10 @@ PlotWindow::PlotWindow(QString analysisType, QHash<QString, QString> *pHash, QSt
         close_button = new QPushButton("Close", this);
         close_button->setGeometry(xDim-xWidth-padX/2, yDim-yHeight-padY/2, xWidth, yHeight);
         connect(close_button, SIGNAL(clicked()), this, SLOT(close()));
+        //move legend button
+        move_legend = new QPushButton("Move legend", this);
+        move_legend->setGeometry(padX/2, yDim-yHeight-padY/2, xWidth, yHeight);
+        connect(move_legend, SIGNAL(clicked()), this, SLOT(onMoveLegendClick()));
         //ranges
         xlim = new QLabel("x limits (comma-separated)", this);
         xlim->setGeometry(padX, padY/2, xWidth*7/4, yHeight*2/3);
@@ -258,6 +262,7 @@ void PlotWindow::PlotByAnalysis()
 
 void PlotWindow::DisableButtons()
 {
+    move_legend->setEnabled(false);
     refit->setEnabled(false);
     replot->setEnabled(false);
     save_plot->setEnabled(false);
@@ -267,11 +272,21 @@ void PlotWindow::DisableButtons()
 
 void PlotWindow::EnableButtons()
 {
+    move_legend->setEnabled(true);
     refit->setEnabled(true);
     replot->setEnabled(true);
     save_plot->setEnabled(true);
     save_txt->setEnabled(true);
     close_button->setEnabled(true);
+}
+
+void PlotWindow::onMoveLegendClick()
+{
+    move_legend_win = new MoveLegendWindow(plt);
+    move_legend_win->setAttribute(Qt::WA_DeleteOnClose);
+    move_legend_win->show();
+    DisableButtons();
+    connect(move_legend_win, SIGNAL(destroyed()), this, SLOT(EnableButtons()));
 }
 
 void PlotWindow::onYorNLegend()

@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     //set dimensions
     SetDimensions();
     //set title
-    setWindowTitle("FATool");
+    setWindowTitle("FATool (v 1.1)");
     //win size
     setFixedSize(xDim, yDim);
     //plot section

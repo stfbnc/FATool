@@ -24,7 +24,8 @@ SOURCES +=  main.cpp \
     MFDFA.cpp \
     MFDFAsingleQ.cpp \
     HT.cpp \
-    HTsingleScale.cpp
+    HTsingleScale.cpp \
+    legend_position_window.cpp
 
 HEADERS += \
     plot_window.h \
@@ -46,7 +47,8 @@ HEADERS += \
     MFDFA.h \
     MFDFAsingleQ.h \
     HT.h \
-    HTsingleScale.h
+    HTsingleScale.h \
+    legend_position_window.h
 
 DISTFILES += \
     prefs.txt
