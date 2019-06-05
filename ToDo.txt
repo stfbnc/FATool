@@ -3,6 +3,9 @@
 ----
 
 possibilità di poter spostare la legenda ai 4 angoli (o anche inserire coordinate) (bottone sx)
+ - chiudere applicazione con x rossa
+ - check su input posizione custom legenda
+ - eccezione su save_text in plot_window
 
 se è più grande di 10000 punti il grafico iniziale chiedere se si vuole plottare
 

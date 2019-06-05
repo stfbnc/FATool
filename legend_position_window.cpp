@@ -11,10 +11,12 @@ MoveLegendWindow::MoveLegendWindow(QCustomPlot *plt, QWidget *parent) : QWidget(
     //ok button
     ok_button = new QPushButton("OK", this);
     ok_button->setGeometry(xDim-padX/2-xWidth*3, yDim-yHeight-padY, xWidth*3, yHeight);
+    ok_button->setEnabled(false);
     connect(ok_button, &QPushButton::clicked, [=](){this->onOKClick(plt);});
     //apply button
     apply_button = new QPushButton("Apply", this);
     apply_button->setGeometry(xDim-padX-xWidth*6, yDim-yHeight-padY, xWidth*3, yHeight);
+    apply_button->setEnabled(false);
     connect(apply_button, &QPushButton::clicked, [=](){this->RefreshLegend(plt);});
     //close button
     close_button = new QPushButton("Close", this);
@@ -22,6 +24,7 @@ MoveLegendWindow::MoveLegendWindow(QCustomPlot *plt, QWidget *parent) : QWidget(
     connect(close_button, SIGNAL(clicked()), this, SLOT(close()));
     //checkboxes
     num_cbs = 5;
+    cb_selected = -1;
     labels.append({"Top left", "Top right", "Bottom left", "Bottom right", "Coordinates (comma-separated)"});
     cbs = new QCheckBox* [num_cbs];
     for(int i = 0; i < num_cbs; i++){
@@ -38,7 +41,7 @@ MoveLegendWindow::~MoveLegendWindow(){}
 
 void MoveLegendWindow::SetDimensions()
 {
-    xDim = 400;
+    xDim = 360;
     yDim = 200;
     xWidth = 30;
     yHeight = 30;
@@ -56,7 +59,15 @@ void MoveLegendWindow::onCheckBoxClick(int idx)
         coordTxt->setEnabled(false);
     else
         coordTxt->setEnabled(true);
-    cb_selected = idx;
+    if(idx == cb_selected && !cbs[idx]->isChecked()){
+        coordTxt->setEnabled(false);
+        ok_button->setEnabled(false);
+        apply_button->setEnabled(false);
+    }else{
+        cb_selected = idx;
+        ok_button->setEnabled(true);
+        apply_button->setEnabled(true);
+    }
 }
 
 void MoveLegendWindow::RefreshLegend(QCustomPlot *plt)
@@ -76,9 +87,11 @@ void MoveLegendWindow::RefreshLegend(QCustomPlot *plt)
             break;
         case 4:
             QRectF rect = plt->axisRect()->insetLayout()->insetRect(0);
-            QPointF crd((coordTxt->text().split(",").first().toDouble()-plt->axisRect()->left())/static_cast<double>(plt->axisRect()->width()),
-                        (coordTxt->text().split(",").last().toDouble()-plt->axisRect()->top())/static_cast<double>(plt->axisRect()->height()));
-            qInfo() << crd;
+            //QPointF crd((coordTxt->text().split(",").first().toDouble()-plt->axisRect()->left())/static_cast<double>(plt->axisRect()->width()),
+            //            (coordTxt->text().split(",").last().toDouble()-plt->axisRect()->top())/static_cast<double>(plt->axisRect()->height()));
+            QPointF crd(coordTxt->text().split(",").first().trimmed().toDouble(),
+                        coordTxt->text().split(",").last().trimmed().toDouble());
+            qInfo() << crd; //se va bene mettere i controlli sull'input che deve essere solo numerico
             rect.moveTopLeft(crd);
             plt->axisRect()->insetLayout()->setInsetRect(0, rect);
             break;

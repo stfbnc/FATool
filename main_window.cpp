@@ -151,6 +151,7 @@ void MainWindow::onSaveClick()
         DisableButtons();
         save_win = new SaveWindow(qplot);
         save_win->setAttribute(Qt::WA_DeleteOnClose);
+        save_win->setWindowModality(Qt::ApplicationModal);
         save_win->show();
         connect(save_win, SIGNAL(destroyed()), this, SLOT(EnableButtons()));
     }
@@ -187,6 +188,7 @@ void MainWindow::onGoClick()
             DisableButtons();
             inpt_win = new InputsWindow(analysisType, paramHash);
             inpt_win->setAttribute(Qt::WA_DeleteOnClose);
+            inpt_win->setWindowModality(Qt::ApplicationModal);
             inpt_win->show();
             connect(inpt_win, SIGNAL(destroyed()), this, SLOT(EnableButtons()));
             connect(inpt_win, SIGNAL(inputsInserted()), this, SLOT(onCloseInputWin()), Qt::QueuedConnection);

@@ -284,6 +284,7 @@ void PlotWindow::onMoveLegendClick()
 {
     move_legend_win = new MoveLegendWindow(plt);
     move_legend_win->setAttribute(Qt::WA_DeleteOnClose);
+    move_legend_win->setWindowModality(Qt::ApplicationModal);
     move_legend_win->show();
     DisableButtons();
     connect(move_legend_win, SIGNAL(destroyed()), this, SLOT(EnableButtons()));
@@ -302,6 +303,7 @@ void PlotWindow::onRefitClick()
 {
     refit_win = new RefitWindow();
     refit_win->setAttribute(Qt::WA_DeleteOnClose);
+    refit_win->setWindowModality(Qt::ApplicationModal);
     refit_win->show();
     DisableButtons();
     connect(refit_win, SIGNAL(inputsInserted(int, int)), this, SLOT(newFit(int, int)));
@@ -393,15 +395,17 @@ void PlotWindow::onSavePlotClick()
     QFileDialog save_dialog;
     save_file = save_dialog.getSaveFileName();
     QString file_ext = save_file.split(".").last();
-    if(file_ext == "pdf")
-        plt->savePdf(save_file);
-    else if(file_ext == "png")
-        plt->savePng(save_file);
-    else{
-        QMessageBox messageBox;
-        QString errToShow = "Supported formats are:\n- pdf\n- png";
-        messageBox.critical(nullptr, "Error", errToShow);
-        messageBox.setFixedSize(200,200);
+    if(!file_ext.isNull() && !file_ext.isEmpty()){
+        if(file_ext == "pdf")
+            plt->savePdf(save_file);
+        else if(file_ext == "png")
+            plt->savePng(save_file);
+        else{
+            QMessageBox messageBox;
+            QString errToShow = "Supported formats are:\n- pdf\n- png";
+            messageBox.critical(nullptr, "Error", errToShow);
+            messageBox.setFixedSize(200,200);
+        }
     }
 }
 
