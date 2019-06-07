@@ -412,15 +412,17 @@ void PlotWindow::onSavePlotClick()
 void PlotWindow::onSaveTxtClick()
 {
     QString pathToSave = QFileDialog::getExistingDirectory();
-    if(analysis == strDFA)
-        dfa->saveFile(pathToSave.toStdString());
-    else if(analysis == strDCCA)
-        dcca->saveFile(pathToSave.toStdString());
-    else if(analysis == strRHODCCA)
-        rhodcca->saveFile(pathToSave.toStdString());
-    else if(analysis == strMFDFA){
-        mfdfa->saveFile(pathToSave.toStdString());
-        mfdfa->qsaveFile(pathToSave.toStdString());
-    }else if(analysis == strHT)
-        ht->saveFile(pathToSave.toStdString());
+    if(!pathToSave.isNull() && !pathToSave.isEmpty()){
+        if(analysis == strDFA)
+            dfa->saveFile(pathToSave.toStdString());
+        else if(analysis == strDCCA)
+            dcca->saveFile(pathToSave.toStdString());
+        else if(analysis == strRHODCCA)
+            rhodcca->saveFile(pathToSave.toStdString());
+        else if(analysis == strMFDFA){
+            mfdfa->saveFile(pathToSave.toStdString());
+            mfdfa->qsaveFile(pathToSave.toStdString());
+        }else if(analysis == strHT)
+            ht->saveFile(pathToSave.toStdString());
+    }
 }

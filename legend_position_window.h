@@ -23,6 +23,7 @@ private:
     QStringList labels;
     int num_cbs;
     int cb_selected;
+    bool refreshOK;
     int xDim;
     int yDim;
     int xWidth;

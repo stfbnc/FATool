@@ -74,26 +74,53 @@ void MoveLegendWindow::RefreshLegend(QCustomPlot *plt)
 {
     switch(cb_selected){
         case 0:
+            plt->axisRect()->insetLayout()->setInsetPlacement(0, QCPLayoutInset::ipBorderAligned);
             plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft|Qt::AlignTop);
             break;
         case 1:
+            plt->axisRect()->insetLayout()->setInsetPlacement(0, QCPLayoutInset::ipBorderAligned);
             plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignRight|Qt::AlignTop);
             break;
         case 2:
+            plt->axisRect()->insetLayout()->setInsetPlacement(0, QCPLayoutInset::ipBorderAligned);
             plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft|Qt::AlignBottom);
             break;
         case 3:
+            plt->axisRect()->insetLayout()->setInsetPlacement(0, QCPLayoutInset::ipBorderAligned);
             plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignRight|Qt::AlignBottom);
             break;
         case 4:
-            QRectF rect = plt->axisRect()->insetLayout()->insetRect(0);
-            //QPointF crd((coordTxt->text().split(",").first().toDouble()-plt->axisRect()->left())/static_cast<double>(plt->axisRect()->width()),
-            //            (coordTxt->text().split(",").last().toDouble()-plt->axisRect()->top())/static_cast<double>(plt->axisRect()->height()));
-            QPointF crd(coordTxt->text().split(",").first().trimmed().toDouble(),
-                        coordTxt->text().split(",").last().trimmed().toDouble());
-            qInfo() << crd; //se va bene mettere i controlli sull'input che deve essere solo numerico
-            rect.moveTopLeft(crd);
-            plt->axisRect()->insetLayout()->setInsetRect(0, rect);
+            QStringList xl = coordTxt->text().replace(QRegExp("\\s+"), "").split(",");
+            QRegExp rgx("^[-]?[0-9]+[.]?[0-9]*$");
+            if(xl.size() != 2 || (!xl.first().contains(rgx) || !xl.last().contains(rgx))){
+                refreshOK = false;
+                QMessageBox messageBox;
+                QString errToShow = "Input must be numeric and\nmust contain two values!";
+                messageBox.critical(nullptr, "Error", errToShow);
+                messageBox.setFixedSize(200,200);
+            }else{
+                refreshOK = true;
+                QFont qFont = QFont(font().family(), 12);
+                plt->axisRect()->insetLayout()->setInsetPlacement(0, QCPLayoutInset::ipFree);
+                QRectF rect = plt->axisRect()->insetLayout()->insetRect(0);
+                QFontMetrics fm(qFont);
+                int num_graphs = plt->itemCount();
+                int pixelsWide = 0;
+                for(int i = 0; i < num_graphs; i++){
+                    int w = fm.width(plt->graph(i)->name());
+                    if(w > pixelsWide)
+                        pixelsWide = w;
+                }
+                int pixelsHigh = fm.height() * num_graphs;
+                QPointF crd(coordTxt->text().split(",").first().trimmed().toDouble(),
+                            coordTxt->text().split(",").last().trimmed().toDouble());
+                //QPointF crd((coordTxt->text().split(",").first().toInt()-plt->axisRect()->left())/static_cast<double>(plt->axisRect()->width()),
+                //            (coordTxt->text().split(",").last().toInt()-plt->axisRect()->top())/static_cast<double>(plt->axisRect()->height()));
+                rect.moveTopLeft(crd);
+                rect.setWidth(pixelsWide);
+                rect.setHeight(pixelsHigh);
+                plt->axisRect()->insetLayout()->setInsetRect(0, rect);
+            }
             break;
     }
     plt->replot();
@@ -102,5 +129,6 @@ void MoveLegendWindow::RefreshLegend(QCustomPlot *plt)
 void MoveLegendWindow::onOKClick(QCustomPlot *plt)
 {
     RefreshLegend(plt);
-    close();
+    if(refreshOK)
+        close();
 }

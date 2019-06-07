@@ -25,6 +25,7 @@ private slots:
     void EnableButtons();
     void onClearClick();
 private:
+    void closeEvent(QCloseEvent *event);
     void SetDimensions();
     void initializeParamHash();
     void InstrWindow();

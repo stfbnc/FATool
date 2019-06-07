@@ -54,6 +54,12 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 
 MainWindow::~MainWindow(){}
 
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if(event->Close)
+        QApplication::quit();
+}
+
 void MainWindow::SetDimensions()
 {
     xDim = 800;
