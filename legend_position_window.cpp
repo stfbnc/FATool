@@ -102,7 +102,6 @@ void MoveLegendWindow::RefreshLegend(QCustomPlot *plt)
                 refreshOK = true;
                 QFont qFont = QFont(font().family(), 12);
                 plt->axisRect()->insetLayout()->setInsetPlacement(0, QCPLayoutInset::ipFree);
-                QRectF rect = plt->axisRect()->insetLayout()->insetRect(0);
                 QFontMetrics fm(qFont);
                 int num_graphs = plt->itemCount();
                 int pixelsWide = 0;
@@ -112,10 +111,17 @@ void MoveLegendWindow::RefreshLegend(QCustomPlot *plt)
                         pixelsWide = w;
                 }
                 int pixelsHigh = fm.height() * num_graphs;
-                QPointF crd(coordTxt->text().split(",").first().trimmed().toDouble(),
-                            coordTxt->text().split(",").last().trimmed().toDouble());
-                //QPointF crd((coordTxt->text().split(",").first().toInt()-plt->axisRect()->left())/static_cast<double>(plt->axisRect()->width()),
-                //            (coordTxt->text().split(",").last().toInt()-plt->axisRect()->top())/static_cast<double>(plt->axisRect()->height()));
+                double xPad = plt->xAxis->pixelToCoord(23) - plt->xAxis->pixelToCoord(10);
+                double yPad = plt->yAxis->pixelToCoord(21) - plt->yAxis->pixelToCoord(10);
+                double xMin = plt->xAxis->range().lower + xPad;
+                double xMax = plt->xAxis->range().upper - xPad;
+                double yMin = plt->yAxis->range().lower - yPad;
+                double yMax = plt->yAxis->range().upper + yPad;
+                double xRange = xMax - xMin;
+                double yRange = yMin - yMax;
+                QPointF crd((coordTxt->text().split(",").first().trimmed().toDouble()-xMin)/static_cast<double>(xRange),
+                            (coordTxt->text().split(",").last().trimmed().toDouble()-yMax)/static_cast<double>(yRange));
+                QRectF rect = plt->axisRect()->insetLayout()->insetRect(0);
                 rect.moveTopLeft(crd);
                 rect.setWidth(pixelsWide);
                 rect.setHeight(pixelsHigh);

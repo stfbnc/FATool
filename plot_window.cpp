@@ -283,7 +283,7 @@ void PlotWindow::EnableButtons()
 void PlotWindow::onMoveLegendClick()
 {
     move_legend_win = new MoveLegendWindow(plt);
-    move_legend_win->setAttribute(Qt::WA_DeleteOnClose);
+    //move_legend_win->setAttribute(Qt::WA_DeleteOnClose);
     move_legend_win->setWindowModality(Qt::ApplicationModal);
     move_legend_win->show();
     DisableButtons();
