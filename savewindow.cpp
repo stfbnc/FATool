@@ -105,14 +105,16 @@ void SaveWindow::onSave(QCustomPlot *plt)
     QFileDialog save_dialog;
     save_file = save_dialog.getSaveFileName();
     QString file_ext = save_file.split(".").last();
-    if(file_ext == "pdf")
-        plt->savePdf(save_file);
-    else if(file_ext == "png")
-        plt->savePng(save_file);
-    else{
-        QMessageBox messageBox;
-        QString errToShow = "Supported formats are:\n- pdf\n- png";
-        messageBox.critical(nullptr, "Error", errToShow);
-        messageBox.setFixedSize(200,200);
+    if(!file_ext.isNull() && !file_ext.isEmpty()){
+        if(file_ext == "pdf")
+            plt->savePdf(save_file);
+        else if(file_ext == "png")
+            plt->savePng(save_file);
+        else{
+            QMessageBox messageBox;
+            QString errToShow = "Supported formats are:\n- pdf\n- png";
+            messageBox.critical(nullptr, "Error", errToShow);
+            messageBox.setFixedSize(200,200);
+        }
     }
 }

@@ -2,8 +2,7 @@
 1.1
 ----
 
-possibilità di poter spostare la legenda ai 4 angoli (o anche inserire coordinate) (bottone sx)
- - posizioni da convertire tra 0 e 1
+omp e librerie linkate
 
 regex e font in FAGlobs
 

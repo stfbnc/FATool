@@ -23,10 +23,11 @@ PlotWindow::PlotWindow(QString analysisType, QHash<QString, QString> *pHash, QSt
         PlotByAnalysis();
         plt->replot();
         //refit button
-        if(analysis != strRHODCCA && analysis != strHT && analysis != strMFDFA){
-            refit = new QPushButton("Refit", this);
-            refit->setGeometry(xDim-5*xWidth-padX*5/2, yDim-yHeight-padY/2, xWidth, yHeight);
-            connect(refit, SIGNAL(clicked()), this, SLOT(onRefitClick()));
+        refit = new QPushButton("Refit", this);
+        refit->setGeometry(xDim-5*xWidth-padX*5/2, yDim-yHeight-padY/2, xWidth, yHeight);
+        connect(refit, SIGNAL(clicked()), this, SLOT(onRefitClick()));
+        if(analysis == strRHODCCA || analysis == strHT || analysis == strMFDFA){
+            refit->setVisible(false);
         }
         //replot button
         replot = new QPushButton("Replot", this);
@@ -283,7 +284,7 @@ void PlotWindow::EnableButtons()
 void PlotWindow::onMoveLegendClick()
 {
     move_legend_win = new MoveLegendWindow(plt);
-    //move_legend_win->setAttribute(Qt::WA_DeleteOnClose);
+    move_legend_win->setAttribute(Qt::WA_DeleteOnClose);
     move_legend_win->setWindowModality(Qt::ApplicationModal);
     move_legend_win->show();
     DisableButtons();
