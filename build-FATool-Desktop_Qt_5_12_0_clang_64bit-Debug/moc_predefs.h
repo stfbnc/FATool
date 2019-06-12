@@ -1,5 +1,6 @@
 #define OBJC_NEW_PROPERTIES 1
 #define _LP64 1
+#define _OPENMP 201107
 #define __APPLE_CC__ 6000
 #define __APPLE__ 1
 #define __ATOMIC_ACQUIRE 2

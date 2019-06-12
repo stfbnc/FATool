@@ -2,6 +2,10 @@ TEMPLATE = app
 TARGET = FATool
 ICON = logo.icns
 
+LIBS += -L/opt/local/lib/libomp -lomp
+QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp
+LIBS += -Xpreprocessor -fopenmp
+
 QT = core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
@@ -48,7 +52,8 @@ HEADERS += \
     MFDFAsingleQ.h \
     HT.h \
     HTsingleScale.h \
-    legend_position_window.h
+    legend_position_window.h \
+    omp.h
 
 DISTFILES += \
     prefs.txt

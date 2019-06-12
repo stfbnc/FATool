@@ -62,10 +62,11 @@ bool DFA::winFlucComp(){
         curr_win_size = s[i];
         N_s = N / curr_win_size;
         ao.zero_vec(F_nu1, F_len);
+        ao.zero_vec(t_fit, max_win);
+        ao.zero_vec(y_fit, max_win);
+        ao.zero_vec(diff_vec, max_win);
+        #pragma omp parallel for shared(F_nu1, t_fit, y_fit, diff_vec, t, y)
         for(int v = 0; v < N_s; v++){
-            ao.zero_vec(t_fit, max_win);
-            ao.zero_vec(y_fit, max_win);
-            ao.zero_vec(diff_vec, max_win);
             start_lim = v * curr_win_size;
             end_lim = (v + 1) * curr_win_size - 1;
             ao.slice_vec(t, t_fit, start_lim, end_lim);
@@ -93,6 +94,7 @@ bool DFA::winFlucComp(){
             F[i] = sqrt((mo.mean(F_nu1, N_s) + mo.mean(F_nu2, N_s)) / 2.0);
         }else{
             F[i] = sqrt(mo.mean(F_nu1, N_s));
+            qInfo() << F[i];
         }
     }
     progress.setValue(range);
