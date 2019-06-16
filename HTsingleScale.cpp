@@ -34,16 +34,16 @@ bool HTsingleScale::winFlucComp(){
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
 	int range = getRangeLength(scale, N);
-    double *t_fit, *y_fit, *diff_vec;
-    t_fit = new double [scale];
-    y_fit = new double [scale];
-    diff_vec = new double [scale];
+//    double *t_fit, *y_fit, *diff_vec;
+//    t_fit = new double [scale];
+//    y_fit = new double [scale];
+//    diff_vec = new double [scale];
     //computation
-    int start_lim, end_lim;
-    double ang_coeff, intercept;
-	ao.zero_vec(t_fit, scale);
-	ao.zero_vec(y_fit, scale);
-	ao.zero_vec(diff_vec, scale);
+//    int start_lim, end_lim;
+//    double ang_coeff, intercept;
+//	ao.zero_vec(t_fit, scale);
+//	ao.zero_vec(y_fit, scale);
+//	ao.zero_vec(diff_vec, scale);
 	ao.zero_vec(F, range);
     QProgressDialog progress(strHT+"\n"+"scale = "+QString::number(scale)+" -> "+
                              QString::fromStdString(file_name.substr(file_name.find_last_of("/")+1)),
@@ -51,25 +51,34 @@ bool HTsingleScale::winFlucComp(){
     progress.setWindowModality(Qt::WindowModal);
     progress.setMinimumDuration(0);
     progress.setFixedSize(xPG, yPG);
+    //#pragma omp parallel for ---- no parallel for with graphic components or break statement
     for(int v = 0; v < range; v++){
         progress.setValue(v);
         if(progress.wasCanceled()){
             execStop = true;
             break;
         }
-		start_lim = v;
-		end_lim = v + scale - 1;
+        int start_lim = v;
+        int end_lim = v + scale - 1;
+        double *t_fit, *y_fit, *diff_vec;
+        t_fit = new double [scale];
+        y_fit = new double [scale];
+        diff_vec = new double [scale];
 		ao.slice_vec(t, t_fit, start_lim, end_lim);
 		ao.slice_vec(y, y_fit, start_lim, end_lim);
+        double ang_coeff, intercept;
 		mo.lin_fit(scale, t_fit, y_fit, &ang_coeff, &intercept);
 		for(int j = 0; j < scale; j++)
 			diff_vec[j] = pow((y_fit[j] - (intercept + ang_coeff * t_fit[j])), 2.0);
 		F[v] = sqrt(mo.mean(diff_vec, scale));
+        delAlloc<double>(t_fit);
+        delAlloc<double>(y_fit);
+        delAlloc<double>(diff_vec);
 	}
     progress.setValue(range);
-    delAlloc(t_fit);
-    delAlloc(y_fit);
-    delAlloc(diff_vec);
+//    delAlloc<double>(t_fit);
+//    delAlloc<double>(y_fit);
+//    delAlloc<double>(diff_vec);
     return execStop;
 }
 

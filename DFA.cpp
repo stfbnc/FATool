@@ -39,16 +39,16 @@ bool DFA::winFlucComp(){
 	int range = getRangeLength(min_win, max_win, win_step);
     ao.int_range(s, range, min_win, win_step);
 	int F_len = N / min_win;
-    double *F_nu1, *F_nu2, *t_fit, *y_fit, *diff_vec;
+    double *F_nu1, *F_nu2;//, *t_fit, *y_fit, *diff_vec;
     F_nu1 = new double [F_len];
     F_nu2 = new double [F_len];
-    t_fit = new double [max_win];
-    y_fit = new double [max_win];
-    diff_vec = new double [max_win];
+    //t_fit = new double [max_win];
+    //y_fit = new double [max_win];
+    //diff_vec = new double [max_win];
     //computation
-    int N_s, curr_win_size;
-    int start_lim, end_lim;
-    double ang_coeff, intercept;
+    //int N_s, curr_win_size;
+    //int start_lim, end_lim;
+    //double ang_coeff, intercept;
     QProgressDialog progress(strDFA+"\n"+QString::fromStdString(file_name.substr(file_name.find_last_of("/")+1)), "Stop", 0, range);
     progress.setWindowModality(Qt::WindowModal);
     progress.setMinimumDuration(0);
@@ -59,50 +59,68 @@ bool DFA::winFlucComp(){
             execStop = true;
             break;
         }
-        curr_win_size = s[i];
-        N_s = N / curr_win_size;
+        int curr_win_size = s[i];
+        int N_s = N / curr_win_size;
         ao.zero_vec(F_nu1, F_len);
-        ao.zero_vec(t_fit, max_win);
-        ao.zero_vec(y_fit, max_win);
-        ao.zero_vec(diff_vec, max_win);
-        #pragma omp parallel for shared(F_nu1, t_fit, y_fit, diff_vec, t, y)
+        //ao.zero_vec(t_fit, max_win);
+        //ao.zero_vec(y_fit, max_win);
+        //ao.zero_vec(diff_vec, max_win);
+        #pragma omp parallel for
         for(int v = 0; v < N_s; v++){
-            start_lim = v * curr_win_size;
-            end_lim = (v + 1) * curr_win_size - 1;
+            int start_lim = v * curr_win_size;
+            int end_lim = (v + 1) * curr_win_size - 1;
+            //double t_fit[curr_win_size], y_fit[curr_win_size], diff_vec[curr_win_size];
+            double *t_fit, *y_fit, *diff_vec;
+            t_fit = new double [curr_win_size];
+            y_fit = new double [curr_win_size];
+            diff_vec = new double [curr_win_size];
             ao.slice_vec(t, t_fit, start_lim, end_lim);
             ao.slice_vec(y, y_fit, start_lim, end_lim);
+            double ang_coeff, intercept;
             mo.lin_fit(curr_win_size, t_fit, y_fit, &ang_coeff, &intercept);
             for(int j = 0; j < curr_win_size; j++)
                 diff_vec[j] = pow((y_fit[j] - (intercept + ang_coeff * t_fit[j])), 2.0);
             F_nu1[v] = mo.mean(diff_vec, curr_win_size);
+            delAlloc<double>(t_fit);
+            delAlloc<double>(y_fit);
+            delAlloc<double>(diff_vec);
         }
         if(rev_seg == 1){
             ao.zero_vec(F_nu2, F_len);
+            #pragma omp parallel for
             for(int v = 0; v < N_s; v++){
-                ao.zero_vec(t_fit, max_win);
-                ao.zero_vec(y_fit, max_win);
-                ao.zero_vec(diff_vec, max_win);
-                start_lim = v * curr_win_size + (N - N_s * curr_win_size);
-                end_lim = (v + 1) * curr_win_size + (N - N_s * curr_win_size) - 1;
+                //ao.zero_vec(t_fit, max_win);
+                //ao.zero_vec(y_fit, max_win);
+                //ao.zero_vec(diff_vec, max_win);
+                int start_lim = v * curr_win_size + (N - N_s * curr_win_size);
+                int end_lim = (v + 1) * curr_win_size + (N - N_s * curr_win_size) - 1;
+                //double t_fit[curr_win_size], y_fit[curr_win_size], diff_vec[curr_win_size];
+                double *t_fit, *y_fit, *diff_vec;
+                t_fit = new double [curr_win_size];
+                y_fit = new double [curr_win_size];
+                diff_vec = new double [curr_win_size];
                 ao.slice_vec(t, t_fit, start_lim, end_lim);
                 ao.slice_vec(y, y_fit, start_lim, end_lim);
+                double ang_coeff, intercept;
                 mo.lin_fit(curr_win_size, t_fit, y_fit, &ang_coeff, &intercept);
                 for(int j = 0; j < curr_win_size; j++)
                     diff_vec[j] = pow((y_fit[j] - (intercept + ang_coeff * t_fit[j])), 2.0);
                 F_nu2[v] = mo.mean(diff_vec, curr_win_size);
+                delAlloc<double>(t_fit);
+                delAlloc<double>(y_fit);
+                delAlloc<double>(diff_vec);
             }
             F[i] = sqrt((mo.mean(F_nu1, N_s) + mo.mean(F_nu2, N_s)) / 2.0);
         }else{
             F[i] = sqrt(mo.mean(F_nu1, N_s));
-            qInfo() << F[i];
         }
     }
     progress.setValue(range);
     delAlloc<double>(F_nu1);
     delAlloc<double>(F_nu2);
-    delAlloc<double>(t_fit);
-    delAlloc<double>(y_fit);
-    delAlloc<double>(diff_vec);
+    //delAlloc<double>(t_fit);
+    //delAlloc<double>(y_fit);
+    //delAlloc<double>(diff_vec);
     return execStop;
 }
 

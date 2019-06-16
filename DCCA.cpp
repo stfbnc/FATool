@@ -71,16 +71,16 @@ bool DCCA::winFlucComp(){
 	int range = getRangeLength(min_win, max_win, win_step);
     ao.int_range(s, range, min_win, win_step);
 	int F_len = N - min_win;
-    double *F_nu, *t_fit, *y_fit1, *y_fit2, *diff_vec;
+    double *F_nu;//, *t_fit, *y_fit1, *y_fit2, *diff_vec;
     F_nu = new double [F_len];
-    t_fit = new double [max_win+1];
-    y_fit1 = new double [max_win+1];
-    y_fit2 = new double [max_win+1];
-    diff_vec = new double [max_win+1];
+//    t_fit = new double [max_win+1];
+//    y_fit1 = new double [max_win+1];
+//    y_fit2 = new double [max_win+1];
+//    diff_vec = new double [max_win+1];
     //computation
-    int N_s, curr_win_size;
-    int start_lim, end_lim;
-    double ang_coeff1, intercept1, ang_coeff2, intercept2;
+    //int N_s, curr_win_size;
+    //int start_lim, end_lim;
+    //double ang_coeff1, intercept1, ang_coeff2, intercept2;
     QProgressDialog progress(strDCCA+"\n"+QString::fromStdString(file_name.substr(file_name.find_last_of("/")+1))+
                              " vs "+QString::fromStdString(file_name2.substr(file_name2.find_last_of("/")+1)), "Stop", 0, range);
     progress.setWindowModality(Qt::WindowModal);
@@ -92,19 +92,26 @@ bool DCCA::winFlucComp(){
             execStop = true;
             break;
         }
-        curr_win_size = s[i];
-        N_s = N - curr_win_size;
+        int curr_win_size = s[i];
+        int N_s = N - curr_win_size;
         ao.zero_vec(F_nu, F_len);
+        #pragma omp parallel for
         for(int v = 0; v < N_s; v++){
-            ao.zero_vec(t_fit, max_win);
-            ao.zero_vec(y_fit1, max_win);
-            ao.zero_vec(y_fit2, max_win);
-            ao.zero_vec(diff_vec, max_win);
-            start_lim = v;
-            end_lim = v + curr_win_size;
+            //ao.zero_vec(t_fit, max_win);
+            //ao.zero_vec(y_fit1, max_win);
+            //ao.zero_vec(y_fit2, max_win);
+            //ao.zero_vec(diff_vec, max_win);
+            int start_lim = v;
+            int end_lim = v + curr_win_size;
+            double *t_fit, *y_fit1, *y_fit2, *diff_vec;
+            t_fit = new double [curr_win_size+1];
+            y_fit1 = new double [curr_win_size+1];
+            y_fit2 = new double [curr_win_size+1];
+            diff_vec = new double [curr_win_size+1];
             ao.slice_vec(t, t_fit, start_lim, end_lim);
             ao.slice_vec(y, y_fit1, start_lim, end_lim);
             ao.slice_vec(y2, y_fit2, start_lim, end_lim);
+            double ang_coeff1, intercept1, ang_coeff2, intercept2;
             mo.lin_fit(curr_win_size+1, t_fit, y_fit1, &ang_coeff1, &intercept1);
             mo.lin_fit(curr_win_size+1, t_fit, y_fit2, &ang_coeff2, &intercept2);
             if(isAbs.compare(CORR_DCCA) == 0){
@@ -115,6 +122,10 @@ bool DCCA::winFlucComp(){
                     diff_vec[j] = fabs((y_fit1[j] - (intercept1 + ang_coeff1 * t_fit[j])) * (y_fit2[j] - (intercept2 + ang_coeff2 * t_fit[j])));
             }
             F_nu[v] = mo.custom_mean(diff_vec, curr_win_size+1, curr_win_size-1);
+            delAlloc<double>(t_fit);
+            delAlloc<double>(y_fit1);
+            delAlloc<double>(y_fit2);
+            delAlloc<double>(diff_vec);
         }
         if(isAbs.compare(CORR_DCCA) == 0){
             F[i] = mo.mean(F_nu, N_s);
@@ -124,10 +135,10 @@ bool DCCA::winFlucComp(){
     }
     progress.setValue(range);
     delAlloc<double>(F_nu);
-    delAlloc<double>(t_fit);
-    delAlloc<double>(y_fit1);
-    delAlloc<double>(y_fit2);
-    delAlloc<double>(diff_vec);
+//    delAlloc<double>(t_fit);
+//    delAlloc<double>(y_fit1);
+//    delAlloc<double>(y_fit2);
+//    delAlloc<double>(diff_vec);
     return execStop;
 }
 
