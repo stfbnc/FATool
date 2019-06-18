@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "qcustomplot.h"
+#include "FAGlobs.h"
 
 class BasePlot : public QCustomPlot
 {

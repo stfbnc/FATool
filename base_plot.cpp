@@ -15,8 +15,8 @@ void BasePlot::SetBasePlot()
     yAxis2->setTickLabels(false);
     connect(xAxis, SIGNAL(rangeChanged(QCPRange)), xAxis2, SLOT(setRange(QCPRange)));
     connect(yAxis, SIGNAL(rangeChanged(QCPRange)), yAxis2, SLOT(setRange(QCPRange)));
-    setFont(QFont("sans", 12));
-    xAxis2->setLabelFont(QFont("sans", 14, QFont::Bold));
+    setFont(QFont("sans", fontSmall));
+    xAxis2->setLabelFont(QFont("sans", fontBig, QFont::Bold));
     QPen plt_pen, grid_pen;
     plt_pen.setColor(QColor(Qt::black));
     grid_pen.setColor(QColor(220, 220, 220));
@@ -38,7 +38,7 @@ void BasePlot::SetBasePlot()
     textItem->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
     textItem->setFrame(false);
     textItem->setEnabled(false);
-    qFont = QFont(font().family(), 12);
+    qFont = QFont(font().family(), fontSmall);
     textItem->setFont(qFont);
     textItem->setStyleSheet("color: #000000");
     connect(this, &QCustomPlot::mouseMove, this, &BasePlot::onMouseMove);

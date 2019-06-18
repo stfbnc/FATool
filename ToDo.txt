@@ -1,13 +1,4 @@
 
-1.1
-----
-
-omp e librerie linkate
-
-regex e font in FAGlobs
-
-se è più grande di 10000 punti il grafico iniziale chiedere se si vuole plottare
-
 1.2
 ----
 
@@ -43,3 +34,8 @@ caricare il file delle fluttuazioni per rifare il fit (tipo la matrice per MFDFA
 ----
 
 nanDFA che estende dfa (e lo stesso con le altre classi)
+
+4.0
+----
+
+rifare la grafica della pagina iniziale, con solo elenco nomi file e possibilità di selezionarli per fare plot o analisi

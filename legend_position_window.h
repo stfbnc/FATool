@@ -4,6 +4,7 @@
 #include <QApplication>
 #include <QtWidgets>
 #include "qcustomplot.h"
+#include "FAGlobs.h"
 
 class MoveLegendWindow : public QWidget
 {

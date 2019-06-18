@@ -100,7 +100,7 @@ void MoveLegendWindow::RefreshLegend(QCustomPlot *plt)
                 messageBox.setFixedSize(200,200);
             }else{
                 refreshOK = true;
-                QFont qFont = QFont(font().family(), 12);
+                QFont qFont = QFont(font().family(), fontSmall);
                 plt->axisRect()->insetLayout()->setInsetPlacement(0, QCPLayoutInset::ipFree);
                 QFontMetrics fm(qFont);
                 int num_graphs = plt->itemCount();

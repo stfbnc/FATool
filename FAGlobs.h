@@ -51,5 +51,8 @@ const QString strRHODCCA = "rhoDCCA";
 const QString dataFilter = "*.txt *.dat *.csv";
 //plots colours
 const QVector<QColor> colours = {Qt::red, Qt::blue, Qt::green, Qt::black, Qt::magenta, Qt::cyan};
+//font dimensions
+const int fontBig = 14;
+const int fontSmall = 12;
 
 #endif
