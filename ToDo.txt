@@ -2,6 +2,9 @@
 1.2
 ----
 
+togliere bottone ok in move legend
+aggiungere rhodcca come prima riga nella progressbar
+in dcca e rhodcca possibilità di fare un solo file contro gli altri
 bottone che apre il log dei fit con mw, Mw, h_intercept e h
 
 1.3
