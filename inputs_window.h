@@ -1,56 +1,36 @@
 #ifndef INPUTS_WINDOW_H
 #define INPUTS_WINDOW_H
 
-#include <QApplication>
 #include <QtWidgets>
-#include "FAGlobs.h"
+#include "constants.h"
 
 class InputsWindow : public QWidget
 {
 Q_OBJECT
 public:
-    explicit InputsWindow(QString analysisStr, QHash<QString, QString> *pHash, QWidget *parent=nullptr);
+    explicit InputsWindow(QWidget *parent=nullptr);
     ~InputsWindow();
-signals:
-    void inputsInserted();
 private slots:
-    void onRangeChkBoxClick();
-    void onStringChkBoxClick();
+    virtual void onOKClick();
 private:
-    void SetDimensions();
-    void setInptWindow();
-    void DFAInptWindow();
-    void DCCAInptWindow();
-    void MFDFAInptWindow();
-    void rhoDCCAInptWindow();
-    void HTInptWindow();
-    void onOKClick(QHash<QString, QString> *pHash);
-    bool CheckInputs(QHash<QString, QString> *pHash);
-    QPushButton *ok_button;
-    QPushButton *close_button;
-    QLabel *minWin;
-    QLabel *maxWin;
-    QLabel *winStep;
-    QLabel *polOrd;
-    QLabel *revSeg;
-    QLabel *isAbs;
-    QLabel *qIn;
-    QLabel *Nq;
-    QLabel *qStep;
-    QLineEdit *minWinTxt;
-    QLineEdit *maxWinTxt;
-    QLineEdit *winStepTxt;
-    QLineEdit *polOrdTxt;
-    QCheckBox *revSegBox;
-    QComboBox *absList;
-    QLineEdit *qInTxt;
-    QLineEdit *NqTxt;
-    QLineEdit *qStepTxt;
-    QCheckBox *rangeBox;
-    QCheckBox *stringBox;
-    QString analysis;
+    void setDimensions();
+protected:
+    void addLabel(QString lbl, int row);
+    void addButtons(int row);
+    QLineEdit* addLabeledEditBox(QString txt, int row, int col=0);
+    void addLabeledEditBoxArray(QStringList txt, QLineEdit **lineEdits, int row, int col=0);
+    QCheckBox* addCheckBox(int row);
+    QCheckBox* addLabeledCheckBox(QString txt, int row);
+    QComboBox* addLabeledComboBox(QString txt, QStringList elements, int row);
+    bool isCorrectFormat(QString txt);
+    virtual bool checkInputs();
+    virtual void setInputsComponents();
+    virtual void setAnalysisObj();
+
+    QPushButton *okButton;
+    QPushButton *closeButton;
+
     int xDim;
-    int yDim;
     int xWidth;
     int yHeight;
     int padX;

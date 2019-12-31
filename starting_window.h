@@ -1,9 +1,8 @@
 #ifndef STARTING_WINDOW_H
 #define STARTING_WINDOW_H
 
-#include <QApplication>
 #include <QtWidgets>
-#include "FAGlobs.h"
+#include "constants.h"
 
 class StartingWindow
 {
@@ -13,6 +12,7 @@ public:
 private:
     QString getInstrText();
     void onOKClick();
+    
     QCheckBox *cb;
 };
 

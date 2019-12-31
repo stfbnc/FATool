@@ -1,38 +1,40 @@
 #ifndef DCCA_H
 #define DCCA_H
 
-#include "FAGlobs.h"
 #include "FA.h"
-#include <QtWidgets>
 
 class DCCA : public FA
 {
 public:
-    DCCA(string, string, int, int, int, string, int);
+    DCCA(std::string fileName_, std::string fileName2_, int minWin_, int maxWin_, int ord_, std::string isAbs_, int winStep_);
 	~DCCA();
-	void allocateMemory();
-    void getEqualLength(string, string);
+    void allocateMemory() override;
+    void getEqualLength(std::string fn1, std::string fn2);
 	int getTsLength();
 	void setFlucVectors();
-    bool winFlucComp();
+    bool computeFlucVec() override;
+    std::string getFileName1();
+    std::string getFileName2();
     double *getF();
+    int getMinWin();
+    int getMaxWin();
 	double getH();
-	double getH_intercept();
-	void H_loglogFit(int, int);
-	string outFileStr();
-	void saveFile(string);
-    void plot(QCustomPlot *);
+	double getHintercept();
+    void fitFlucVec(int start, int end) override;
+    std::string outFileStr() override;
+    void saveFile(std::string pathTot) override;
+    void plot(BasePlot *plt) override;
 private:
-	string file_name2;
-	int min_win;
-	int max_win;
+	std::string fileName2;
+	int minWin;
+	int maxWin;
 	int ord;
-    string isAbs;
-    int win_step;
+    std::string isAbs;
+    int winStep;
 	double *y2;
 	int *s;
 	double H;
-	double H_intercept;
+	double Hintercept;
 };
 
 #endif

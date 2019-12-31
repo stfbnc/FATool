@@ -1,24 +1,25 @@
 #ifndef HT_H
 #define HT_H
 
-#include "FAGlobs.h"
-#include "HTsingleScale.h"
+#include "HT_single_scale.h"
 
 class HT : public HTsingleScale
 {
 public:
-	HT(string, int, int, int);
-	HT(string, string);
+    HT(std::string fileName_, int scale_, int Nscales_, int stepScale_, int mfdfaMinWin, int mfdfaMaxWin, int mfdfaStep);
+    HT(std::string fileName, std::string strScales, int mfdfaMinWin, int mfdfaMaxWin, int mfdfaStep);
     ~HT() override;
 	void allocateScalesMemory();
-	int getNumScales(string);
-    int getMinScale(string);
-	void getScales(string);
-    bool winFlucComp() override;
-	string outFileStr() override;
-	void saveFile(string) override;
-    void plot(QCustomPlot *) override;
+	int getNumScales(std::string str);
+    int getMinScale(std::string str);
+	void getScales(std::string str);
+    bool computeFlucVec() override;
+	std::string outFileStr() override;
+	void saveFile(std::string pathTot) override;
+    void plot(BasePlot *plt) override;
 private:
+	int mMFDFA;
+	int MMFDFA;
 	int Nscales;
 	int minScale;
 	int stepScale;

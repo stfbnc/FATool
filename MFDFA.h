@@ -1,29 +1,28 @@
 #ifndef MFDFA_H
 #define MFDFA_H
 
-#include "FAGlobs.h"
-#include "MFDFAsingleQ.h"
+#include "MFDFA_single_q.h"
 
 class MFDFA : public MFDFAsingleQ
 {
 public:
-    MFDFA(string, int, int, int, double, int, int=1, double=1.0, int=1);
+    MFDFA(std::string fileName_, int minWin_, int maxWin_, int ord_, double qIn_, int Nq_, int winStep_=1, double stepq_=1.0, int revSeg_=1);
     ~MFDFA() override;
     void allocateQmemory();
     void setQrange(double, int, double);
-    bool winFlucComp() override;
-	string outFileStr() override;
-	void saveFile(string) override;
-	string qoutFileStr();
-	void qsaveFile(string);
-    void plot(QCustomPlot *) override;
+    bool computeFlucVec() override;
+	std::string outFileStr() override;
+	void saveFile(std::string pathTot) override;
+	std::string qoutFileStr();
+	void qsaveFile(std::string pathTot);
+    void plot(BasePlot *plt) override;
 private:
     int Nq;
     double stepq;
     double *qRange;
 	double **flucMtx;
     double *Hq;
-    double *H_interceptq;
+    double *Hinterceptq;
 };
 
 #endif

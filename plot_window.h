@@ -1,81 +1,69 @@
 #ifndef PLOT_WINDOW_H
 #define PLOT_WINDOW_H
 
-#include <QApplication>
-#include <QtWidgets>
 #include "base_plot.h"
 #include "refit_window.h"
 #include "legend_position_window.h"
-#include "FAGlobs.h"
-#include "DFA.h"
-#include "DCCA.h"
-#include "rhoDCCA.h"
-#include "MFDFA.h"
-#include "HT.h"
-#include "FileOps.h"
 
 class PlotWindow : public QWidget
 {
 Q_OBJECT
 public:
-    explicit PlotWindow(QString analysisType, QHash<QString, QString> *pHash, QString fileName, QString fileName2="", QWidget *parent=nullptr);
+    explicit PlotWindow(QWidget *parent=nullptr);
     ~PlotWindow();
+protected:
     BasePlot *plt;
+
+    void setTitle(QString winTitle);
+    void addPlotFields();
+    void addLegend();
+    void addRefitButton();
 private slots:
     void onMoveLegendClick();
-    void onYorNLegend();
+    void onIsLegendCheck();
     void onRefitClick();
     void onReplotClick();
     void onSavePlotClick();
-    void onSaveTxtClick();
-    void newFit(int start, int end);
-    void EnableButtons();
+    virtual void onSaveTxtClick();
+    void newFitPlot(int start, int end);
+    void enableButtons();
 private:
-    void SetDimensions();
-    bool PerformAnalysis(QHash<QString, QString> *pHash, QString fileName, QString fileName2);
-    void DisableButtons();
-    bool setLogAxesByAnalysis();
-    void RefitByAnalysis(int start, int end, double *hSlope, double *hIntcpt);
-    void PlotByAnalysis();
-    bool DFAanalysis(QHash<QString, QString> *pHash, QString fileName);
-    bool MFDFAanalysis(QHash<QString, QString> *pHash, QString fileName);
-    bool HTanalysis(QHash<QString, QString> *pHash, QString fileName);
-    bool DCCAanalysis(QHash<QString, QString> *pHash, QString fileName, QString fileName2);
-    bool rhoDCCAanalysis(QHash<QString, QString> *pHash, QString fileName, QString fileName2);
-    QLabel *xlim;
-    QLabel *ylim;
-    QLabel *title;
-    QLabel *xlabel;
-    QLabel *ylabel;
-    QLabel *legend;
-    QLabel *legendYorN;
-    QLineEdit *xlimTxt;
-    QLineEdit *ylimTxt;
+	void addButtons();
+    void disableButtons();
+    virtual void refitData(int start, int end, double *hSlope, double *hIntcpt);
+	virtual void plotData();
+
+	const int xDim = 800;
+    const int yDim = 500;
+    const int xWidth = 110;
+    const int yHeight = 30;
+    const int padX = 10;
+    const int padY = 10;
+
+    QLabel *xLimLbl;
+    QLabel *yLimLbl;
+    QLabel *titleLbl;
+    QLabel *xLabelLbl;
+    QLabel *yLabelLbl;
+    QLabel *legendLbl;
+    QLabel *isLegendLbl;
+    QLineEdit *xLimTxt;
+    QLineEdit *yLimTxt;
     QLineEdit *titleTxt;
-    QLineEdit *xlabelTxt;
-    QLineEdit *ylabelTxt;
+    QLineEdit *xLabelTxt;
+    QLineEdit *yLabelTxt;
     QTextEdit *legendTxt;
-    QCheckBox *legendYorNBox;
-    QPushButton *move_legend;
-    QPushButton *refit;
-    QPushButton *replot;
-    QPushButton *save_plot;
-    QPushButton *save_txt;
-    QPushButton *close_button;
-    RefitWindow *refit_win;
-    MoveLegendWindow *move_legend_win;
-    QString analysis;
-    DFA *dfa;
-    DCCA *dcca;
-    rhoDCCA *rhodcca;
-    MFDFA *mfdfa;
-    HT *ht;
-    int xDim;
-    int yDim;
-    int xWidth;
-    int yHeight;
-    int padX;
-    int padY;
+    QCheckBox *isLegendBox;
+
+    QPushButton *moveLegendBtn;
+    QPushButton *refitBtn;
+    QPushButton *replotBtn;
+    QPushButton *savePlotBtn;
+    QPushButton *saveTxtBtn;
+    QPushButton *closeBtn;
+
+    RefitWindow *refitWin;
+    MoveLegendWindow *moveLegendWin;
 };
 
 #endif // PLOT_WINDOW_H

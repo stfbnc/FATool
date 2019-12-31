@@ -3,19 +3,19 @@
 RefitWindow::RefitWindow(QWidget *parent) : QWidget(parent)
 {
     //set dimensions
-    SetDimensions();
+    setDimensions();
     //set title
     setWindowTitle("Fit parameters");
     //win size
     setFixedSize(xDim, yDim);
     //apply button
-    ok_button = new QPushButton("OK", this);
-    ok_button->setGeometry(xDim-padX/2-xWidth*3, yDim-yHeight-padY, xWidth*3, yHeight);
-    connect(ok_button, SIGNAL(clicked()), this, SLOT(onOKClick()));
+    okButton = new QPushButton("OK", this);
+    okButton->setGeometry(xDim-padX/2-xWidth*3, yDim-yHeight-padY, xWidth*3, yHeight);
+    connect(okButton, SIGNAL(clicked()), this, SLOT(onOKClick()));
     //close button
-    close_button = new QPushButton("Close", this);
-    close_button->setGeometry(xDim-padX-xWidth*6, yDim-yHeight-padY, xWidth*3, yHeight);
-    connect(close_button, SIGNAL(clicked()), this, SLOT(close()));
+    closeButton = new QPushButton("Close", this);
+    closeButton->setGeometry(xDim-padX-xWidth*6, yDim-yHeight-padY, xWidth*3, yHeight);
+    connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
     //windows sizes
     minWin = new QLabel("Windows size from", this);
     minWin->setGeometry(padX, padY, xWidth*4, yHeight);
@@ -29,7 +29,7 @@ RefitWindow::RefitWindow(QWidget *parent) : QWidget(parent)
 
 RefitWindow::~RefitWindow(){}
 
-void RefitWindow::SetDimensions()
+void RefitWindow::setDimensions()
 {
     xDim = 240;
     yDim = 80;
@@ -52,6 +52,6 @@ void RefitWindow::onOKClick()
         QMessageBox messageBox;
         QString errToShow = "Inputs must be numeric and not null!";
         messageBox.critical(nullptr, "Error", errToShow);
-        messageBox.setFixedSize(200,200);
+        messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
     }
 }

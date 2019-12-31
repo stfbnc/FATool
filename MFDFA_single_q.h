@@ -1,30 +1,28 @@
-#ifndef DFA_H
-#define DFA_H
+#ifndef MFDFAsingleQ_H
+#define MFDFAsingleQ_H
 
 #include "FA.h"
 
-class DFA : public FA
+class MFDFAsingleQ : public FA
 {
 public:
-    DFA(std::string fileName_, int minWin_, int maxWin_, int ord_, int winStep_=1, int revSeg_=1);
-	~DFA();
+    MFDFAsingleQ(std::string fileName_, int minWin_, int maxWin_, int ord_, double q_, int winStep_=1, int revSeg_=1);
+	~MFDFAsingleQ();
     void allocateMemory() override;
 	int getTsLength();
     bool computeFlucVec() override;
     std::string getFileName();
-    int getMinWin();
-    int getMaxWin();
-    int getWinStep();
 	double getH();
-    double getHintercept();
+	double getHintercept();
     void fitFlucVec(int start, int end) override;
     std::string outFileStr() override;
     void saveFile(std::string pathTot) override;
     void plot(BasePlot *plt) override;
-private:
+protected:
 	int minWin;
 	int maxWin;
 	int ord;
+    double q;
 	int revSeg;
 	int winStep;
 	int *s;

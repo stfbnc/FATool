@@ -1,27 +1,27 @@
 #ifndef RHO_DCCA_H
 #define RHO_DCCA_H
 
-#include "FAGlobs.h"
 #include "DCCA.h"
-#include <QtWidgets>
 
 class rhoDCCA
 {
 public:
-    rhoDCCA(string, string, int, int, int, int=1);
+    rhoDCCA(std::string fileName_, std::string fileName2_, int minWin_, int maxWin_, int ord_, int winStep_=1);
 	~rhoDCCA();
     bool computeRho();
     int getRhoLength();
-    string outFileStr();
-    void saveFile(string);
-    void plot(QCustomPlot *);
+    std::string getFileName1();
+    std::string getFileName2();
+    std::string outFileStr();
+    void saveFile(std::string pathTot);
+    void plot(BasePlot *plt);
 private:
-	string file_name;
-	string file_name2;
-	int min_win;
-	int max_win;
+	std::string fileName;
+	std::string fileName2;
+	int minWin;
+	int maxWin;
 	int ord;
-	int win_step;
+	int winStep;
     double *rho;
     int L;
 };

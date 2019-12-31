@@ -3,18 +3,24 @@
 
 #include <QWidget>
 #include "qcustomplot.h"
-#include "FAGlobs.h"
+#include "constants.h"
 
 class BasePlot : public QCustomPlot
 {
 public:
-    explicit BasePlot(bool logVars, QWidget *parent=nullptr);
+    explicit BasePlot(QWidget *parent=nullptr);
     ~BasePlot();
-    void SetBasePlot();
+    void setBasePlot();
+    void setLogAxes(int logAx);
+
+    static const int X = 0;
+    static const int Y = 1;
+    static const int XY = 2;
 private:
     QFont qFont;
     QLineEdit *textItem;
-    bool isLog;
+    bool isLogX;
+    bool isLogY;
 private slots:
     void onMouseMove(QMouseEvent* event);
 };

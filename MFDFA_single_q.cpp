@@ -1,42 +1,39 @@
-#include "DFA.h"
+#include "MFDFA_single_q.h"
 
-DFA::DFA(std::string fileName_, int minWin_, int maxWin_, int ord_, int winStep_, int revSeg_)
+MFDFAsingleQ::MFDFAsingleQ(std::string fileName_, int minWin_, int maxWin_, int ord_, double q_, int winStep_, int revSeg_)
 	: FA()
 {
 	fileName = fileName_;
 	minWin = minWin_;
 	maxWin = maxWin_;
 	ord = ord_;
-	revSeg = revSeg_;
+	q = q_;
 	winStep = winStep_;
+	revSeg = revSeg_;
     checkFileExistence(fileName);
 	N = setTsLength(fileName);
     allocateMemory();
 }
 
-DFA::~DFA()
-{
+MFDFAsingleQ::~MFDFAsingleQ(){
 	delAlloc<double>(t);
 	delAlloc<double>(y);
 	delAlloc<int>(s);
 	delAlloc<double>(F);
 }
 
-void DFA::allocateMemory()
-{
+void MFDFAsingleQ::allocateMemory(){
 	t = new double [N];
 	y = new double [N];
 	s = new int [getRangeLength(minWin, maxWin, winStep)];
 	F = new double [getRangeLength(minWin, maxWin, winStep)];
 }
 
-int DFA::getTsLength()
-{
+int MFDFAsingleQ::getTsLength(){
 	return N;
 }
     
-bool DFA::computeFlucVec()
-{
+bool MFDFAsingleQ::computeFlucVec(){
     bool execStop = false;
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
@@ -47,7 +44,9 @@ bool DFA::computeFlucVec()
     Fnu1 = new double [Flen];
     Fnu2 = new double [Flen];
 
-    QProgressDialog progress(strDFA+"\n"+QString::fromStdString(fileName.substr(fileName.find_last_of("/")+1)), "Stop", 0, range);
+    QProgressDialog progress(strMFDFA+"\n"+"q = "+QString::number(q)+" -> "+
+                             QString::fromStdString(fileName.substr(fileName.find_last_of("/")+1)),
+                             "Stop", 0, range);
     progress.setWindowModality(Qt::WindowModal);
     progress.setMinimumDuration(0);
     progress.setFixedSize(xPG, yPG);
@@ -75,7 +74,11 @@ bool DFA::computeFlucVec()
             mo.linFit(currWinSize, tFit, yFit, &angCoeff, &intercept);
             for(int j = 0; j < currWinSize; j++)
                 diffVec[j] = pow((yFit[j] - (intercept + angCoeff * tFit[j])), 2.0);
-            Fnu1[v] = mo.mean(diffVec, currWinSize);
+            if(q == 0.0){
+                Fnu1[v] = log(mo.mean(diffVec, currWinSize));
+            }else{
+                Fnu1[v] = pow(mo.mean(diffVec, currWinSize), 0.5*q);
+            }
             delAlloc<double>(tFit);
             delAlloc<double>(yFit);
             delAlloc<double>(diffVec);
@@ -96,14 +99,26 @@ bool DFA::computeFlucVec()
                 mo.linFit(currWinSize, tFit, yFit, &angCoeff, &intercept);
                 for(int j = 0; j < currWinSize; j++)
                     diffVec[j] = pow((yFit[j] - (intercept + angCoeff * tFit[j])), 2.0);
-                Fnu2[v] = mo.mean(diffVec, currWinSize);
+                if(q == 0.0){
+                    Fnu2[v] = log(mo.mean(diffVec, currWinSize));
+                }else{
+                    Fnu2[v] = pow(mo.mean(diffVec, currWinSize), 0.5*q);
+                }
                 delAlloc<double>(tFit);
                 delAlloc<double>(yFit);
                 delAlloc<double>(diffVec);
             }
-            F[i] = sqrt((mo.mean(Fnu1, Ns) + mo.mean(Fnu2, Ns)) / 2.0);
+            if(q == 0.0){
+                F[i] = exp((mo.customMean(Fnu1, Ns, 2*Ns) + mo.customMean(Fnu2, Ns, 2*Ns)) / 2.0);
+            }else{
+                F[i] = pow((mo.mean(Fnu1, Ns) + mo.mean(Fnu2, Ns)) / 2.0, 1/static_cast<double>(q));
+            }
         }else{
-            F[i] = sqrt(mo.mean(Fnu1, Ns));
+            if(q == 0.0){
+                F[i] = exp(mo.customMean(Fnu1, Ns, 2*Ns));
+            }else{
+                F[i] = pow(mo.mean(Fnu1, Ns), 1/static_cast<double>(q));
+            }
         }
     }
 
@@ -114,38 +129,19 @@ bool DFA::computeFlucVec()
     return execStop;
 }
 
-std::string DFA::getFileName()
-{
+std::string MFDFAsingleQ::getFileName(){
     return fileName;
 }
 
-int DFA::getMinWin()
-{
-    return minWin;
-}
-
-int DFA::getMaxWin()
-{
-    return maxWin;
-}
-
-int DFA::getWinStep()
-{
-    return winStep;
-}
-
-double DFA::getH()
-{
+double MFDFAsingleQ::getH(){
 	return H;
 }
 
-double DFA::getHintercept()
-{
+double MFDFAsingleQ::getHintercept(){
 	return Hintercept;
 }
 
-void DFA::fitFlucVec(int start, int end)
-{
+void MFDFAsingleQ::fitFlucVec(int start, int end){
     MathOps mo = MathOps();
 	int range = getRangeLength(start, end, winStep);
     double *logS, *logF;
@@ -162,13 +158,12 @@ void DFA::fitFlucVec(int start, int end)
     delAlloc<double>(logF);
 }
 
-std::string DFA::outFileStr()
-{
-    return "/"+DFAfnStart+"_"+std::to_string(minWin)+"_"+std::to_string(maxWin)+"_"+fileName.substr(fileName.find_last_of("/")+1);
+std::string MFDFAsingleQ::outFileStr(){
+    return "/"+MFDFAsQfnStart+"_"+std::to_string(minWin)+"_"+std::to_string(maxWin)+"_q"+std::to_string(static_cast<int>(q))+"_"+
+			fileName.substr(fileName.find_last_of("/")+1);
 }
 
-void DFA::saveFile(std::string pathTot)
-{
+void MFDFAsingleQ::saveFile(std::string pathTot){
     FileOps fo = FileOps();
 	int range = getRangeLength(minWin, maxWin, winStep);
 	FILE *f;
@@ -178,8 +173,7 @@ void DFA::saveFile(std::string pathTot)
     fclose(f);
 }
 
-void DFA::plot(BasePlot *plt)
-{
+void MFDFAsingleQ::plot(BasePlot *plt){
     int len = getRangeLength(minWin, maxWin, winStep);
     QVector<double> pltVec(len), n(len), Hfit(len);
     for(int i = 0; i < len; i++){
@@ -195,7 +189,7 @@ void DFA::plot(BasePlot *plt)
     plt->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, Qt::red, 10));
     QString fn = QString::fromStdString(fileName).split("/").last();
     fn.truncate(fn.lastIndexOf("."));
-    plt->graph(0)->setName(fn+"_"+QString::number(minWin)+"_"+QString::number(maxWin));
+    plt->graph(0)->setName(fn+"_"+QString::number(minWin)+"_"+QString::number(maxWin)+"_q"+QString::number(q));
     plt->graph(0)->rescaleAxes();
     plt->addGraph();
     plt->graph(1)->setData(n, Hfit);

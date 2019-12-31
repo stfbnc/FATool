@@ -1,13 +1,14 @@
 #include "base_plot.h"
 
-BasePlot::BasePlot(bool logVars, QWidget *parent) : QCustomPlot(parent)
+BasePlot::BasePlot(QWidget *parent) : QCustomPlot(parent)
 {
-    isLog = logVars;
+    isLogX = false;
+    isLogY = false;
 }
 
 BasePlot::~BasePlot(){}
 
-void BasePlot::SetBasePlot()
+void BasePlot::setBasePlot()
 {
     xAxis2->setVisible(true);
     xAxis2->setTickLabels(false);
@@ -17,20 +18,20 @@ void BasePlot::SetBasePlot()
     connect(yAxis, SIGNAL(rangeChanged(QCPRange)), yAxis2, SLOT(setRange(QCPRange)));
     setFont(QFont("sans", fontSmall));
     xAxis2->setLabelFont(QFont("sans", fontBig, QFont::Bold));
-    QPen plt_pen, grid_pen;
-    plt_pen.setColor(QColor(Qt::black));
-    grid_pen.setColor(QColor(220, 220, 220));
-    grid_pen.setStyle(Qt::DashLine);
-    xAxis->setBasePen(plt_pen);
-    xAxis->setTickPen(plt_pen);
-    xAxis2->setBasePen(plt_pen);
-    xAxis2->setTickPen(plt_pen);
-    yAxis->setBasePen(plt_pen);
-    yAxis->setTickPen(plt_pen);
-    yAxis2->setBasePen(plt_pen);
-    yAxis2->setTickPen(plt_pen);
-    xAxis->grid()->setPen(grid_pen);
-    yAxis->grid()->setPen(grid_pen);
+    QPen pltPen, gridPen;
+    pltPen.setColor(QColor(Qt::black));
+    gridPen.setColor(QColor(220, 220, 220));
+    gridPen.setStyle(Qt::DashLine);
+    xAxis->setBasePen(pltPen);
+    xAxis->setTickPen(pltPen);
+    xAxis2->setBasePen(pltPen);
+    xAxis2->setTickPen(pltPen);
+    yAxis->setBasePen(pltPen);
+    yAxis->setTickPen(pltPen);
+    yAxis2->setBasePen(pltPen);
+    yAxis2->setTickPen(pltPen);
+    xAxis->grid()->setPen(gridPen);
+    yAxis->grid()->setPen(gridPen);
     setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
     setLocale(QLocale(QLocale::English, QLocale::UnitedKingdom));
     textItem = new QLineEdit("", this);
@@ -44,24 +45,47 @@ void BasePlot::SetBasePlot()
     connect(this, &QCustomPlot::mouseMove, this, &BasePlot::onMouseMove);
 }
 
+void BasePlot::setLogAxes(int logAx)
+{
+    switch (logAx)
+    {
+    case X:
+        isLogX = true;
+        isLogY = false;
+        break;
+    case Y:
+        isLogX = false;
+        isLogY = true;
+        break;
+    case XY:
+        isLogX = true;
+        isLogY = true;
+        break;
+    default:
+        isLogX = false;
+        isLogY = false;
+        break;
+    }
+}
+
 void BasePlot::onMouseMove(QMouseEvent *event)
 {
     double x = xAxis->pixelToCoord(event->pos().x());
     double y = yAxis->pixelToCoord(event->pos().y());
-    if(isLog){
+    if(isLogX)
         x = exp(x);
+    if(isLogY)
         y = exp(y);
-    }
     QString xStr, yStr;
     xStr.sprintf("%.3f", x);
     yStr.sprintf("%.3f", y);
     QString text = QString("(%1, %2)").arg(xStr).arg(yStr);
     textItem->setText(text);
-    int left_pxl = axisRect()->outerRect().left();
-    int bottom_pxl = axisRect()->outerRect().bottom();
+    int leftPxl = axisRect()->outerRect().left();
+    int bottomPxl = axisRect()->outerRect().bottom();
     int pad = 2;
     QFontMetrics fm(qFont);
     int pixelsWide = fm.width(text);
     int pixelsHigh = fm.height();
-    textItem->setGeometry(left_pxl+pad, bottom_pxl-pad-pixelsHigh, pixelsWide+2*pad, pixelsHigh);
+    textItem->setGeometry(leftPxl+pad, bottomPxl-pad-pixelsHigh, pixelsWide+2*pad, pixelsHigh);
 }

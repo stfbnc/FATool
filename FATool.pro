@@ -14,44 +14,64 @@ SOURCES +=  main.cpp \
     plot_window.cpp \
     qcustomplot.cpp \
     main_window.cpp \
-    FileOps.cpp \
-    savewindow.cpp \
+    file_ops.cpp \
+    save_window.cpp \
     base_plot.cpp \
     inputs_window.cpp \
+    inputs_dfa.cpp \
+    inputs_dcca.cpp \
+    inputs_ht.cpp \
+    inputs_mfdfa.cpp \
+    inputs_rhodcca.cpp \
+    dfa_window.cpp \
+    mfdfa_window.cpp \
+    dcca_window.cpp \
+    rhodcca_window.cpp \
+    ht_window.cpp \
     DFA.cpp \
-    ArrayOps.cpp \
-    MathOps.cpp \
+    array_ops.cpp \
+    math_ops.cpp \
     refit_window.cpp \
     DCCA.cpp \
     rhoDCCA.cpp \
     starting_window.cpp \
     MFDFA.cpp \
-    MFDFAsingleQ.cpp \
+    MFDFA_single_q.cpp \
     HT.cpp \
-    HTsingleScale.cpp \
+    HT_single_scale.cpp \
     legend_position_window.cpp
 
 HEADERS += \
+    constants.h \
     plot_window.h \
     qcustomplot.h \
     main_window.h \
-    FAGlobs.h \
-    FileOps.h \
-    savewindow.h \
+    file_ops.h \
+    save_window.h \
     base_plot.h \
     inputs_window.h \
+    inputs_dfa.h \
+    inputs_dcca.h \
+    inputs_ht.h \
+    inputs_mfdfa.h \
+    inputs_rhodcca.h \
+    dfa_window.h \
+    mfdfa_window.h \
+    dcca_window.h \
+    rhodcca_window.h \
+    ht_window.h \
     DFA.h \
-    ArrayOps.h \
-    MathOps.h \
+    array_ops.h \
+    math_ops.h \
     FA.h \
     refit_window.h \
     DCCA.h \
     rhoDCCA.h \
     starting_window.h \
     MFDFA.h \
-    MFDFAsingleQ.h \
+    MFDFA_single_q.h \
     HT.h \
-    HTsingleScale.h \
+    HT_single_scale.h \
     legend_position_window.h \
     omp.h
 

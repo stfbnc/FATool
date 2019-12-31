@@ -1,55 +1,50 @@
-#include <QDebug>
 #include "main_window.h"
-#include "FAGlobs.h"
-#include "FileOps.h"
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
 {
-    //set parameters hash
-    initializeParamHash();
     //set dimensions
-    SetDimensions();
+    setDimensions();
     //set title
     setWindowTitle("FATool (v 1.1)");
     //win size
     setFixedSize(xDim, yDim);
     //plot section
-    qplot = new BasePlot(false, this);
+    qplot = new BasePlot(this);
     qplot->setGeometry(padX, padY+yHeight, xDim-2*padX, yDim-yHeight-2*padY);
-    qplot->SetBasePlot();
+    qplot->setBasePlot();
     qplot->xAxis->setLabel("time");
     qplot->yAxis->setLabel("Time series");
     qplot->replot();
     //load button
-    load_button = new QPushButton("Load file(s)", this);
-    load_button->setGeometry(padX/2, padY/2, xWidth, yHeight);
-    connect(load_button, SIGNAL(clicked()), this, SLOT(onLoadClick()));
+    loadButton = new QPushButton("Load file(s)", this);
+    loadButton->setGeometry(padX/2, padY/2, xWidth, yHeight);
+    connect(loadButton, SIGNAL(clicked()), this, SLOT(onLoadClick()));
     //save button
-    save_button = new QPushButton("Save plot", this);
-    save_button->setGeometry(padX/2+xWidth, padY/2, xWidth, yHeight);
-    connect(save_button, SIGNAL(clicked()), this, SLOT(onSaveClick()));
-    //text
-    fluct_txt = new QLabel("Type of analysis:", this);
-    fluct_txt->setGeometry(padX+2*xWidth, padY/2, xWidth, yHeight);
-    fluct_txt->setStyleSheet("font-weight: bold");
+    saveButton = new QPushButton("Save plot", this);
+    saveButton->setGeometry(padX/2+xWidth, padY/2, xWidth, yHeight);
+    connect(saveButton, SIGNAL(clicked()), this, SLOT(onSaveClick()));
+    //dropdown text
+    analysisLbl = new QLabel("Type of analysis:", this);
+    analysisLbl->setGeometry(padX+2*xWidth, padY/2, xWidth, yHeight);
+    analysisLbl->setStyleSheet("font-weight: bold");
     //dropdown list
-    dd_list = new QComboBox(this);
-    FillList();
-    dd_list->setGeometry(padX*3/2+3*xWidth, padY/2+2, xWidth, yHeight);
+    ddList = new QComboBox(this);
+    fillList();
+    ddList->setGeometry(padX*3/2+3*xWidth, padY/2+2, xWidth, yHeight);
     //go button
-    go_button = new QPushButton("Go!", this);
-    go_button->setGeometry(padX*2+4*xWidth, padY/2, xWidth, yHeight);
-    connect(go_button, SIGNAL(clicked()), this, SLOT(onGoClick()));
+    goButton = new QPushButton("Go!", this);
+    goButton->setGeometry(padX*2+4*xWidth, padY/2, xWidth, yHeight);
+    connect(goButton, SIGNAL(clicked()), this, SLOT(onGoClick()));
     //clear button
-    clear_button = new QPushButton("Clear all", this);
-    clear_button->setGeometry(padX*5/2+5*xWidth, padY/2, xWidth, yHeight);
-    connect(clear_button, SIGNAL(clicked()), this, SLOT(onClearClick()));
+    clearButton = new QPushButton("Clear all", this);
+    clearButton->setGeometry(padX*5/2+5*xWidth, padY/2, xWidth, yHeight);
+    connect(clearButton, SIGNAL(clicked()), this, SLOT(onClearClick()));
     //quit button
-    quit_button = new QPushButton("Quit", this);
-    quit_button->setGeometry(xDim-xWidth-padX/2, padY/2, xWidth, yHeight);
-    connect(quit_button, SIGNAL(clicked()), QApplication::instance(), SLOT(quit()));
+    quitButton = new QPushButton("Quit", this);
+    quitButton->setGeometry(xDim-xWidth-padX/2, padY/2, xWidth, yHeight);
+    connect(quitButton, SIGNAL(clicked()), QApplication::instance(), SLOT(quit()));
     //instructions window
-    InstrWindow();
+    instrWindow();
 }
 
 MainWindow::~MainWindow(){}
@@ -60,7 +55,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
         QApplication::quit();
 }
 
-void MainWindow::SetDimensions()
+void MainWindow::setDimensions()
 {
     xDim = 800;
     yDim = 500;
@@ -70,25 +65,7 @@ void MainWindow::SetDimensions()
     padY = 10;
 }
 
-void MainWindow::initializeParamHash()
-{
-    paramHash = new QHash<QString, QString>;
-    paramHash->insert("minWin", "");
-    paramHash->insert("maxWin", "");
-    paramHash->insert("polOrd", "");
-    paramHash->insert("winStep", "");
-    paramHash->insert("revSeg", "");
-    paramHash->insert("qIn", "");
-    paramHash->insert("Nq", "");
-    paramHash->insert("qStep", "");
-    paramHash->insert("isAbs", "");
-    paramHash->insert("scale", "");
-    paramHash->insert("Nscales", "");
-    paramHash->insert("stepScale", "");
-    paramHash->insert("strScales", "");
-}
-
-void MainWindow::InstrWindow()
+void MainWindow::instrWindow()
 {
     QFile f(prefsFile);
     QTextStream in(&f);
@@ -98,17 +75,17 @@ void MainWindow::InstrWindow()
         f.close();
     }
     if(str == showStartWin)
-        start_win = new StartingWindow();
+        startWin = new StartingWindow();
 }
 
-void MainWindow::FillList()
+void MainWindow::fillList()
 {
-    dd_list->addItem("-");
-    dd_list->addItem(strDFA);
-    dd_list->addItem(strMFDFA);
-    dd_list->addItem(strDCCA);
-    dd_list->addItem(strHT);
-    dd_list->addItem(strRHODCCA);
+    ddList->addItem("-");
+    ddList->addItem(strDFA);
+    ddList->addItem(strMFDFA);
+    ddList->addItem(strDCCA);
+    ddList->addItem(strHT);
+    ddList->addItem(strRHODCCA);
 }
 
 void MainWindow::onLoadClick()
@@ -123,12 +100,12 @@ void MainWindow::onLoadClick()
     qplot->legend->clearItems();
     qplot->clearGraphs();
     for(int i = 0; i < fileNames.size(); i++){
-        string fn = fileNames.at(i).toLocal8Bit().constData();
+        std::string fn = fileNames.at(i).toLocal8Bit().constData();
         FileOps fo;
-        int len = fo.rows_number(fn);
+        int len = fo.rowsNumber(fn);
         QVector<double> t(len), vec(len);
         FILE *f;
-        f = fo.open_file(fn, "r");
+        f = fo.openFile(fn, "r");
         if(f){
             for(int j = 0; j < len; j++){
                 t[j] = j;
@@ -154,71 +131,150 @@ void MainWindow::onLoadClick()
 void MainWindow::onSaveClick()
 {
     if(qplot->graphCount() > 0){
-        DisableButtons();
-        save_win = new SaveWindow(qplot);
-        save_win->setAttribute(Qt::WA_DeleteOnClose);
-        save_win->setWindowModality(Qt::ApplicationModal);
-        save_win->show();
-        connect(save_win, SIGNAL(destroyed()), this, SLOT(EnableButtons()));
+        disableButtons();
+        saveWin = new SaveWindow(qplot);
+        saveWin->setAttribute(Qt::WA_DeleteOnClose);
+        saveWin->setWindowModality(Qt::ApplicationModal);
+        saveWin->show();
+        connect(saveWin, SIGNAL(destroyed()), this, SLOT(enableButtons()));
     }
 }
 
-void MainWindow::DisableButtons()
+void MainWindow::disableButtons()
 {
-    load_button->setEnabled(false);
-    go_button->setEnabled(false);
-    save_button->setEnabled(false);
-    dd_list->setEnabled(false);
-    clear_button->setEnabled(false);
+    loadButton->setEnabled(false);
+    goButton->setEnabled(false);
+    saveButton->setEnabled(false);
+    ddList->setEnabled(false);
+    clearButton->setEnabled(false);
 }
 
-void MainWindow::EnableButtons()
+void MainWindow::enableButtons()
 {
-    load_button->setEnabled(true);
-    go_button->setEnabled(true);
-    save_button->setEnabled(true);
-    dd_list->setEnabled(true);
-    clear_button->setEnabled(true);
+    loadButton->setEnabled(true);
+    goButton->setEnabled(true);
+    saveButton->setEnabled(true);
+    ddList->setEnabled(true);
+    clearButton->setEnabled(true);
 }
 
 void MainWindow::onGoClick()
 {
-    QString analysisType = dd_list->currentText();
+    QString analysisType = ddList->currentText();
     if(analysisType != "-" && qplot->graphCount() > 0){
         if((analysisType == strDCCA || analysisType == strRHODCCA) && fileNames.size() < 2){
             QMessageBox messageBox;
             QString errToShow = "This type of analysis requires\nat least two data files";
             messageBox.critical(nullptr, "Error", errToShow);
-            messageBox.setFixedSize(200,200);
+            messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
         }else{
-            DisableButtons();
-            inpt_win = new InputsWindow(analysisType, paramHash);
-            inpt_win->setAttribute(Qt::WA_DeleteOnClose);
-            inpt_win->setWindowModality(Qt::ApplicationModal);
-            inpt_win->show();
-            connect(inpt_win, SIGNAL(destroyed()), this, SLOT(EnableButtons()));
-            connect(inpt_win, SIGNAL(inputsInserted()), this, SLOT(onCloseInputWin()), Qt::QueuedConnection);
+            disableButtons();
+            if(analysisType == strDFA){
+                dfaInptWin = new InputsDFA(fileNames);
+                dfaInptWin->setAttribute(Qt::WA_DeleteOnClose);
+                dfaInptWin->setWindowModality(Qt::ApplicationModal);
+                dfaInptWin->show();
+                connect(dfaInptWin, SIGNAL(dfaInputsInserted(DFA**)), this, SLOT(onCloseDFAInputWin(DFA**)), Qt::QueuedConnection);
+                connect(dfaInptWin, SIGNAL(destroyed()), this, SLOT(enableButtons()));
+            }else if(analysisType == strDCCA){
+                dccaInptWin = new InputsDCCA(fileNames);
+                dccaInptWin->setAttribute(Qt::WA_DeleteOnClose);
+                dccaInptWin->setWindowModality(Qt::ApplicationModal);
+                dccaInptWin->show();
+                connect(dccaInptWin, SIGNAL(dccaInputsInserted(DCCA**)), this, SLOT(onCloseDCCAInputWin(DCCA**)), Qt::QueuedConnection);
+                connect(dccaInptWin, SIGNAL(destroyed()), this, SLOT(enableButtons()));
+            }else if(analysisType == strMFDFA){
+                mfdfaInptWin = new InputsMFDFA(fileNames);
+                mfdfaInptWin->setAttribute(Qt::WA_DeleteOnClose);
+                mfdfaInptWin->setWindowModality(Qt::ApplicationModal);
+                mfdfaInptWin->show();
+                connect(mfdfaInptWin, SIGNAL(mfdfaInputsInserted(MFDFA**)), this, SLOT(onCloseMFDFAInputWin(MFDFA**)), Qt::QueuedConnection);
+                connect(mfdfaInptWin, SIGNAL(destroyed()), this, SLOT(enableButtons()));
+            }else if(analysisType == strRHODCCA){
+                rhodccaInptWin = new InputsrhoDCCA(fileNames);
+                rhodccaInptWin->setAttribute(Qt::WA_DeleteOnClose);
+                rhodccaInptWin->setWindowModality(Qt::ApplicationModal);
+                rhodccaInptWin->show();
+                connect(rhodccaInptWin, SIGNAL(rhodccaInputsInserted(rhoDCCA**)), this, SLOT(onCloseRHODCCAInputWin(rhoDCCA**)), Qt::QueuedConnection);
+                connect(rhodccaInptWin, SIGNAL(destroyed()), this, SLOT(enableButtons()));
+            }else if(analysisType == strHT){
+                htInptWin = new InputsHT(fileNames);
+                htInptWin->setAttribute(Qt::WA_DeleteOnClose);
+                htInptWin->setWindowModality(Qt::ApplicationModal);
+                htInptWin->show();
+                connect(htInptWin, SIGNAL(htInputsInserted(HT**)), this, SLOT(onCloseHTInputWin(HT**)), Qt::QueuedConnection);
+                connect(htInptWin, SIGNAL(destroyed()), this, SLOT(enableButtons()));
+            }
         }
     }
 }
 
-void MainWindow::onCloseInputWin()
+void MainWindow::onCloseDFAInputWin(DFA **dfa)
 {
-    QString analysisType = dd_list->currentText();
-    if(analysisType == strDFA || analysisType == strMFDFA || analysisType == strHT){
-        for(int i = 0;  i < fileNames.size(); i++){
-            PlotWindow *plot_win = new PlotWindow(analysisType, paramHash, fileNames[i]);
-            plot_win->setAttribute(Qt::WA_DeleteOnClose);
-            plot_win->show();
+    for(int i = 0;  i < fileNames.size(); i++){
+        dfa[i]->setFlucVectors();
+        bool execStop = dfa[i]->computeFlucVec();
+        if(!execStop){
+            dfa[i]->fitFlucVec(dfa[i]->getMinWin(), dfa[i]->getMaxWin());
+            DFAWindow *plotWin = new DFAWindow(dfa[i]);
+            plotWin->setAttribute(Qt::WA_DeleteOnClose);
+            plotWin->show();
         }
     }
-    if(analysisType == strDCCA || analysisType == strRHODCCA){
-        for(int i = 0;  i < fileNames.size()-1; i++){
-            for(int j = i+1; j < fileNames.size(); j++){
-                PlotWindow *plot_win = new PlotWindow(analysisType, paramHash, fileNames[i], fileNames[j]);
-                plot_win->setAttribute(Qt::WA_DeleteOnClose);
-                plot_win->show();
-            }
+}
+
+void MainWindow::onCloseDCCAInputWin(DCCA **dcca)
+{
+    MathOps mo;
+    long long int combs = mo.binCoeff(fileNames.size(), 2);
+    for(int i = 0;  i < combs; i++){
+        dcca[i]->setFlucVectors();
+        bool execStop = dcca[i]->computeFlucVec();
+        if(!execStop){
+            dcca[i]->fitFlucVec(dcca[i]->getMinWin(), dcca[i]->getMaxWin());
+            DCCAWindow *plotWin = new DCCAWindow(dcca[i]);
+            plotWin->setAttribute(Qt::WA_DeleteOnClose);
+            plotWin->show();
+        }
+    }
+}
+
+void MainWindow::onCloseMFDFAInputWin(MFDFA **mfdfa)
+{
+    for(int i = 0;  i < fileNames.size(); i++){
+        mfdfa[i]->setFlucVectors();
+        bool execStop = mfdfa[i]->computeFlucVec();
+        if(!execStop){
+            MFDFAWindow *plotWin = new MFDFAWindow(mfdfa[i]);
+            plotWin->setAttribute(Qt::WA_DeleteOnClose);
+            plotWin->show();
+        }
+    }
+}
+
+void MainWindow::onCloseRHODCCAInputWin(rhoDCCA **rhodcca)
+{
+    MathOps mo;
+    long long int combs = mo.binCoeff(fileNames.size(), 2);
+    for(int i = 0;  i < combs; i++){
+        bool execStop = rhodcca[i]->computeRho();
+        if(!execStop){
+            rhoDCCAWindow *plotWin = new rhoDCCAWindow(rhodcca[i]);
+            plotWin->setAttribute(Qt::WA_DeleteOnClose);
+            plotWin->show();
+        }
+    }
+}
+
+void MainWindow::onCloseHTInputWin(HT **ht)
+{
+    for(int i = 0;  i < fileNames.size(); i++){
+        ht[i]->setFlucVectors();
+        bool execStop = ht[i]->computeFlucVec();
+        if(!execStop){
+            HTWindow *plotWin = new HTWindow(ht[i]);
+            plotWin->setAttribute(Qt::WA_DeleteOnClose);
+            plotWin->show();
         }
     }
 }

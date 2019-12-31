@@ -3,31 +3,26 @@
 MoveLegendWindow::MoveLegendWindow(QCustomPlot *plt, QWidget *parent) : QWidget(parent)
 {
     //set dimensions
-    SetDimensions();
+    setDimensions();
     //set title
     setWindowTitle("Legend position");
     //win size
     setFixedSize(xDim, yDim);
-    //ok button
-    ok_button = new QPushButton("OK", this);
-    ok_button->setGeometry(xDim-padX/2-xWidth*3, yDim-yHeight-padY, xWidth*3, yHeight);
-    ok_button->setEnabled(false);
-    connect(ok_button, &QPushButton::clicked, [=](){this->onOKClick(plt);});
     //apply button
-    apply_button = new QPushButton("Apply", this);
-    apply_button->setGeometry(xDim-padX-xWidth*6, yDim-yHeight-padY, xWidth*3, yHeight);
-    apply_button->setEnabled(false);
-    connect(apply_button, &QPushButton::clicked, [=](){this->RefreshLegend(plt);});
+    applyButton = new QPushButton("Apply", this);
+    applyButton->setGeometry(xDim-padX-xWidth*6, yDim-yHeight-padY, xWidth*3, yHeight);
+    applyButton->setEnabled(false);
+    connect(applyButton, &QPushButton::clicked, [=](){this->refreshLegend(plt);});
     //close button
-    close_button = new QPushButton("Close", this);
-    close_button->setGeometry(xDim-padX*3/2-xWidth*9, yDim-yHeight-padY, xWidth*3, yHeight);
-    connect(close_button, SIGNAL(clicked()), this, SLOT(close()));
+    closeButton = new QPushButton("Close", this);
+    closeButton->setGeometry(xDim-padX*3/2-xWidth*9, yDim-yHeight-padY, xWidth*3, yHeight);
+    connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
     //checkboxes
-    num_cbs = 5;
-    cb_selected = -1;
+    numCbs = 5;
+    cbSelected = -1;
     labels.append({"Top left", "Top right", "Bottom left", "Bottom right", "Coordinates (comma-separated)"});
-    cbs = new QCheckBox* [num_cbs];
-    for(int i = 0; i < num_cbs; i++){
+    cbs = new QCheckBox* [numCbs];
+    for(int i = 0; i < numCbs; i++){
         cbs[i] = new QCheckBox(labels[i], this);
         cbs[i]->setGeometry(padX, padY+yHeight*i, xWidth*8, yHeight);
         connect(cbs[i], &QCheckBox::clicked, [=](){this->onCheckBoxClick(i);});
@@ -39,7 +34,7 @@ MoveLegendWindow::MoveLegendWindow(QCustomPlot *plt, QWidget *parent) : QWidget(
 
 MoveLegendWindow::~MoveLegendWindow(){}
 
-void MoveLegendWindow::SetDimensions()
+void MoveLegendWindow::setDimensions()
 {
     xDim = 360;
     yDim = 200;
@@ -51,28 +46,26 @@ void MoveLegendWindow::SetDimensions()
 
 void MoveLegendWindow::onCheckBoxClick(int idx)
 {
-    for(int i = 0; i < num_cbs; i++){
+    for(int i = 0; i < numCbs; i++){
         if(i != idx)
             cbs[i]->setChecked(false);
     }
-    if(idx != num_cbs-1)
+    if(idx != numCbs-1)
         coordTxt->setEnabled(false);
     else
         coordTxt->setEnabled(true);
-    if(idx == cb_selected && !cbs[idx]->isChecked()){
+    if(idx == cbSelected && !cbs[idx]->isChecked()){
         coordTxt->setEnabled(false);
-        ok_button->setEnabled(false);
-        apply_button->setEnabled(false);
+        applyButton->setEnabled(false);
     }else{
-        cb_selected = idx;
-        ok_button->setEnabled(true);
-        apply_button->setEnabled(true);
+        cbSelected = idx;
+        applyButton->setEnabled(true);
     }
 }
 
-void MoveLegendWindow::RefreshLegend(QCustomPlot *plt)
+void MoveLegendWindow::refreshLegend(QCustomPlot *plt)
 {
-    switch(cb_selected){
+    switch(cbSelected){
         case 0:
             plt->axisRect()->insetLayout()->setInsetPlacement(0, QCPLayoutInset::ipBorderAligned);
             plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft|Qt::AlignTop);
@@ -93,24 +86,22 @@ void MoveLegendWindow::RefreshLegend(QCustomPlot *plt)
             QStringList xl = coordTxt->text().replace(QRegExp("\\s+"), "").split(",");
             QRegExp rgx("^[-]?[0-9]+[.]?[0-9]*$");
             if(xl.size() != 2 || (!xl.first().contains(rgx) || !xl.last().contains(rgx))){
-                refreshOK = false;
                 QMessageBox messageBox;
                 QString errToShow = "Input must be numeric and\nmust contain two values!";
                 messageBox.critical(nullptr, "Error", errToShow);
                 messageBox.setFixedSize(200,200);
             }else{
-                refreshOK = true;
                 QFont qFont = QFont(font().family(), fontSmall);
                 plt->axisRect()->insetLayout()->setInsetPlacement(0, QCPLayoutInset::ipFree);
                 QFontMetrics fm(qFont);
-                int num_graphs = plt->itemCount();
+                int numGraphs = plt->itemCount();
                 int pixelsWide = 0;
-                for(int i = 0; i < num_graphs; i++){
+                for(int i = 0; i < numGraphs; i++){
                     int w = fm.width(plt->graph(i)->name());
                     if(w > pixelsWide)
                         pixelsWide = w;
                 }
-                int pixelsHigh = fm.height() * num_graphs;
+                int pixelsHigh = fm.height() * numGraphs;
                 double xPad = plt->xAxis->pixelToCoord(23) - plt->xAxis->pixelToCoord(10);
                 double yPad = plt->yAxis->pixelToCoord(21) - plt->yAxis->pixelToCoord(10);
                 double xMin = plt->xAxis->range().lower + xPad;
@@ -130,11 +121,4 @@ void MoveLegendWindow::RefreshLegend(QCustomPlot *plt)
             break;
     }
     plt->replot();
-}
-
-void MoveLegendWindow::onOKClick(QCustomPlot *plt)
-{
-    RefreshLegend(plt);
-    if(refreshOK)
-        close();
 }

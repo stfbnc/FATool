@@ -1,8 +1,12 @@
 #ifndef FA_H
 #define FA_H
 
-#include "FAGlobs.h"
-#include "qcustomplot.h"
+#include "constants.h"
+#include "base_plot.h"
+#include <sys/stat.h>
+#include "file_ops.h"
+#include "array_ops.h"
+#include "math_ops.h"
 
 class FA
 {
@@ -30,7 +34,7 @@ public:
 		}
 	}
 
-    void checkFileExistence(string fn){
+    void checkFileExistence(std::string fn){
         struct stat buffer;
         if(stat(fn.c_str(), &buffer) != 0){
             fprintf(stdout, "ERROR %d: file %s does not exist\n", FILE_FAILURE, fn.c_str());
@@ -38,9 +42,9 @@ public:
         }
     }
     
-    int setTsLength(string fn){
+    int setTsLength(std::string fn){
         FileOps fo = FileOps();
-        return fo.rows_number(fn);
+        return fo.rowsNumber(fn);
     }
     
     int getRangeLength(int start, int end, int step=1){
@@ -54,31 +58,31 @@ public:
 	    ArrayOps ao = ArrayOps();
 	    FileOps fo = FileOps();
 		//time series vector
-        double *pn, *pn_nomean;
+        double *pn, *pnNomean;
         pn = new double [N];
-        pn_nomean = new double [N];
+        pnNomean = new double [N];
 	    FILE *f;
-	    f = fo.open_file(file_name, "r");
+	    f = fo.openFile(fileName, "r");
 	    for(int i = 0; i < N; i++)
 	        fscanf(f, "%lf", &pn[i]);
 	    fclose(f);
 		//time vector
-	    ao.double_range(t, N, 1.0);
+	    ao.doubleRange(t, N, 1.0);
 	    //time series minus its mean
-	    mo.subtract_mean(pn, N, pn_nomean);
+	    mo.subtractMean(pn, N, pnNomean);
 	    //cumulative sum
-	    mo.cumsum(pn_nomean, y, N);
+	    mo.cumsum(pnNomean, y, N);
         delAlloc<double>(pn);
-        delAlloc<double>(pn_nomean);
+        delAlloc<double>(pnNomean);
 	}
 
-    virtual bool winFlucComp() = 0;
-    virtual void H_loglogFit(int, int) = 0;
-    virtual string outFileStr() = 0;
-    virtual void saveFile(string) = 0;
-    virtual void plot(QCustomPlot *) = 0;
+    virtual bool computeFlucVec() = 0;
+    virtual void fitFlucVec(int start, int end) = 0;
+    virtual std::string outFileStr() = 0;
+    virtual void saveFile(std::string pathTot) = 0;
+    virtual void plot(BasePlot *plt) = 0;
 protected:
-    string file_name;
+    std::string fileName;
     int N;
     double *t;
 	double *y;

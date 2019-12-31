@@ -1,8 +1,8 @@
 #ifndef REFIT_WINDOW_H
 #define REFIT_WINDOW_H
 
-#include <QApplication>
 #include <QtWidgets>
+#include "constants.h"
 
 class RefitWindow : public QWidget
 {
@@ -15,13 +15,15 @@ signals:
 private slots:
     void onOKClick();
 private:
-    void SetDimensions();
-    QPushButton *ok_button;
-    QPushButton *close_button;
+    void setDimensions();
+
+    QPushButton *okButton;
+    QPushButton *closeButton;
     QLabel *minWin;
     QLabel *maxWin;
     QLineEdit *minWinTxt;
     QLineEdit *maxWinTxt;
+
     int xDim;
     int yDim;
     int xWidth;
