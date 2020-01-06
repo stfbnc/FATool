@@ -11,6 +11,8 @@
 #define POL_FAILURE -97
 #define REV_SEG_FAILURE -96
 #define FILE_FAILURE -95
+//app version
+const QString VERSION = "1.2";
 //dcca fluctuation vector
 const std::string defaultDCCA = "abs";
 const std::string corrDCCA = "sign";

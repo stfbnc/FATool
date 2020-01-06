@@ -3,12 +3,16 @@
 DCCAWindow::DCCAWindow(DCCA *dcca_, QWidget *parent) : PlotWindow(parent)
 {
     dcca = dcca_;
+    fileName = QString::fromStdString(dcca->getFileName1()).split("/").last();
+    fileName2 = QString::fromStdString(dcca->getFileName2()).split("/").last();
     //set title
-    QString winTitle = strDCCA+" - "+QString::fromStdString(dcca->getFileName1()).split("/").last();
-    winTitle.append(" & "+QString::fromStdString(dcca->getFileName2()).split("/").last());
+    QString winTitle = strDCCA+" - "+fileName;
+    winTitle.append(" & "+fileName2);
     setTitle(winTitle);
     //refit button
     addRefitButton();
+    //fits log button
+    addFitLogButton();
     //plot
     plotData();
     //plot fields

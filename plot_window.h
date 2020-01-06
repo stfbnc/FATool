@@ -4,6 +4,7 @@
 #include "base_plot.h"
 #include "refit_window.h"
 #include "legend_position_window.h"
+#include "log_window.h"
 
 class PlotWindow : public QWidget
 {
@@ -13,12 +14,20 @@ public:
     ~PlotWindow();
 protected:
     BasePlot *plt;
+    QString fileName;
+    QString fileName2;
 
     void setTitle(QString winTitle);
     void addPlotFields();
     void addLegend();
     void addRefitButton();
+    void addFitLogButton();
+    void addSpectrumButton();
+    void addMassExponentsButton();
 private slots:
+    virtual void onMassExponentsClick();
+    virtual void onSpectrumClick();
+    void onFitLogClick();
     void onMoveLegendClick();
     void onIsLegendCheck();
     void onRefitClick();
@@ -40,6 +49,7 @@ private:
     const int padX = 10;
     const int padY = 10;
 
+    QString fitLog;
     QLabel *xLimLbl;
     QLabel *yLimLbl;
     QLabel *titleLbl;
@@ -56,6 +66,9 @@ private:
     QCheckBox *isLegendBox;
 
     QPushButton *moveLegendBtn;
+    QPushButton *massExpBtn;
+    QPushButton *spectBtn;
+    QPushButton *fitLogBtn;
     QPushButton *refitBtn;
     QPushButton *replotBtn;
     QPushButton *savePlotBtn;
@@ -64,6 +77,7 @@ private:
 
     RefitWindow *refitWin;
     MoveLegendWindow *moveLegendWin;
+    LogWindow *logWin;
 };
 
 #endif // PLOT_WINDOW_H

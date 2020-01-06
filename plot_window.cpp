@@ -2,6 +2,7 @@
 
 PlotWindow::PlotWindow(QWidget *parent) : QWidget(parent)
 {
+    fileName2 = "";
 	//win size
 	setFixedSize(xDim, yDim);
 	//plot section
@@ -10,8 +11,10 @@ PlotWindow::PlotWindow(QWidget *parent) : QWidget(parent)
     plt->setBasePlot();
     //not plot section
     refitBtn = nullptr;
+    fitLogBtn = nullptr;
+    spectBtn = nullptr;
+    massExpBtn = nullptr;
     addButtons();
-    //addPlotFields();
 }
 
 PlotWindow::~PlotWindow(){}
@@ -51,6 +54,30 @@ void PlotWindow::addRefitButton()
 	refitBtn = new QPushButton("Refit", this);
 	refitBtn->setGeometry(xDim-5*xWidth-padX*5/2, yDim-yHeight-padY/2, xWidth, yHeight);
 	connect(refitBtn, SIGNAL(clicked()), this, SLOT(onRefitClick()));
+}
+
+void PlotWindow::addFitLogButton()
+{
+    //fit log button
+    fitLogBtn = new QPushButton("Fits log", this);
+    fitLogBtn->setGeometry(xDim-6*xWidth-padX*3, yDim-yHeight-padY/2, xWidth, yHeight);
+    connect(fitLogBtn, SIGNAL(clicked()), this, SLOT(onFitLogClick()));
+}
+
+void PlotWindow::addSpectrumButton()
+{
+    //spectrum button
+    spectBtn = new QPushButton("Spectrum", this);
+    spectBtn->setGeometry(xDim-5*xWidth-padX*5/2, yDim-yHeight-padY/2, xWidth, yHeight);
+    connect(spectBtn, SIGNAL(clicked()), this, SLOT(onSpectrumClick()));
+}
+
+void PlotWindow::addMassExponentsButton()
+{
+    //mass exponents button
+    massExpBtn = new QPushButton("Mass exps", this);
+    massExpBtn->setGeometry(xDim-6*xWidth-padX*3, yDim-yHeight-padY/2, xWidth, yHeight);
+    connect(massExpBtn, SIGNAL(clicked()), this, SLOT(onMassExponentsClick()));
 }
 
 void PlotWindow::addPlotFields()
@@ -108,6 +135,12 @@ void PlotWindow::disableButtons()
     closeBtn->setEnabled(false);
 	if(refitBtn != nullptr)
 		refitBtn->setEnabled(false);
+    if(fitLogBtn != nullptr)
+        fitLogBtn->setEnabled(false);
+    if(spectBtn != nullptr)
+        spectBtn->setEnabled(false);
+    if(massExpBtn != nullptr)
+        massExpBtn->setEnabled(false);
 }
 
 void PlotWindow::enableButtons()
@@ -119,6 +152,25 @@ void PlotWindow::enableButtons()
     closeBtn->setEnabled(true);
 	if(refitBtn != nullptr)
 		refitBtn->setEnabled(true);
+    if(fitLogBtn != nullptr)
+        fitLogBtn->setEnabled(true);
+    if(spectBtn != nullptr)
+        spectBtn->setEnabled(true);
+    if(massExpBtn != nullptr)
+        massExpBtn->setEnabled(true);
+}
+
+void PlotWindow::onSpectrumClick(){}
+
+void PlotWindow::onMassExponentsClick(){}
+
+void PlotWindow::onFitLogClick()
+{
+    logWin = new LogWindow(fitLog, fileName, fileName2);
+    logWin->setAttribute(Qt::WA_DeleteOnClose);
+    logWin->show();
+    disableButtons();
+    connect(logWin, SIGNAL(destroyed()), this, SLOT(enableButtons()));
 }
 
 void PlotWindow::onMoveLegendClick()
@@ -181,6 +233,12 @@ void PlotWindow::newFitPlot(int start, int end)
         lgnd += ";"+plt->graph(i)->name();
     legendTxt->clear();
     legendTxt->setText(lgnd);
+
+    fitLog.append("start: "+QString::number(start)+
+                   "\nend: "+QString::number(end)+
+                   "\nH: "+QString::number(H)+
+                   "\nintercept: "+QString::number(HIntercept)+
+                   "\n----------------------------\n");
 }
 
 void PlotWindow::refitData(int start, int end, double *hSlope, double *hIntcpt){}

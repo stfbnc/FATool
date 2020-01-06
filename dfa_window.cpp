@@ -3,11 +3,14 @@
 DFAWindow::DFAWindow(DFA *dfa_, QWidget *parent) : PlotWindow(parent)
 {
     dfa = dfa_;
+    fileName = QString::fromStdString(dfa->getFileName()).split("/").last();
     //set title
-    QString winTitle = strDFA+" - "+QString::fromStdString(dfa->getFileName()).split("/").last();
+    QString winTitle = strDFA+" - "+fileName;
     setTitle(winTitle);
     //refit button
     addRefitButton();
+    //fits log button
+    addFitLogButton();
     //plot
     plotData();
     //plot fields

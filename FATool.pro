@@ -11,6 +11,8 @@ QT = core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 SOURCES +=  main.cpp \
+    log_window.cpp \
+    mass_exponents_window.cpp \
     plot_window.cpp \
     qcustomplot.cpp \
     main_window.cpp \
@@ -34,6 +36,7 @@ SOURCES +=  main.cpp \
     refit_window.cpp \
     DCCA.cpp \
     rhoDCCA.cpp \
+    spectrum_window.cpp \
     starting_window.cpp \
     MFDFA.cpp \
     MFDFA_single_q.cpp \
@@ -43,6 +46,8 @@ SOURCES +=  main.cpp \
 
 HEADERS += \
     constants.h \
+    log_window.h \
+    mass_exponents_window.h \
     plot_window.h \
     qcustomplot.h \
     main_window.h \
@@ -67,6 +72,7 @@ HEADERS += \
     refit_window.h \
     DCCA.h \
     rhoDCCA.h \
+    spectrum_window.h \
     starting_window.h \
     MFDFA.h \
     MFDFA_single_q.h \

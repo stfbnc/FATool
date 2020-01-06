@@ -3,9 +3,11 @@
 rhoDCCAWindow::rhoDCCAWindow(rhoDCCA *rhodcca_, QWidget *parent) : PlotWindow(parent)
 {
     rhodcca = rhodcca_;
+    fileName = QString::fromStdString(rhodcca->getFileName1()).split("/").last();
+    fileName2 = QString::fromStdString(rhodcca->getFileName2()).split("/").last();
     //set title
-    QString winTitle = strRHODCCA+" - "+QString::fromStdString(rhodcca->getFileName1()).split("/").last();;
-    winTitle.append(" & "+QString::fromStdString(rhodcca->getFileName2()).split("/").last());
+    QString winTitle = strRHODCCA+" - "+fileName;
+    winTitle.append(" & "+fileName2);
     setTitle(winTitle);
     //plot
     plotData();

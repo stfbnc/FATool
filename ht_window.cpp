@@ -3,8 +3,9 @@
 HTWindow::HTWindow(HT *ht_, QWidget *parent) : PlotWindow(parent)
 {
     ht = ht_;
+    fileName = QString::fromStdString(ht->getFileName()).split("/").last();
     //set title
-    QString winTitle = strHT+" - "+QString::fromStdString(ht->getFileName()).split("/").last();
+    QString winTitle = strHT+" - "+fileName;
     setTitle(winTitle);
     //plot
     plotData();

@@ -11,11 +11,19 @@ public:
     void allocateQmemory();
     void setQrange(double, int, double);
     bool computeFlucVec() override;
+    void computeMassExponents();
+    void computeSpectrum();
 	std::string outFileStr() override;
 	void saveFile(std::string pathTot) override;
 	std::string qoutFileStr();
 	void qsaveFile(std::string pathTot);
+    std::string tauOutFileStr();
+    void tauSaveFile(std::string pathTot);
+    std::string spectrumOutFileStr();
+    void spectrumSaveFile(std::string pathTot);
     void plot(BasePlot *plt) override;
+    void plotMassExponents(BasePlot *plt);
+    void plotSpectrum(BasePlot *plt);
 private:
     int Nq;
     double stepq;
@@ -23,6 +31,9 @@ private:
 	double **flucMtx;
     double *Hq;
     double *Hinterceptq;
+    double *tau;
+    double *alpha;
+    double *spectrum;
 };
 
 #endif
