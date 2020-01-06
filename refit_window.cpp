@@ -25,6 +25,17 @@ RefitWindow::RefitWindow(QWidget *parent) : QWidget(parent)
     maxWin->setGeometry(2*padX+5*xWidth, padY, xWidth, yHeight);
     maxWinTxt = new QLineEdit(this);
     maxWinTxt->setGeometry(4*padX+5*xWidth, padY, xWidth, yHeight);
+    //checkboxes
+    keepFits = new QCheckBox(this);
+    keepFits->setGeometry(padX, padY*2+yHeight, xWidth, yHeight*2/3);
+    connect(keepFits, SIGNAL(clicked()), this, SLOT(onKeepFitsClick()));
+    keepTxt = new QLabel("Keep previous fit", this);
+    keepTxt->setGeometry(padX+xWidth, padY*2+yHeight, xWidth*4, yHeight*2/3);
+    clearFits = new QCheckBox(this);
+    clearFits->setGeometry(padX, padY*3+yHeight*5/3, xWidth, yHeight*2/3);
+    connect(clearFits, SIGNAL(clicked()), this, SLOT(onClearFitsClick()));
+    clearTxt = new QLabel("Clear previous fits", this);
+    clearTxt->setGeometry(padX+xWidth, padY*3+yHeight*5/3, xWidth*4, yHeight*2/3);
 }
 
 RefitWindow::~RefitWindow(){}
@@ -32,7 +43,7 @@ RefitWindow::~RefitWindow(){}
 void RefitWindow::setDimensions()
 {
     xDim = 240;
-    yDim = 80;
+    yDim = 120;
     xWidth = 30;
     yHeight = 30;
     padX = 10;
@@ -46,7 +57,10 @@ void RefitWindow::onOKClick()
     QRegExp rgx("^[0-9]+$");
     if((!win1.isEmpty() && win1.contains(rgx)) &&
        (!win2.isEmpty() && win2.contains(rgx))){
-        emit inputsInserted(win1.toInt(), win2.toInt());
+        int k, c;
+        keepFits->isChecked() ? k = 1 : k = 0;
+        clearFits->isChecked() ? c = 1 : c = 0;
+        emit inputsInserted(win1.toInt(), win2.toInt(), k, c);
         close();
     }else{
         QMessageBox messageBox;
@@ -54,4 +68,14 @@ void RefitWindow::onOKClick()
         messageBox.critical(nullptr, "Error", errToShow);
         messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
     }
+}
+
+void RefitWindow::onKeepFitsClick()
+{
+    clearFits->setChecked(false);
+}
+
+void RefitWindow::onClearFitsClick()
+{
+    keepFits->setChecked(false);
 }

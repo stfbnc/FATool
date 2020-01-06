@@ -34,7 +34,7 @@ private slots:
     void onReplotClick();
     void onSavePlotClick();
     virtual void onSaveTxtClick();
-    void newFitPlot(int start, int end);
+    void newFitPlot(int start, int end, int keep, int clear);
     void enableButtons();
 private:
 	void addButtons();

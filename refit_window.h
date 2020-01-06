@@ -11,9 +11,11 @@ public:
     explicit RefitWindow(QWidget *parent=nullptr);
     ~RefitWindow();
 signals:
-    void inputsInserted(int mw, int Mw);
+    void inputsInserted(int mw, int Mw, int keep, int clear);
 private slots:
     void onOKClick();
+    void onKeepFitsClick();
+    void onClearFitsClick();
 private:
     void setDimensions();
 
@@ -23,6 +25,10 @@ private:
     QLabel *maxWin;
     QLineEdit *minWinTxt;
     QLineEdit *maxWinTxt;
+    QLabel *keepTxt;
+    QCheckBox *keepFits;
+    QLabel *clearTxt;
+    QCheckBox *clearFits;
 
     int xDim;
     int yDim;

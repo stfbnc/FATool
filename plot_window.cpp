@@ -199,11 +199,11 @@ void PlotWindow::onRefitClick()
     refitWin->setWindowModality(Qt::ApplicationModal);
     refitWin->show();
     disableButtons();
-    connect(refitWin, SIGNAL(inputsInserted(int, int)), this, SLOT(newFitPlot(int, int)));
+    connect(refitWin, SIGNAL(inputsInserted(int, int, int, int)), this, SLOT(newFitPlot(int, int, int, int)));
     connect(refitWin, SIGNAL(destroyed()), this, SLOT(enableButtons()));
 }
 
-void PlotWindow::newFitPlot(int start, int end)
+void PlotWindow::newFitPlot(int start, int end, int keep, int clear)
 {
     if(end < start){
         int tmp = end;
@@ -212,8 +212,13 @@ void PlotWindow::newFitPlot(int start, int end)
     }
     double HIntercept = 0.0, H = 0.0;
     refitData(start, end, &H, &HIntercept);
-    for(int i = 1; i < plt->graphCount(); i++)
-        plt->removeGraph(i);
+    if(clear == 1){
+        for(int i = 1; i < plt->graphCount(); i++)
+            plt->removeGraph(i);
+    }
+    if(keep == 0 && plt->graphCount() != 1){
+        plt->removeGraph(plt->graphCount()-1);
+    }
     int len = end - start + 1;
     QVector<double> n(len), Hfit(len);
     for(int i = 0; i < len; i++){
@@ -224,6 +229,7 @@ void PlotWindow::newFitPlot(int start, int end)
     plt->graph(plt->graphCount()-1)->setData(n, Hfit);
     QPen pen;
     pen.setWidth(2);
+    pen.setStyle(lineStyles[(plt->graphCount()-1)%lineStyles.size()]);
     plt->graph(plt->graphCount()-1)->setPen(pen);
     plt->graph(plt->graphCount()-1)->setName("H = "+QString::number(H));
     plt->graph(plt->graphCount()-1)->rescaleAxes(true);

@@ -12,7 +12,7 @@
 #define REV_SEG_FAILURE -96
 #define FILE_FAILURE -95
 //app version
-const QString VERSION = "1.2";
+const QString VERSION = "1.3";
 //dcca fluctuation vector
 const std::string defaultDCCA = "abs";
 const std::string corrDCCA = "sign";
@@ -43,6 +43,7 @@ const QString strRHODCCA = "rhoDCCA";
 const QString dataFilter = "*.txt *.dat *.csv";
 //plots colours
 const QVector<QColor> colours = {Qt::red, Qt::blue, Qt::green, Qt::black, Qt::magenta, Qt::cyan};
+const QVector<Qt::PenStyle> lineStyles = {Qt::SolidLine, Qt::DashLine, Qt::DotLine, Qt::DashDotLine, Qt::DashDotDotLine};
 //font dimensions
 const int fontBig = 14;
 const int fontSmall = 12;
