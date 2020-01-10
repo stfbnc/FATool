@@ -37,11 +37,14 @@ void InputsHT::setInputsComponents()
         scalesAndStep[i] = new QLineEdit* [labels.size()];
         addLabeledEditBoxArray(labels, scalesAndStep[i], i*numComp+1, 1);
         scalesAndStep[i][2]->setText("1");
+        for(int j = 0; j < labels.size(); j++)
+            scalesAndStep[i][j]->setEnabled(false);
 
         stringBox[i] = addCheckBox(i*numComp+2);
         connect(stringBox[i], &QCheckBox::clicked, [=](){this->onStringChkBoxClick(i);});
 
         customScales[i] = addLabeledEditBox("Windows sizes (comma separated)", i*numComp+2, 1);
+        customScales[i]->setEnabled(false);
 
         winsAndStep[i] = new QLineEdit* [mLabels.size()];
         addLabeledEditBoxArray(mLabels, winsAndStep[i], i*numComp+3);
@@ -88,42 +91,43 @@ void InputsHT::onStringChkBoxClick(int idx)
 
 bool InputsHT::checkInputs()
 {
-    ns = new int [fileNames.size()];
-    ms = new int [fileNames.size()];
-    for(int i = 0; i < fileNames.size(); i++)
+    int L = fileNames.size();
+    ns = new int [L];
+    ms = new int [L];
+    ss = new int [L];
+    cs = new QString [L];
+    for(int i = 0; i < L; i++){
+        ns[i] = 0;
         ms[i] = 0;
-    ss = new int [fileNames.size()];
-    cs = new QString [fileNames.size()];
-    for(int i = 0; i < fileNames.size(); i++)
+        ss[i] = 0;
         cs[i] = "";
-    mmw = new int [fileNames.size()];
-    mMw = new int [fileNames.size()];
-    mws = new int [fileNames.size()];
+    }
+    mmw = new int [L];
+    mMw = new int [L];
+    mws = new int [L];
     QStringList inptErrs;
-    for(int i = 0; i < fileNames.size(); i++){
-        QString nsStr = scalesAndStep[i][0]->text().trimmed();
-        QString msStr = scalesAndStep[i][1]->text().trimmed();
-        QString ssStr = scalesAndStep[i][2]->text().trimmed();
-        cs[i] = customScales[i]->text().trimmed();
-        QString mmwStr = winsAndStep[i][0]->text().trimmed();
-        QString mMwStr = winsAndStep[i][1]->text().trimmed();
-        QString mwsStr = winsAndStep[i][2]->text().trimmed();
-        bool err = false, custom = false;
-        if(!msStr.isEmpty()){
-            if(isCorrectFormat(nsStr) &&
-                isCorrectFormat(msStr) &&
-                isCorrectFormat(ssStr)){
-                ns[i] = nsStr.toInt();
-                ms[i] = msStr.toInt();
-                ss[i] = ssStr.toInt();
-            }else{
-                err = true;
+    for(int i = 0; i < L; i++){
+        bool err = false;
+        if(rangeBox[i]->isChecked()){
+            QString nsStr = scalesAndStep[i][0]->text().trimmed();
+            QString msStr = scalesAndStep[i][1]->text().trimmed();
+            QString ssStr = scalesAndStep[i][2]->text().trimmed();
+            if(!msStr.isEmpty()){
+                if(isCorrectFormat(nsStr) &&
+                    isCorrectFormat(msStr) &&
+                    isCorrectFormat(ssStr)){
+                    ns[i] = nsStr.toInt();
+                    ms[i] = msStr.toInt();
+                    ss[i] = ssStr.toInt();
+                }else{
+                    err = true;
+                }
             }
-        }else{
+        }else if(stringBox[i]->isChecked()){
+            cs[i] = customScales[i]->text().trimmed();
             if(!cs[i].isEmpty()){
-                custom = true;
                 for(QString s : cs[i].split(QString::fromStdString(strSep))){
-                    if(!isCorrectFormat(s)){
+                    if(!isCorrectFormat(s.trimmed())){
                         err = true;
                         break;
                     }
@@ -132,6 +136,9 @@ bool InputsHT::checkInputs()
                 err = true;
             }
         }
+        QString mmwStr = winsAndStep[i][0]->text().trimmed();
+        QString mMwStr = winsAndStep[i][1]->text().trimmed();
+        QString mwsStr = winsAndStep[i][2]->text().trimmed();
         if(isCorrectFormat(mmwStr) &&
             isCorrectFormat(mMwStr) &&
             isCorrectFormat(mwsStr)){
@@ -150,7 +157,7 @@ bool InputsHT::checkInputs()
             return false;
         }
 
-        if(!custom){
+        if(rangeBox[i]->isChecked()){
             //minimum scale size
             if(ms[i] < 3)
                 inptErrs.append("- scale must be greater than 2\n");
@@ -160,7 +167,7 @@ bool InputsHT::checkInputs()
             //step for scales
             if(ss[i] < 1)
                 inptErrs.append("- step must be strictly positive and such that scales are smaller than the time series length\n");
-        }else{
+        }else if(stringBox[i]->isChecked()){
             for(QString s : cs[i].split(QString::fromStdString(strSep))){
                 int sInt = s.toInt();
                 if(sInt < 3)

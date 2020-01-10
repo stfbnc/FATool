@@ -43,12 +43,12 @@ QLineEdit* InputsWindow::addLabeledEditBox(QString txt, int row, int col)
     if(col == 0)
         pos = padX;
     else
-        pos = 2 * padX + xWidth;
+        pos = 4 * padX;
     QLabel *label = new QLabel(txt, this);
     int w = label->fontMetrics().boundingRect(label->text()).width()+padX;
     label->setGeometry(pos, (row+1)*padY+row*yHeight, w, yHeight);
     QLineEdit *lineEdit = new QLineEdit(this);
-    lineEdit->setGeometry(pos+w, (row+1)*padY+row*yHeight, xWidth, yHeight);
+    lineEdit->setGeometry(pos+w, (row+1)*padY+row*yHeight, xWidth*4, yHeight);
     return lineEdit;
 }
 
@@ -58,7 +58,7 @@ void InputsWindow::addLabeledEditBoxArray(QStringList txt, QLineEdit **lineEdits
     if(col == 0)
         lastPos = padX;
     else
-        lastPos = 2 * padX + xWidth;
+        lastPos = 4 * padX;
     for(int i = 0; i < txt.size(); i++){
         QLabel *label = new QLabel(txt[i], this);
         int w = label->fontMetrics().boundingRect(label->text()).width()+padX;

@@ -65,20 +65,25 @@ bool DFA::computeFlucVec()
         for(int v = 0; v < Ns; v++){
             int startLim = v * currWinSize;
             int endLim = (v + 1) * currWinSize - 1;
-            double *tFit, *yFit, *diffVec;
+            double *tFit, *yFit, *diffVec, *coeffs;
             tFit = new double [currWinSize];
             yFit = new double [currWinSize];
             diffVec = new double [currWinSize];
+            coeffs = new double [ord+1];
+            ao.zeroVec(diffVec, currWinSize);
             ao.sliceVec(t, tFit, startLim, endLim);
             ao.sliceVec(y, yFit, startLim, endLim);
-            double angCoeff, intercept;
-            mo.linFit(currWinSize, tFit, yFit, &angCoeff, &intercept);
-            for(int j = 0; j < currWinSize; j++)
-                diffVec[j] = pow((yFit[j] - (intercept + angCoeff * tFit[j])), 2.0);
+            mo.polyFit(currWinSize, ord+1, tFit, yFit, coeffs);
+            for(int j = 0; j < currWinSize; j++){
+                for(int k = 0; k < ord+1; k++)
+                    diffVec[j] += coeffs[k] * pow(tFit[j], k);
+                diffVec[j] = pow(yFit[j] - diffVec[j], 2.0);
+            }
             Fnu1[v] = mo.mean(diffVec, currWinSize);
             delAlloc<double>(tFit);
             delAlloc<double>(yFit);
             delAlloc<double>(diffVec);
+            delAlloc<double>(coeffs);
         }
         if(revSeg == 1){
             ao.zeroVec(Fnu2, Flen);
@@ -86,20 +91,25 @@ bool DFA::computeFlucVec()
             for(int v = 0; v < Ns; v++){
                 int startLim = v * currWinSize + (N - Ns * currWinSize);
                 int endLim = (v + 1) * currWinSize + (N - Ns * currWinSize) - 1;
-                double *tFit, *yFit, *diffVec;
+                double *tFit, *yFit, *diffVec, *coeffs;
                 tFit = new double [currWinSize];
                 yFit = new double [currWinSize];
                 diffVec = new double [currWinSize];
+                coeffs = new double [ord+1];
+                ao.zeroVec(diffVec, currWinSize);
                 ao.sliceVec(t, tFit, startLim, endLim);
                 ao.sliceVec(y, yFit, startLim, endLim);
-                double angCoeff, intercept;
-                mo.linFit(currWinSize, tFit, yFit, &angCoeff, &intercept);
-                for(int j = 0; j < currWinSize; j++)
-                    diffVec[j] = pow((yFit[j] - (intercept + angCoeff * tFit[j])), 2.0);
+                mo.polyFit(currWinSize, ord+1, tFit, yFit, coeffs);
+                for(int j = 0; j < currWinSize; j++){
+                    for(int k = 0; k < ord+1; k++)
+                        diffVec[j] += coeffs[k] * pow(tFit[j], k);
+                    diffVec[j] = pow(yFit[j] - diffVec[j], 2.0);
+                }
                 Fnu2[v] = mo.mean(diffVec, currWinSize);
                 delAlloc<double>(tFit);
                 delAlloc<double>(yFit);
                 delAlloc<double>(diffVec);
+                delAlloc<double>(coeffs);
             }
             F[i] = sqrt((mo.mean(Fnu1, Ns) + mo.mean(Fnu2, Ns)) / 2.0);
         }else{

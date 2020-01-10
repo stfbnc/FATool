@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <gsl/gsl_multifit.h>
 
 class MathOps
 {
@@ -17,7 +18,8 @@ public:
     int minVal(int a, int b);
 	void cumsum(double *vec, double *sumVec, int L);
 	void nanCumsum(double *vec, double *sumVec, int L);
-	void linFit(int L, const double *x, const double *y, double *m, double *q);
+    void linFit(int L, const double *x, const double *y, double *m, double *q);
+    void polyFit(int obs, int degree, double *dx, double *dy, double *store);
     long long int factorial(int a);
     long long int binCoeff(int a, int b);
 };

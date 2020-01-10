@@ -94,29 +94,44 @@ bool DCCA::computeFlucVec(){
         for(int v = 0; v < Ns; v++){
             int startLim = v;
             int endLim = v + currWinSize;
-            double *tFit, *yFit1, *yFit2, *diffVec;
+            double *tFit, *yFit1, *yFit2, *diffVec, *coeffs1, *coeffs2;
             tFit = new double [currWinSize+1];
             yFit1 = new double [currWinSize+1];
             yFit2 = new double [currWinSize+1];
             diffVec = new double [currWinSize+1];
+            coeffs1 = new double [ord+1];
+            coeffs2 = new double [ord+1];
             ao.sliceVec(t, tFit, startLim, endLim);
             ao.sliceVec(y, yFit1, startLim, endLim);
             ao.sliceVec(y2, yFit2, startLim, endLim);
-            double angCoeff1, intercept1, angCoeff2, intercept2;
-            mo.linFit(currWinSize+1, tFit, yFit1, &angCoeff1, &intercept1);
-            mo.linFit(currWinSize+1, tFit, yFit2, &angCoeff2, &intercept2);
+            mo.polyFit(currWinSize+1, ord+1, tFit, yFit1, coeffs1);
+            mo.polyFit(currWinSize+1, ord+1, tFit, yFit2, coeffs2);
             if(isAbs.compare(corrDCCA) == 0){
-                for(int j = 0; j <= currWinSize; j++)
-                    diffVec[j] = (yFit1[j] - (intercept1 + angCoeff1 * tFit[j])) * (yFit2[j] - (intercept2 + angCoeff2 * tFit[j]));
+                for(int j = 0; j <= currWinSize; j++){
+                    double polySum1 = 0, polySum2 = 0;
+                    for(int k = 0; k < ord+1; k++){
+                        polySum1 += coeffs1[k] * pow(tFit[j], k);
+                        polySum2 += coeffs2[k] * pow(tFit[j], k);
+                    }
+                    diffVec[j] = (yFit1[j] - polySum1) * (yFit2[j] - polySum2);
+                }
             }else if(isAbs.compare(defaultDCCA) == 0){
-                for(int j = 0; j <= currWinSize; j++)
-                    diffVec[j] = fabs((yFit1[j] - (intercept1 + angCoeff1 * tFit[j])) * (yFit2[j] - (intercept2 + angCoeff2 * tFit[j])));
+                for(int j = 0; j <= currWinSize; j++){
+                    double polySum1 = 0, polySum2 = 0;
+                    for(int k = 0; k < ord+1; k++){
+                        polySum1 += coeffs1[k] * pow(tFit[j], k);
+                        polySum2 += coeffs2[k] * pow(tFit[j], k);
+                    }
+                    diffVec[j] = fabs((yFit1[j] - polySum1) * (yFit2[j] - polySum2));
+                }
             }
             Fnu[v] = mo.customMean(diffVec, currWinSize+1, currWinSize-1);
             delAlloc<double>(tFit);
             delAlloc<double>(yFit1);
             delAlloc<double>(yFit2);
             delAlloc<double>(diffVec);
+            delAlloc<double>(coeffs1);
+            delAlloc<double>(coeffs2);
         }
         if(isAbs.compare(corrDCCA) == 0){
             F[i] = mo.mean(Fnu, Ns);

@@ -2,7 +2,10 @@ TEMPLATE = app
 TARGET = FATool
 ICON = logo.icns
 
+INCLUDEPATH += /opt/local/include/
+INCLUDEPATH += /opt/local/include/libomp/
 LIBS += -L/opt/local/lib/libomp -lomp
+LIBS += -L/opt/local/lib/ -lgsl -lgslcblas -lm
 QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp
 LIBS += -Xpreprocessor -fopenmp
 
@@ -78,8 +81,7 @@ HEADERS += \
     MFDFA_single_q.h \
     HT.h \
     HT_single_scale.h \
-    legend_position_window.h \
-    omp.h
+    legend_position_window.h
 
 DISTFILES += \
     prefs.txt
