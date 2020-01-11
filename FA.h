@@ -41,10 +41,30 @@ public:
             exit(FILE_FAILURE);
         }
     }
-    
-    int setTsLength(std::string fn){
+
+    int getFileLength(std::string fn){
         FileOps fo = FileOps();
         return fo.rowsNumber(fn);
+    }
+
+    int getNansNumber(std::string fn){
+        FileOps fo = FileOps();
+        int L = getFileLength(fn);
+        FILE *f;
+        f = fo.openFile(fn, "r");
+        int nans = 0;
+        for(int i = 0; i < L; i++){
+            double val;
+            fscanf(f, "%lf", &val);
+            if(std::isnan(val))
+                nans++;
+        }
+        fclose(f);
+        return nans;
+    }
+
+    int setTsLength(std::string fn){
+        return getFileLength(fn) - getNansNumber(fn);
     }
     
     int getRangeLength(int start, int end, int step=1){
@@ -63,8 +83,15 @@ public:
         pnNomean = new double [N];
 	    FILE *f;
 	    f = fo.openFile(fileName, "r");
-	    for(int i = 0; i < N; i++)
-	        fscanf(f, "%lf", &pn[i]);
+        int idx = 0;
+        for(int i = 0; i < getFileLength(fileName); i++){
+            double val;
+            fscanf(f, "%lf", &val);
+            if(!std::isnan(val)){
+                pn[idx] = val;
+                idx++;
+            }
+        }
 	    fclose(f);
 		//time vector
 	    ao.doubleRange(t, N, 1.0);

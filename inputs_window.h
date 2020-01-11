@@ -17,7 +17,7 @@ private:
 protected:
     void addLabel(QString lbl, int row);
     void addButtons(int row);
-    QLineEdit* addLabeledEditBox(QString txt, int row, int col=0);
+    QLineEdit* addLabeledEditBox(QString txt, int row, int col=0, int isSmall=1);
     void addLabeledEditBoxArray(QStringList txt, QLineEdit **lineEdits, int row, int col=0);
     QCheckBox* addCheckBox(int row);
     QCheckBox* addLabeledCheckBox(QString txt, int row);

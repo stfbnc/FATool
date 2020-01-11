@@ -43,7 +43,7 @@ void InputsHT::setInputsComponents()
         stringBox[i] = addCheckBox(i*numComp+2);
         connect(stringBox[i], &QCheckBox::clicked, [=](){this->onStringChkBoxClick(i);});
 
-        customScales[i] = addLabeledEditBox("Windows sizes (comma separated)", i*numComp+2, 1);
+        customScales[i] = addLabeledEditBox("Windows sizes (comma separated)", i*numComp+2, 1, 0);
         customScales[i]->setEnabled(false);
 
         winsAndStep[i] = new QLineEdit* [mLabels.size()];

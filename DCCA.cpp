@@ -55,8 +55,15 @@ void DCCA::setFlucVectors(){
     pn2Nomean = new double [N];
 	FILE *f;
 	f = fo.openFile(fileName2, "r");
-	for(int i = 0; i < N; i++)
-		fscanf(f, "%lf", &pn2[i]);
+    int idx = 0;
+    for(int i = 0; i < getFileLength(fileName2); i++){
+        double val;
+        fscanf(f, "%lf", &val);
+        if(!std::isnan(val)){
+            pn2[idx] = val;
+            idx++;
+        }
+    }
 	fclose(f);
 	mo.subtractMean(pn2, N, pn2Nomean);
 	mo.cumsum(pn2Nomean, y2, N);

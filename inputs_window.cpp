@@ -37,7 +37,7 @@ void InputsWindow::addButtons(int row)
     connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
 }
 
-QLineEdit* InputsWindow::addLabeledEditBox(QString txt, int row, int col)
+QLineEdit* InputsWindow::addLabeledEditBox(QString txt, int row, int col, int isSmall)
 {
     int pos;
     if(col == 0)
@@ -48,7 +48,10 @@ QLineEdit* InputsWindow::addLabeledEditBox(QString txt, int row, int col)
     int w = label->fontMetrics().boundingRect(label->text()).width()+padX;
     label->setGeometry(pos, (row+1)*padY+row*yHeight, w, yHeight);
     QLineEdit *lineEdit = new QLineEdit(this);
-    lineEdit->setGeometry(pos+w, (row+1)*padY+row*yHeight, xWidth*4, yHeight);
+    if(isSmall == 0)
+        lineEdit->setGeometry(pos+w, (row+1)*padY+row*yHeight, xWidth*4, yHeight);
+    else if(isSmall == 1)
+        lineEdit->setGeometry(pos+w, (row+1)*padY+row*yHeight, xWidth, yHeight);
     return lineEdit;
 }
 
