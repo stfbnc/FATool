@@ -3,7 +3,7 @@
 InputsrhoDCCA::InputsrhoDCCA(QStringList fileNames_, QWidget *parent) : InputsWindow(parent)
 {
     fileNames = fileNames_;
-    numComp = 3;
+    numComp = 4;
     MathOps mo;
     combs = mo.binCoeff(fileNames.size(), 2);
     //set title
@@ -31,6 +31,7 @@ void InputsrhoDCCA::setInputsComponents()
     }
     winsAndStep = new QLineEdit** [combs];
     polOrd = new QLineEdit* [combs];
+    compThresh = new QCheckBox* [combs];
 
     for(int i = 0; i < combs; i++){
         addLabel(fileCouples[i][0].split("/").last()+" - "+fileCouples[i][1].split("/").last(), i*numComp);
@@ -41,16 +42,29 @@ void InputsrhoDCCA::setInputsComponents()
 
         polOrd[i] = addLabeledEditBox("Polynomial order", i*numComp+2);
         polOrd[i]->setText("1");
+
+        compThresh[i] = addLabeledCheckBox("Compute thresholds", i*numComp+3);
     }
     addButtons(combs*numComp);
 }
 
 bool InputsrhoDCCA::checkInputs()
 {
+    for(int i = 0; i < fileNames.size(); i++){
+        if(!checkFileExistence(fileNames[i].toStdString())){
+            QMessageBox messageBox;
+            QString errToShow = "File "+fileNames[i].split("/").last()+"not found!";
+            messageBox.critical(nullptr, "Error", errToShow);
+            messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
+            return false;
+        }
+    }
+
     mw = new int [combs];
     Mw = new int [combs];
     ws = new int [combs];
     po = new int [combs];
+    ct = new bool [combs];
     for(int i = 0; i < combs; i++){
         QString mwStr = winsAndStep[i][0]->text().trimmed();
         QString MwStr = winsAndStep[i][1]->text().trimmed();
@@ -64,6 +78,7 @@ bool InputsrhoDCCA::checkInputs()
             Mw[i] = MwStr.toInt();
             ws[i] = wsStr.toInt();
             po[i] = poStr.toInt();
+            compThresh[i]->isChecked() ? ct[i] = true : ct[i] = false;
         }else{
             QMessageBox messageBox;
             QString errToShow = "Inputs must be numeric and not null!";
@@ -111,13 +126,27 @@ void InputsrhoDCCA::setAnalysisObj()
         int N = fo.rowsNumber(fn);
         std::string fn2 = fileCouples[i][1].toStdString();
         int N2 = fo.rowsNumber(fn2);
+        FILE *f;
+        double *vec, *vec2;
+        vec = new double [N];
+        vec2 = new double [N2];
+        f = fo.openFile(fn, "r");
+        for(int j = 0; j < N; j++){
+            fscanf(f, "%lf", &vec[j]);
+        }
+        fclose(f);
+        f = fo.openFile(fn2, "r");
+        for(int j = 0; j < N2; j++){
+            fscanf(f, "%lf", &vec2[j]);
+        }
+        fclose(f);
         MathOps mo;
         int val = mo.minVal(N, N2);
         if(mw[i] > N)
             mw[i] = po[i] + 2;
         if(Mw[i] > val)
             Mw[i] = val;
-        rhodcca[i] = new rhoDCCA(fn, fn2, mw[i], Mw[i], po[i], ws[i]);
+        rhodcca[i] = new rhoDCCA(fn, vec, N, fn2, vec2, N2, mw[i], Mw[i], po[i], ws[i], ct[i]);
     }
 }
 

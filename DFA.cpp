@@ -1,7 +1,7 @@
 #include "DFA.h"
 
-DFA::DFA(std::string fileName_, int minWin_, int maxWin_, int ord_, int winStep_, int revSeg_)
-	: FA()
+DFA::DFA(std::string fileName_, double *ts_, int tsLen_, int minWin_, int maxWin_, int ord_, int winStep_, int revSeg_)
+    : FA(ts_, tsLen_)
 {
 	fileName = fileName_;
 	minWin = minWin_;
@@ -9,8 +9,7 @@ DFA::DFA(std::string fileName_, int minWin_, int maxWin_, int ord_, int winStep_
 	ord = ord_;
 	revSeg = revSeg_;
 	winStep = winStep_;
-    checkFileExistence(fileName);
-	N = setTsLength(fileName);
+    N = setTsLength();
     allocateMemory();
 }
 

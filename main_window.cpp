@@ -259,6 +259,8 @@ void MainWindow::onCloseRHODCCAInputWin(rhoDCCA **rhodcca)
     for(int i = 0;  i < combs; i++){
         bool execStop = rhodcca[i]->computeRho();
         if(!execStop){
+            if(rhodcca[i]->threshCompute())
+                rhodcca[i]->computeThresholds();
             rhoDCCAWindow *plotWin = new rhoDCCAWindow(rhodcca[i]);
             plotWin->setAttribute(Qt::WA_DeleteOnClose);
             plotWin->show();

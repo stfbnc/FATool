@@ -3,6 +3,7 @@
 
 #include <QtWidgets>
 #include "constants.h"
+#include <sys/stat.h>
 
 class InputsWindow : public QWidget
 {
@@ -23,6 +24,7 @@ protected:
     QCheckBox* addLabeledCheckBox(QString txt, int row);
     QComboBox* addLabeledComboBox(QString txt, QStringList elements, int row);
     bool isCorrectFormat(QString txt);
+    bool checkFileExistence(std::string fn);
     virtual bool checkInputs();
     virtual void setInputsComponents();
     virtual void setAnalysisObj();

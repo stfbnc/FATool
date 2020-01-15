@@ -6,7 +6,7 @@
 class MFDFA : public MFDFAsingleQ
 {
 public:
-    MFDFA(std::string fileName_, int minWin_, int maxWin_, int ord_, double qIn_, int Nq_, int winStep_=1, double stepq_=1.0, int revSeg_=1);
+    MFDFA(std::string fileName_, double *ts_, int tsLen_, int minWin_, int maxWin_, int ord_, double qIn_, int Nq_, int winStep_=1, double stepq_=1.0, int revSeg_=1);
     ~MFDFA() override;
     void allocateQmemory();
     void setQrange(double, int, double);

@@ -7,7 +7,7 @@
 class HTsingleScale : public FA
 {
 public:
-	HTsingleScale(std::string fileName_, int scale_);
+    HTsingleScale(std::string fileName_, double *ts_, int tsLen_, int scale_);
 	~HTsingleScale();
     void allocateMemory() override;
 	int getTsLength();

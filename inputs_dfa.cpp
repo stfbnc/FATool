@@ -39,6 +39,16 @@ void InputsDFA::setInputsComponents()
 
 bool InputsDFA::checkInputs()
 {
+    for(int i = 0; i < fileNames.size(); i++){
+        if(!checkFileExistence(fileNames[i].toStdString())){
+            QMessageBox messageBox;
+            QString errToShow = "File "+fileNames[i].split("/").last()+"not found!";
+            messageBox.critical(nullptr, "Error", errToShow);
+            messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
+            return false;
+        }
+    }
+
     mw = new int [fileNames.size()];
     Mw = new int [fileNames.size()];
     ws = new int [fileNames.size()];
@@ -103,11 +113,19 @@ void InputsDFA::setAnalysisObj()
         FileOps fo;
         std::string fn = fileNames[i].toStdString();
         int N = fo.rowsNumber(fn);
+        FILE *f;
+        double *vec;
+        vec = new double [N];
+        f = fo.openFile(fn, "r");
+        for(int j = 0; j < N; j++){
+            fscanf(f, "%lf", &vec[j]);
+        }
+        fclose(f);
         if(mw[i] > N)
             mw[i] = po[i] + 2;
         if(Mw[i] > N)
             Mw[i] = N;
-        dfa[i] = new DFA(fn, mw[i], Mw[i], po[i], ws[i], rs[i]);
+        dfa[i] = new DFA(fn, vec, N, mw[i], Mw[i], po[i], ws[i], rs[i]);
     }
 }
 

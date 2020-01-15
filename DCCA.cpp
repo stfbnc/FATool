@@ -1,18 +1,18 @@
 #include "DCCA.h"
 
-DCCA::DCCA(std::string fileName_, std::string fileName2_, int minWin_, int maxWin_, int ord_, std::string isAbs_, int winStep_)
-	: FA()
+DCCA::DCCA(std::string fileName_, double *ts_, int tsLen_, std::string fileName2_, double *ts2_, int tsLen2_, int minWin_, int maxWin_, int ord_, std::string isAbs_, int winStep_)
+    : FA(ts_, tsLen_)
 {
 	fileName = fileName_;
 	fileName2 = fileName2_;
+    ts2 = ts2_;
+    tsLen2 = tsLen2_;
 	minWin = minWin_;
 	maxWin = maxWin_;
 	ord = ord_;
 	isAbs = isAbs_;
 	winStep = winStep_;
-    checkFileExistence(fileName);
-    checkFileExistence(fileName2);
-	getEqualLength(fileName, fileName2);
+    getEqualLength();
     allocateMemory();
 }
 
@@ -32,9 +32,9 @@ void DCCA::allocateMemory(){
 	F = new double [getRangeLength(minWin, maxWin, winStep)];
 }
 
-void DCCA::getEqualLength(std::string fn1, std::string fn2){
-	int N1 = setTsLength(fn1);
-    int N2 = setTsLength(fn2);
+void DCCA::getEqualLength(){
+    int N1 = setTsLength();
+    int N2 = setTsLength();
     if(N1 > N2){
         N = N2;
     }else{
@@ -53,18 +53,13 @@ void DCCA::setFlucVectors(){
     double *pn2, *pn2Nomean;
     pn2 = new double [N];
     pn2Nomean = new double [N];
-	FILE *f;
-	f = fo.openFile(fileName2, "r");
     int idx = 0;
-    for(int i = 0; i < getFileLength(fileName2); i++){
-        double val;
-        fscanf(f, "%lf", &val);
-        if(!std::isnan(val)){
-            pn2[idx] = val;
+    for(int i = 0; i < tsLen2; i++){
+        if(!std::isnan(ts2[i])){
+            pn2[idx] = ts2[i];
             idx++;
         }
     }
-	fclose(f);
 	mo.subtractMean(pn2, N, pn2Nomean);
 	mo.cumsum(pn2Nomean, y2, N);
     delAlloc<double>(pn2);

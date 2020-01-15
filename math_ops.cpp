@@ -40,13 +40,21 @@ void MathOps::subtractMean(double *vec, int L, double *vecNomean){
 		vecNomean[i] = vec[i] - avg;
 }
 
-int MathOps::vecMin(int *vec, int len){
-    int m = vec[0];
-    for(int i = 1; i < len; i++)
-        if(vec[i] < m)
-            m = vec[i];
-    return m;
-}
+//int MathOps::vecMin(int *vec, int len){
+//    int m = vec[0];
+//    for(int i = 1; i < len; i++)
+//        if(vec[i] < m)
+//            m = vec[i];
+//    return m;
+//}
+
+//int MathOps::vecMax(int *vec, int len){
+//    int M = vec[0];
+//    for(int i = 1; i < len; i++)
+//        if(vec[i] > M)
+//            M = vec[i];
+//    return M;
+//}
 
 int MathOps::minVal(int a, int b){
     if(a <= b)
@@ -141,4 +149,12 @@ long long int MathOps::binCoeff(int a, int b){
     long long int fac2 = factorial(b);
     long long int fac3 = factorial(a-b);
     return fac1 / (fac2 * fac3);
+}
+
+void MathOps::gaussRand(double *vec, int len){
+    std::random_device rd{};
+    std::mt19937 gen{rd()};
+    std::normal_distribution<> d{0,1};
+    for(int i = 0; i < len; i++)
+        vec[i] = d(gen);
 }

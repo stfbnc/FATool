@@ -1,7 +1,7 @@
 #include "MFDFA_single_q.h"
 
-MFDFAsingleQ::MFDFAsingleQ(std::string fileName_, int minWin_, int maxWin_, int ord_, double q_, int winStep_, int revSeg_)
-	: FA()
+MFDFAsingleQ::MFDFAsingleQ(std::string fileName_, double *ts_, int tsLen_, int minWin_, int maxWin_, int ord_, double q_, int winStep_, int revSeg_)
+    : FA(ts_, tsLen_)
 {
 	fileName = fileName_;
 	minWin = minWin_;
@@ -10,8 +10,7 @@ MFDFAsingleQ::MFDFAsingleQ(std::string fileName_, int minWin_, int maxWin_, int 
 	q = q_;
 	winStep = winStep_;
 	revSeg = revSeg_;
-    checkFileExistence(fileName);
-	N = setTsLength(fileName);
+    N = setTsLength();
     allocateMemory();
 }
 

@@ -1,7 +1,7 @@
 #include "MFDFA.h"
 
-MFDFA::MFDFA(std::string fileName_, int minWin_, int maxWin_, int ord_, double qIn_, int Nq_, int winStep_, double stepq_, int revSeg_)
-	: MFDFAsingleQ(fileName_, minWin_, maxWin_, ord_, qIn_, winStep_, revSeg_)
+MFDFA::MFDFA(std::string fileName_, double *ts_, int tsLen_, int minWin_, int maxWin_, int ord_, double qIn_, int Nq_, int winStep_, double stepq_, int revSeg_)
+    : MFDFAsingleQ(fileName_, ts_, tsLen_, minWin_, maxWin_, ord_, qIn_, winStep_, revSeg_)
 {
 	Nq = Nq_;
 	stepq = stepq_;
@@ -17,6 +17,9 @@ MFDFA::~MFDFA(){
 	delAlloc<double>(Hq);
 	delAlloc<double>(Hinterceptq);
 	del2Alloc<double>(flucMtx, getRangeLength(minWin, maxWin, winStep));
+    delAlloc<double>(tau);
+    delAlloc<double>(alpha);
+    delAlloc<double>(spectrum);
 }
 
 void MFDFA::allocateQmemory(){

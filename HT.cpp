@@ -1,7 +1,7 @@
 #include "HT.h"
 
-HT::HT(std::string fileName_, int scale_, int Nscales_, int stepScale_, int mfdfaMinWin, int mfdfaMaxWin, int mfdfaStep)
-	: HTsingleScale(fileName_, scale_)
+HT::HT(std::string fileName_, double *ts_, int tsLen_, int scale_, int Nscales_, int stepScale_, int mfdfaMinWin, int mfdfaMaxWin, int mfdfaStep)
+    : HTsingleScale(fileName_, ts_, tsLen_, scale_)
 {
     setMFDFAstep(mfdfaStep);
     mMFDFA = mfdfaMinWin;
@@ -16,8 +16,8 @@ HT::HT(std::string fileName_, int scale_, int Nscales_, int stepScale_, int mfdf
     ao.intRange(scales, Nscales, minScale, stepScale);
 }
 
-HT::HT(std::string fileName_, std::string strScales, int mfdfaMinWin, int mfdfaMaxWin, int mfdfaStep)
-		: HTsingleScale(fileName_, stoi(strScales.substr(0, strScales.find_first_of(strSep))))
+HT::HT(std::string fileName_, double *ts_, int tsLen_, std::string strScales, int mfdfaMinWin, int mfdfaMaxWin, int mfdfaStep)
+        : HTsingleScale(fileName_, ts_, tsLen_, stoi(strScales.substr(0, strScales.find_first_of(strSep))))
 {
     setMFDFAstep(mfdfaStep);
     mMFDFA = mfdfaMinWin;

@@ -3,7 +3,6 @@
 
 #include "constants.h"
 #include "base_plot.h"
-#include <sys/stat.h>
 #include "file_ops.h"
 #include "array_ops.h"
 #include "math_ops.h"
@@ -11,7 +10,9 @@
 class FA
 {
 public:
-	FA(){
+    FA(double *ts_, int tsLen_){
+        ts = ts_;
+        tsLen = tsLen_;
 		N = 0;
         t = nullptr;
         y = nullptr;
@@ -34,37 +35,17 @@ public:
 		}
 	}
 
-    void checkFileExistence(std::string fn){
-        struct stat buffer;
-        if(stat(fn.c_str(), &buffer) != 0){
-            fprintf(stdout, "ERROR %d: file %s does not exist\n", FILE_FAILURE, fn.c_str());
-            exit(FILE_FAILURE);
-        }
-    }
-
-    int getFileLength(std::string fn){
-        FileOps fo = FileOps();
-        return fo.rowsNumber(fn);
-    }
-
-    int getNansNumber(std::string fn){
-        FileOps fo = FileOps();
-        int L = getFileLength(fn);
-        FILE *f;
-        f = fo.openFile(fn, "r");
+    int getNansNumber(){
         int nans = 0;
-        for(int i = 0; i < L; i++){
-            double val;
-            fscanf(f, "%lf", &val);
-            if(std::isnan(val))
+        for(int i = 0; i < tsLen; i++){
+            if(std::isnan(ts[i]))
                 nans++;
         }
-        fclose(f);
         return nans;
     }
 
-    int setTsLength(std::string fn){
-        return getFileLength(fn) - getNansNumber(fn);
+    int setTsLength(){
+        return tsLen - getNansNumber();
     }
     
     int getRangeLength(int start, int end, int step=1){
@@ -76,23 +57,16 @@ public:
 	void setFlucVectors(){
 	    MathOps mo = MathOps();
 	    ArrayOps ao = ArrayOps();
-	    FileOps fo = FileOps();
-		//time series vector
         double *pn, *pnNomean;
         pn = new double [N];
         pnNomean = new double [N];
-	    FILE *f;
-	    f = fo.openFile(fileName, "r");
         int idx = 0;
-        for(int i = 0; i < getFileLength(fileName); i++){
-            double val;
-            fscanf(f, "%lf", &val);
-            if(!std::isnan(val)){
-                pn[idx] = val;
+        for(int i = 0; i < tsLen; i++){
+            if(!std::isnan(ts[i])){
+                pn[idx] = ts[i];
                 idx++;
             }
         }
-	    fclose(f);
 		//time vector
 	    ao.doubleRange(t, N, 1.0);
 	    //time series minus its mean
@@ -110,6 +84,8 @@ public:
     virtual void plot(BasePlot *plt) = 0;
 protected:
     std::string fileName;
+    double *ts;
+    int tsLen;
     int N;
     double *t;
 	double *y;

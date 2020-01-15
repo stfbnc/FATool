@@ -23,6 +23,7 @@ private:
     QLineEdit ***winsAndStep;
     QLineEdit **polOrd;
     QStringList *fileCouples;
+    QCheckBox **compThresh;
 
     rhoDCCA **rhodcca;
 
@@ -31,6 +32,7 @@ private:
     int *Mw;
     int *ws;
     int *po;
+    bool *ct;
     int numComp;
     long long int combs;
 };

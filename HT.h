@@ -6,8 +6,8 @@
 class HT : public HTsingleScale
 {
 public:
-    HT(std::string fileName_, int scale_, int Nscales_, int stepScale_, int mfdfaMinWin, int mfdfaMaxWin, int mfdfaStep);
-    HT(std::string fileName, std::string strScales, int mfdfaMinWin, int mfdfaMaxWin, int mfdfaStep);
+    HT(std::string fileName_, double *ts_, int tsLen_, int scale_, int Nscales_, int stepScale_, int mfdfaMinWin, int mfdfaMaxWin, int mfdfaStep);
+    HT(std::string fileName, double *ts_, int tsLen_, std::string strScales, int mfdfaMinWin, int mfdfaMaxWin, int mfdfaStep);
     ~HT() override;
 	void allocateScalesMemory();
 	int getNumScales(std::string str);

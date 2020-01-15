@@ -111,6 +111,14 @@ bool InputsWindow::isCorrectFormat(QString txt)
         return false;
 }
 
+bool InputsWindow::checkFileExistence(std::string fn)
+{
+    struct stat buffer;
+    if(stat(fn.c_str(), &buffer) != 0)
+        return false;
+    return true;
+}
+
 bool InputsWindow::checkInputs()
 {
     return false;

@@ -1,12 +1,11 @@
 #include "HT_single_scale.h"
 
-HTsingleScale::HTsingleScale(std::string fileName_, int scale_)
-	: FA()
+HTsingleScale::HTsingleScale(std::string fileName_, double *ts_, int tsLen_, int scale_)
+    : FA(ts_, tsLen_)
 {
 	fileName = fileName_;
 	scale = scale_;
-    checkFileExistence(fileName);
-	N = setTsLength(fileName);
+    N = setTsLength();
     allocateMemory();
 }
 
@@ -85,7 +84,7 @@ void HTsingleScale::fitFlucVec(int start, int end)
 {
     if(step == 0)
         step = 1;
-    MFDFAsingleQ dfaQ0 = MFDFAsingleQ(fileName, start, end, 1, 0.0, step);
+    MFDFAsingleQ dfaQ0 = MFDFAsingleQ(fileName, ts, tsLen, start, end, 1, 0.0, step);
     dfaQ0.setFlucVectors();
     dfaQ0.computeFlucVec();
     dfaQ0.fitFlucVec(start, end);

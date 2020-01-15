@@ -52,6 +52,16 @@ void InputsDCCA::setInputsComponents()
 
 bool InputsDCCA::checkInputs()
 {
+    for(int i = 0; i < fileNames.size(); i++){
+        if(!checkFileExistence(fileNames[i].toStdString())){
+            QMessageBox messageBox;
+            QString errToShow = "File "+fileNames[i].split("/").last()+"not found!";
+            messageBox.critical(nullptr, "Error", errToShow);
+            messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
+            return false;
+        }
+    }
+
     mw = new int [combs];
     Mw = new int [combs];
     ws = new int [combs];
@@ -118,13 +128,27 @@ void InputsDCCA::setAnalysisObj()
         int N = fo.rowsNumber(fn);
         std::string fn2 = fileCouples[i][1].toStdString();
         int N2 = fo.rowsNumber(fn2);
+        FILE *f;
+        double *vec, *vec2;
+        vec = new double [N];
+        vec2 = new double [N2];
+        f = fo.openFile(fn, "r");
+        for(int j = 0; j < N; j++){
+            fscanf(f, "%lf", &vec[j]);
+        }
+        fclose(f);
+        f = fo.openFile(fn2, "r");
+        for(int j = 0; j < N2; j++){
+            fscanf(f, "%lf", &vec2[j]);
+        }
+        fclose(f);
         MathOps mo;
         int val = mo.minVal(N, N2);
         if(mw[i] > N)
             mw[i] = po[i] + 2;
         if(Mw[i] > val)
             Mw[i] = val;
-        dcca[i] = new DCCA(fn, fn2, mw[i], Mw[i], po[i], al[i], ws[i]);
+        dcca[i] = new DCCA(fn, vec, N, fn2, vec2, N2, mw[i], Mw[i], po[i], al[i], ws[i]);
     }
 }
 

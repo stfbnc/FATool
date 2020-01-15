@@ -12,6 +12,7 @@ public:
     void zeroVec(double *vec, int L);
 	void doubleRange(double *vec, int L, double start, double step=1.0);
 	void intRange(int *vec, int L, int start, int step=1);
+    void extractColumn(double *mtx, int l, int h, int col, double *vec);
 };
 
 #endif

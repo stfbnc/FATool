@@ -92,6 +92,17 @@ void InputsHT::onStringChkBoxClick(int idx)
 bool InputsHT::checkInputs()
 {
     int L = fileNames.size();
+
+    for(int i = 0; i < L; i++){
+        if(!checkFileExistence(fileNames[i].toStdString())){
+            QMessageBox messageBox;
+            QString errToShow = "File "+fileNames[i].split("/").last()+"not found!";
+            messageBox.critical(nullptr, "Error", errToShow);
+            messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
+            return false;
+        }
+    }
+
     ns = new int [L];
     ms = new int [L];
     ss = new int [L];
@@ -205,6 +216,14 @@ void InputsHT::setAnalysisObj()
         FileOps fo;
         std::string fn = fileNames[i].toStdString();
         int N = fo.rowsNumber(fn);
+        FILE *f;
+        double *vec;
+        vec = new double [N];
+        f = fo.openFile(fn, "r");
+        for(int j = 0; j < N; j++){
+            fscanf(f, "%lf", &vec[j]);
+        }
+        fclose(f);
         if(ms[i] != 0){
             if(ms[i] > N)
                 ms[i] = 3;
@@ -212,9 +231,9 @@ void InputsHT::setAnalysisObj()
                 ns[i] = N - ms[i] + 1;
             if((ms[i]+(ns[i]-1)*ss[i]) > N)
                 ns[i] = (N - ms[i]) / ss[i] + 1;
-            ht[i] = new HT(fn, ms[i], ns[i], ss[i], mmw[i], mMw[i], mws[i]);
+            ht[i] = new HT(fn, vec, N, ms[i], ns[i], ss[i], mmw[i], mMw[i], mws[i]);
         }else{
-            ht[i] = new HT(fn, cs[i].toStdString(), mmw[i], mMw[i], mws[i]);
+            ht[i] = new HT(fn, vec, N, cs[i].toStdString(), mmw[i], mMw[i], mws[i]);
         }
     }
 }

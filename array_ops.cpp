@@ -35,3 +35,8 @@ void ArrayOps::intRange(int *vec, int L, int start, int step){
 	for(int i = 0; i < L; i++)
         vec[i] = i * step + start;
 }
+
+void ArrayOps::extractColumn(double *mtx, int l, int h, int col, double *vec){
+    for(int i = 0; i < h; i++)
+        vec[i] = mtx[col+i*l];
+}
