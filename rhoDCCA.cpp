@@ -1,33 +1,25 @@
 #include "rhoDCCA.h"
 
-rhoDCCA::rhoDCCA(std::string fileName_, double *ts_, int tsLen_, std::string fileName2_, double *ts2_, int tsLen2_, int minWin_, int maxWin_, int ord_, int winStep_, bool thresh_){
-	fileName = fileName_;
-    ts = ts_;
-    tsLen = tsLen_;
-	fileName2 = fileName2_;
-    ts2 = ts2_;
-    tsLen2 = tsLen2_;
-	minWin = minWin_;
-	maxWin = maxWin_;
-	ord = ord_;
-	winStep = winStep_;
-    thresh = thresh_;
-	L = 0;
-    rho = nullptr;
+rhoDCCA::rhoDCCA(std::string fileName, std::vector<double> ts, int tsLen, std::string fileName2, std::vector<double> ts2, int tsLen2, int minWin, int maxWin, int ord, int winStep, bool thresh){
+    this->fileName = fileName;
+    this->tsLen = tsLen;
+    this->ts.reserve(tsLen);
+    for(int i = 0; i < tsLen; i++)
+        this->ts.push_back(ts.at(i));
+    this->fileName2 = fileName2;
+    this->tsLen2 = tsLen2;
+    this->ts2.reserve(tsLen2);
+    for(int i = 0; i < tsLen2; i++)
+        this->ts2.push_back(ts2.at(i));
+    this->minWin = minWin;
+    this->maxWin = maxWin;
+    this->ord = ord;
+    this->winStep = winStep;
+    this->thresh = thresh;
+    L = 0;
 }
 
-rhoDCCA::~rhoDCCA() {
-    delete [] ts;
-    delete [] ts2;
-    delete [] rho;
-    if(thresh){
-        delete [] confDown;
-        delete [] confUp;
-    }else{
-        delete confDown;
-        delete confUp;
-    }
-}
+rhoDCCA::~rhoDCCA() {}
 
 bool rhoDCCA::computeRho(){
     bool execStop = false;
@@ -35,22 +27,22 @@ bool rhoDCCA::computeRho(){
     dccaXX.setFlucVectors();
     execStop = dccaXX.computeFlucVec();
     if(!execStop){
-        double *Fxx = dccaXX.getF();
+        std::vector<double> Fxx = dccaXX.getF();
         DCCA dccaYY = DCCA(fileName2, ts2, tsLen2, fileName2, ts2, tsLen2, minWin, maxWin, ord, defaultDCCA, winStep);
         dccaYY.setFlucVectors();
         execStop = dccaYY.computeFlucVec();
         if(!execStop){
-            double *Fyy = dccaYY.getF();
+            std::vector<double> Fyy = dccaYY.getF();
             DCCA dccaXY = DCCA(fileName, ts, tsLen, fileName2, ts2, tsLen2, minWin, maxWin, ord, corrDCCA, winStep);
             dccaXY.setFlucVectors();
             execStop = dccaXY.computeFlucVec();
             if(!execStop){
-                double *Fxy = dccaXY.getF();
+                std::vector<double> Fxy = dccaXY.getF();
                 L = dccaXY.getRangeLength(minWin, maxWin, winStep);
                 N = dccaXY.getTsLength();
-                rho = new double [L];
+                rho.reserve(L);
                 for(int i = 0; i < L; i++)
-                    rho[i] = Fxy[i] / static_cast<double>(Fxx[i] * Fyy[i]);
+                    rho.push_back(Fxy.at(i) / static_cast<double>(Fxx.at(i) * Fyy.at(i)));
             }
         }
     }
@@ -58,91 +50,77 @@ bool rhoDCCA::computeRho(){
 }
 
 void rhoDCCA::computeThresholds(){
-    bool execStop;
+    bool execStop = false;
     MathOps mo;
-    double *grand1, *grand2;
-    grand1 = new double [N];
-    grand2 = new double [N];
-    double *rhoMtx;
-    rhoMtx = new double [getRhoLength()*nSim];
+    ArrayOps ao;
+    std::vector<double> rhoMtx;
+    rhoMtx.reserve(getRhoLength()*nSim);
+    ao.zeroVec(rhoMtx, getRhoLength()*nSim);
+
+    QProgressDialog progress("Coumputing confidence intervals", "Stop", 0, nSim*3);
+    progress.setWindowModality(Qt::WindowModal);
+    progress.setAttribute(Qt::WA_DeleteOnClose, true);
+    progress.setMinimumDuration(0);
+    progress.setFixedSize(xPG, yPG);
+
     for(int i = 0; i < nSim; i++){
-        mo.gaussRand(grand1, N);
-        mo.gaussRand(grand2, N);
-        std::string s1 = "rand1 (sim "+std::to_string(i+1)+")";
-        std::string s2 = "rand2 (sim "+std::to_string(i+1)+")";
-        DCCA dcca11 = DCCA(s1, grand1, N, s1, grand1, N, minWin, maxWin, ord, defaultDCCA, winStep);
-        dcca11.setFlucVectors();
-        execStop = dcca11.computeFlucVec();
-        if(!execStop){
-            double *F11 = dcca11.getF();
-            DCCA dcca22 = DCCA(s2, grand2, N, s2, grand2, N, minWin, maxWin, ord, defaultDCCA, winStep);
-            dcca22.setFlucVectors();
-            execStop = dcca22.computeFlucVec();
-            if(!execStop){
-                double *F22 = dcca22.getF();
-                DCCA dcca12 = DCCA(s1, grand1, N, s2, grand2, N, minWin, maxWin, ord, corrDCCA, winStep);
-                dcca12.setFlucVectors();
-                execStop = dcca12.computeFlucVec();
-                if(!execStop){
-                    double *F12 = dcca12.getF();
-                    for(int j = 0; j < getRhoLength(); j++)
-                        rhoMtx[i*nSim+j] = F12[j] / static_cast<double>(F11[j] * F22[j]);
-                }else{
-                    thresh = false;
-                    break;
-                }
-            }else{
-                thresh = false;
-                break;
-            }
-        }else{
+        if(progress.wasCanceled()){
+            execStop = true;
             thresh = false;
             break;
         }
+
+        std::random_device rd1{};
+        std::mt19937 gen1{rd1()};
+        std::random_device rd2{};
+        std::mt19937 gen2{rd2()};
+
+        progress.setValue(i*3);
+        std::vector<double> grand1, grand2;
+        grand1.reserve(N);
+        grand2.reserve(N);
+        mo.gaussRand(grand1, N, gen1);
+        mo.gaussRand(grand2, N, gen2);
+        for(int j = 0; j < N; j++){
+            std::cout << grand1.at(j) << "!!!" << grand2.at(j) << std::endl;
+        }
+        DCCA dcca11 = DCCA("", grand1, N, "", grand1, N, minWin, maxWin, ord, defaultDCCA, winStep, false);
+        dcca11.setFlucVectors();
+        dcca11.computeFlucVec();
+        std::vector<double> F11 = dcca11.getF();
+        progress.setValue(i*3+1);
+        DCCA dcca22 = DCCA("", grand2, N, "", grand2, N, minWin, maxWin, ord, defaultDCCA, winStep, false);
+        dcca22.setFlucVectors();
+        dcca22.computeFlucVec();
+        std::vector<double> F22 = dcca22.getF();
+        progress.setValue(i*3+2);
+        DCCA dcca12 = DCCA("", grand1, N, "", grand2, N, minWin, maxWin, ord, corrDCCA, winStep, false);
+        dcca12.setFlucVectors();
+        dcca12.computeFlucVec();
+        std::vector<double> F12 = dcca12.getF();
+        for(int j = 0; j < getRhoLength(); j++)
+            rhoMtx.at(i*getRhoLength()+j) = F12.at(j) / static_cast<double>(F11.at(j) * F22.at(j));
     }
-    if(!execStop)
-        confLevHist(rhoMtx);
-    delete [] grand1;
-    delete [] grand2;
-    delete [] rhoMtx;
+
+    if(!execStop){
+        progress.setValue(nSim*3);
+        confLevels(rhoMtx);
+    }
 }
 
-void rhoDCCA::confLevHist(double *rhos){
+void rhoDCCA::confLevels(std::vector<double> rhos){
     MathOps mo;
     ArrayOps ao;
-    double *singleCol;
-    singleCol = new double [getRhoLength()];
-    confDown = new double [getRhoLength()];
-    confUp = new double [getRhoLength()];
-    int numBins = static_cast<int>(2.0 * pow(getRhoLength(), 1.0/3.0));
+    confUp.reserve(getRhoLength());
+    confDown.reserve(getRhoLength());
     for(int i = 0; i < getRhoLength(); i++){
+        std::vector<double> singleCol;
+        singleCol.reserve(nSim);
         ao.extractColumn(rhos, getRhoLength(), nSim, i, singleCol);
-        double minVal = mo.vecMin<double>(singleCol, getRhoLength());
-        double maxVal = mo.vecMax<double>(singleCol, getRhoLength());
-        double binWidth = (maxVal - minVal) / static_cast<double>(numBins);
-        double *normHist;
-        normHist = new double [numBins];
-        ao.zeroVec(normHist, numBins);
-        for(int j = 0; j < getRhoLength(); j++){
-            int bin = floor((singleCol[i] - minVal) / binWidth);
-            normHist[bin] += 1;
-        }
-        for(int j = 0; j < numBins; j++)
-            normHist[j] /= static_cast<double>(binWidth * getRhoLength());
-        double sumArea = 0.0, leftVal, rightVal;
-        int idx = 0;
-        while(sumArea <= confLev && idx < (numBins / 2)){
-            leftVal = normHist[idx];
-            rightVal = normHist[numBins-1-idx];
-            sumArea += ((leftVal + rightVal) * binWidth);
-            idx++;
-        }
-        idx++;
-        confDown[i] = minVal + (idx * binWidth);
-        confUp[i] = maxVal - (idx * binWidth);
-        delete [] normHist;
+        std::sort(singleCol.begin(), singleCol.end());
+        confUp.push_back(singleCol[mo.quantile(nSim, confLev)]);
+        confDown.push_back(singleCol[mo.quantile(nSim, 1-confLev)]);
     }
-    delete [] singleCol;
 }
 
 int rhoDCCA::getRhoLength(){
@@ -174,7 +152,7 @@ void rhoDCCA::saveFile(std::string pathTot){
     FILE *f;
     f = fo.openFile(pathTot+outFileStr(), "w");
     for(int i = 0; i < getRhoLength(); i++)
-        fprintf(f, "%d %lf\n", (i*winStep)+minWin, rho[i]);
+        fprintf(f, "%d %lf\n", (i*winStep)+minWin, rho.at(i));
     fclose(f);
 }
 
@@ -182,7 +160,7 @@ void rhoDCCA::plot(BasePlot *plt){
     QVector<double> n(L), corrs(L);
     for(int i = 0; i < L; i++){
         n[i] = (i * winStep) + minWin;
-        corrs[i] = rho[i];
+        corrs[i] = rho.at(i);
     }
     plt->addGraph();
     plt->xAxis->setLabel("n");
@@ -201,8 +179,8 @@ void rhoDCCA::plot(BasePlot *plt){
     if(thresh){
         QVector<double> cd(L), cu(L);
         for(int i = 0; i < L; i++){
-            cd[i] = confDown[i];
-            cu[i] = confUp[i];
+            cd[i] = confDown.at(i);
+            cu[i] = confUp.at(i);
         }
         pen.setColor(Qt::black);
         pen.setWidth(2);

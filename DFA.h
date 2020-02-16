@@ -6,7 +6,7 @@
 class DFA : public FA
 {
 public:
-    DFA(std::string fileName_, double *ts_, int tsLen_, int minWin_, int maxWin_, int ord_, int winStep_=1, int revSeg_=1);
+    DFA(std::string fileName, std::vector<double> ts, int tsLen, int minWin, int maxWin, int ord, int winStep=1, int revSeg=1);
 	~DFA();
     void allocateMemory() override;
 	int getTsLength();
@@ -27,7 +27,7 @@ private:
 	int ord;
 	int revSeg;
 	int winStep;
-	int *s;
+    std::vector<int> s;
 	double H;
 	double Hintercept;
 };

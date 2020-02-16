@@ -4,39 +4,49 @@ ArrayOps::ArrayOps() {}
 
 ArrayOps::~ArrayOps() {}
 
-void ArrayOps::sliceVec(double *allVec, double *slicedVec, int start, int end){
+void ArrayOps::sliceVec(std::vector<double> allVec, std::vector<double> &slicedVec, int start, int end){
     for(int i = 0; i <= (end - start); i++)
-        slicedVec[i] = allVec[start+i];
+        slicedVec.push_back(allVec.at(start+i));
 }
 
-void ArrayOps::concatenate(double *vecTo, double *vecFrom1, double *vecFrom2, int L){
-    for(int i = 0; i < L; i++){
-        vecTo[i] = vecFrom1[i];
-        vecTo[i+L] = vecFrom2[i];
-    }
-}
-
-void ArrayOps::vecCopy(double *vecTo, double *vecFrom, int L){
+void ArrayOps::concatenate(std::vector<double> &vecTo, std::vector<double> vecFrom1, std::vector<double> vecFrom2, int L){
     for(int i = 0; i < L; i++)
-        vecTo[i] = vecFrom[i];
-}
-
-void ArrayOps::zeroVec(double *vec, int L){
+        vecTo.push_back(vecFrom1.at(i));
     for(int i = 0; i < L; i++)
-        vec[i] = 0.0;
+        vecTo.push_back(vecFrom2.at(i));
 }
 
-void ArrayOps::doubleRange(double *vec, int L, double start, double step){
+void ArrayOps::vecCopy(std::vector<double> &vecTo, std::vector<double> vecFrom, int L){
+    for(int i = 0; i < L; i++)
+        vecTo.push_back(vecFrom.at(i));
+}
+
+void ArrayOps::zeroVec(std::vector<double> &vec, int L){
+    for(int i = 0; i < L; i++)
+        vec.push_back(0.0);
+}
+
+void ArrayOps::doubleRange(std::vector<double> &vec, int L, double start, double step){
 	for(int i = 0; i < L; i++)
-        vec[i] = static_cast<double>(i * step + start);
+        vec.push_back(static_cast<double>(i * step + start));
 }
 
-void ArrayOps::intRange(int *vec, int L, int start, int step){
+void ArrayOps::intRange(std::vector<int> &vec, int L, int start, int step){
 	for(int i = 0; i < L; i++)
-        vec[i] = i * step + start;
+        vec.push_back(i * step + start);
 }
 
-void ArrayOps::extractColumn(double *mtx, int l, int h, int col, double *vec){
+void ArrayOps::extractColumn(std::vector<double> mtx, int l, int h, int col, std::vector<double> &vec){
     for(int i = 0; i < h; i++)
-        vec[i] = mtx[col+i*l];
+        vec.push_back(mtx.at(col+i*l));
+}
+
+void ArrayOps::noNan(std::vector<double> vec, int L, std::vector<double> &vecNoNan){
+    int idx = 0;
+    for(int i = 0; i < L; i++){
+        if(!std::isnan(vec.at(i))){
+            vecNoNan.push_back(vec.at(i));
+            idx++;
+        }
+    }
 }

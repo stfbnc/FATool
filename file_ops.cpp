@@ -19,11 +19,12 @@ int FileOps::rowsNumber(std::string fName){
 }
 
 FILE* FileOps::openFile(std::string fName, const char *mode){
-    char *fileName;
-    fileName = new char [fName.length()+1];
-    strcpy(fileName, fName.c_str());
+    //char *fileName;
+    //fileName = new char [fName.length()+1];
+    //strcpy(fileName, fName.c_str());
     FILE *fl;
-    fl = fopen(fileName, mode);
-    delete fileName;
+    //fl = fopen(fileName, mode);
+    fl = fopen(fName.c_str(), mode);
+    //delete fileName;
     return fl;
 }

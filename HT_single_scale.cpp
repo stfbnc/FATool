@@ -1,26 +1,21 @@
 #include "HT_single_scale.h"
 
-HTsingleScale::HTsingleScale(std::string fileName_, double *ts_, int tsLen_, int scale_)
-    : FA(ts_, tsLen_)
+HTsingleScale::HTsingleScale(std::string fileName, std::vector<double> ts, int tsLen, int scale)
+    : FA(ts, tsLen)
 {
-	fileName = fileName_;
-	scale = scale_;
-    N = setTsLength();
+    this->fileName = fileName;
+    this->scale = scale;
+    N = setTsLength(ts, tsLen);
     allocateMemory();
 }
 
-HTsingleScale::~HTsingleScale(){
-	delAlloc<double>(t);
-	delAlloc<double>(y);
-	delAlloc<double>(F);
-	delAlloc<double>(Ht);
-}
+HTsingleScale::~HTsingleScale(){}
 
 void HTsingleScale::allocateMemory(){
-	t = new double [N];
-	y = new double [N];
-	F = new double [getRangeLength(scale, N)];
-	Ht = new double [getRangeLength(scale, N)];
+    t.reserve(N);
+    y.reserve(N);
+    F.reserve(getRangeLength(scale, N));
+    Ht.reserve(getRangeLength(scale, N));
 }
 
 int HTsingleScale::getTsLength(){
@@ -54,20 +49,17 @@ bool HTsingleScale::computeFlucVec(){
         }
         int startLim = v;
         int endLim = v + scale - 1;
-        double *tFit, *yFit, *diffVec;
-        tFit = new double [scale];
-        yFit = new double [scale];
-        diffVec = new double [scale];
+        std::vector<double> tFit, yFit, diffVec;
+        tFit.reserve(scale);
+        yFit.reserve(scale);
+        diffVec.reserve(scale);
 		ao.sliceVec(t, tFit, startLim, endLim);
 		ao.sliceVec(y, yFit, startLim, endLim);
         double angCoeff, intercept;
 		mo.linFit(scale, tFit, yFit, &angCoeff, &intercept);
 		for(int j = 0; j < scale; j++)
-			diffVec[j] = pow((yFit[j] - (intercept + angCoeff * tFit[j])), 2.0);
-		F[v] = sqrt(mo.mean(diffVec, scale));
-        delAlloc<double>(tFit);
-        delAlloc<double>(yFit);
-        delAlloc<double>(diffVec);
+            diffVec.at(j) = pow((yFit.at(j) - (intercept + angCoeff * tFit.at(j))), 2.0);
+        F.at(v) = sqrt(mo.mean(diffVec, scale));
 	}
 
     progress.setValue(range);
@@ -97,7 +89,7 @@ void HTsingleScale::fitFlucVec(int start, int end)
     regfit = Hq0Intercept + Hq0 * log(scale);
     logscale = log(range) - log(scale);
     for(int i = 0; i < range; i++){
-        Ht[i] = (regfit - log(F[i])) / static_cast<double>(logscale) + Hq0;
+        Ht.at(i) = (regfit - log(F.at(i))) / static_cast<double>(logscale) + Hq0;
     }
 }
 
@@ -112,7 +104,7 @@ void HTsingleScale::saveFile(std::string pathTot){
     f = fo.openFile(pathTot+outFileStr(), "w");
 	fprintf(f, "#scale=%d\n", scale);
     for(int i = 0; i < range; i++)
-        fprintf(f, "%lf\n", Ht[i]);
+        fprintf(f, "%lf\n", Ht.at(i));
     fclose(f);
 }
 
@@ -122,7 +114,7 @@ void HTsingleScale::plot(BasePlot *plt)
     QVector<double> pltVec(len), w(len);
     for(int i = 0; i < len; i++){
         w[i] = i + 1;
-        pltVec[i] = Ht[i];
+        pltVec[i] = Ht.at(i);
     }
     plt->addGraph();
     plt->xAxis->setLabel("w");

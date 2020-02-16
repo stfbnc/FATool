@@ -10,42 +10,27 @@
 class FA
 {
 public:
-    FA(double *ts_, int tsLen_){
-        ts = ts_;
-        tsLen = tsLen_;
+    FA(std::vector<double> ts, int tsLen){
+        this->tsLen = tsLen;
+        this->ts.reserve(tsLen);
+        for(int i = 0; i < tsLen; i++)
+            this->ts.push_back(ts.at(i));
 		N = 0;
-        t = nullptr;
-        y = nullptr;
-        F = nullptr;
-	}
-	virtual ~FA(){}
-
-	template <class T>
-	void delAlloc(T *p){
-        if(p != nullptr)
-			delete [] p;
 	}
 
-	template <class T>
-	void del2Alloc(T **p, int iLen){
-		if(p != NULL){
-			for(int i = 0; i < iLen; i++)
-				delAlloc<T>(p[i]);
-			delete [] p;
-		}
-	}
+    virtual ~FA(){}
 
-    int getNansNumber(){
+    int getNansNumber(std::vector<double> vec, int len){
         int nans = 0;
-        for(int i = 0; i < tsLen; i++){
-            if(std::isnan(ts[i]))
+        for(int i = 0; i < len; i++){
+            if(std::isnan(vec.at(i)))
                 nans++;
         }
         return nans;
     }
 
-    int setTsLength(){
-        return tsLen - getNansNumber();
+    int setTsLength(std::vector<double> vec, int len){
+        return len - getNansNumber(vec, len);
     }
     
     int getRangeLength(int start, int end, int step=1){
@@ -57,24 +42,18 @@ public:
 	void setFlucVectors(){
 	    MathOps mo = MathOps();
 	    ArrayOps ao = ArrayOps();
-        double *pn, *pnNomean;
-        pn = new double [N];
-        pnNomean = new double [N];
-        int idx = 0;
-        for(int i = 0; i < tsLen; i++){
-            if(!std::isnan(ts[i])){
-                pn[idx] = ts[i];
-                idx++;
-            }
-        }
+        std::vector<double> pn, pnNomean, pnNoNan;
+        pn.reserve(N);
+        pnNomean.reserve(N);
+        pnNoNan.reserve(setTsLength(ts, tsLen));
+        ao.noNan(ts, tsLen, pnNoNan);
+        ao.sliceVec(pnNoNan, pn, 0, N-1);
 		//time vector
-	    ao.doubleRange(t, N, 1.0);
+        ao.doubleRange(t, N, 1.0);
 	    //time series minus its mean
-	    mo.subtractMean(pn, N, pnNomean);
+        mo.subtractMean(pn, N, pnNomean);
 	    //cumulative sum
 	    mo.cumsum(pnNomean, y, N);
-        delAlloc<double>(pn);
-        delAlloc<double>(pnNomean);
 	}
 
     virtual bool computeFlucVec() = 0;
@@ -84,12 +63,12 @@ public:
     virtual void plot(BasePlot *plt) = 0;
 protected:
     std::string fileName;
-    double *ts;
+    std::vector<double> ts;
     int tsLen;
     int N;
-    double *t;
-	double *y;
-	double *F;
+    std::vector<double> t;
+    std::vector<double> y;
+    std::vector<double> F;
 };
 
 #endif

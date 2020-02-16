@@ -139,8 +139,8 @@ void InputsMFDFA::setAnalysisObj()
         std::string fn = fileNames[i].toStdString();
         int N = fo.rowsNumber(fn);
         FILE *f;
-        double *vec;
-        vec = new double [N];
+        std::vector<double> vec(N);
+        //vec = new double [N];
         f = fo.openFile(fn, "r");
         for(int j = 0; j < N; j++){
             fscanf(f, "%lf", &vec[j]);
@@ -151,6 +151,7 @@ void InputsMFDFA::setAnalysisObj()
         if(Mw[i] > N)
             Mw[i] = N;
         mfdfa[i] = new MFDFA(fn, vec, N, mw[i], Mw[i], po[i], qi[i], nq[i], ws[i], qs[i], rs[i]);
+        //delete [] vec;
     }
 }
 

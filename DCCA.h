@@ -6,7 +6,7 @@
 class DCCA : public FA
 {
 public:
-    DCCA(std::string fileName_, double *ts_, int tsLen_, std::string fileName2_, double *ts2_, int tsLen2_, int minWin_, int maxWin_, int ord_, std::string isAbs_, int winStep_);
+    DCCA(std::string fileName, std::vector<double> ts, int tsLen, std::string fileName2, std::vector<double> ts2, int tsLen2, int minWin, int maxWin, int ord, std::string isAbs, int winStep, bool showProgBar=true);
 	~DCCA();
     void allocateMemory() override;
     void getEqualLength();
@@ -15,7 +15,7 @@ public:
     bool computeFlucVec() override;
     std::string getFileName1();
     std::string getFileName2();
-    double *getF();
+    std::vector<double> getF();
     int getMinWin();
     int getMaxWin();
 	double getH();
@@ -26,17 +26,18 @@ public:
     void plot(BasePlot *plt) override;
 private:
 	std::string fileName2;
-    double *ts2;
+    std::vector<double> ts2;
     int tsLen2;
 	int minWin;
 	int maxWin;
 	int ord;
     std::string isAbs;
     int winStep;
-	double *y2;
-	int *s;
+    std::vector<double> y2;
+    std::vector<int> s;
 	double H;
 	double Hintercept;
+    bool showProgBar;
 };
 
 #endif

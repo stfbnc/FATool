@@ -217,8 +217,8 @@ void InputsHT::setAnalysisObj()
         std::string fn = fileNames[i].toStdString();
         int N = fo.rowsNumber(fn);
         FILE *f;
-        double *vec;
-        vec = new double [N];
+        std::vector<double> vec(N);
+        //vec = new double [N];
         f = fo.openFile(fn, "r");
         for(int j = 0; j < N; j++){
             fscanf(f, "%lf", &vec[j]);
@@ -235,6 +235,7 @@ void InputsHT::setAnalysisObj()
         }else{
             ht[i] = new HT(fn, vec, N, cs[i].toStdString(), mmw[i], mMw[i], mws[i]);
         }
+        //delete [] vec;
     }
 }
 

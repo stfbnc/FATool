@@ -129,9 +129,9 @@ void InputsDCCA::setAnalysisObj()
         std::string fn2 = fileCouples[i][1].toStdString();
         int N2 = fo.rowsNumber(fn2);
         FILE *f;
-        double *vec, *vec2;
-        vec = new double [N];
-        vec2 = new double [N2];
+        std::vector<double> vec(N), vec2(N);
+        //vec = new double [N];
+        //vec2 = new double [N2];
         f = fo.openFile(fn, "r");
         for(int j = 0; j < N; j++){
             fscanf(f, "%lf", &vec[j]);
@@ -149,6 +149,8 @@ void InputsDCCA::setAnalysisObj()
         if(Mw[i] > val)
             Mw[i] = val;
         dcca[i] = new DCCA(fn, vec, N, fn2, vec2, N2, mw[i], Mw[i], po[i], al[i], ws[i]);
+        //delete [] vec;
+        //delete [] vec2;
     }
 }
 

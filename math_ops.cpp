@@ -4,57 +4,41 @@ MathOps::MathOps() {}
 
 MathOps::~MathOps() {}
 
-double MathOps::mean(double *vec, int L){
+double MathOps::mean(std::vector<double> vec, int L){
     double avg = 0.0;
     for(int i = 0; i < L; i++)
-        avg += vec[i];
+        avg += vec.at(i);
     avg /= static_cast<double>(L);
     return avg;
 }
 
-double MathOps::nanMean(double *vec, int L){
+double MathOps::nanMean(std::vector<double> vec, int L){
     double avg = 0.0;
 	int cnt = 0;
     for(int i = 0; i < L; i++){
-		if(std::isnan(vec[i])){
+        if(std::isnan(vec.at(i))){
 			cnt++;
 		}else{
-			avg += vec[i];
+            avg += vec.at(i);
 		}
     }
     avg /= static_cast<double>(L - cnt);
     return avg;
 }
 
-double MathOps::customMean(double *vec, int vecL, int L){
+double MathOps::customMean(std::vector<double> vec, int vecL, int L){
     double avg = 0.0;
     for(int i = 0; i < vecL; i++)
-        avg += vec[i];
+        avg += vec.at(i);
     avg /= static_cast<double>(L);
     return avg;
 }
 
-void MathOps::subtractMean(double *vec, int L, double *vecNomean){
+void MathOps::subtractMean(std::vector<double> vec, int L, std::vector<double> &vecNomean){
 	double avg = mean(vec, L);
 	for(int i = 0; i < L; i++)
-		vecNomean[i] = vec[i] - avg;
+        vecNomean.push_back(vec.at(i) - avg);
 }
-
-//int MathOps::vecMin(int *vec, int len){
-//    int m = vec[0];
-//    for(int i = 1; i < len; i++)
-//        if(vec[i] < m)
-//            m = vec[i];
-//    return m;
-//}
-
-//int MathOps::vecMax(int *vec, int len){
-//    int M = vec[0];
-//    for(int i = 1; i < len; i++)
-//        if(vec[i] > M)
-//            M = vec[i];
-//    return M;
-//}
 
 int MathOps::minVal(int a, int b){
     if(a <= b)
@@ -63,35 +47,34 @@ int MathOps::minVal(int a, int b){
         return b;
 }
 	
-void MathOps::cumsum(double *vec, double *sumVec, int L){
-    sumVec[0] = vec[0];
+void MathOps::cumsum(std::vector<double> vec, std::vector<double> &sumVec, int L){
+    sumVec.push_back(vec.at(0));
     for(int i = 1; i < L; i++)
-        sumVec[i] = sumVec[i-1] + vec[i];
+        sumVec.push_back(sumVec.at(i-1) + vec.at(i));
 }
 
-void MathOps::nanCumsum(double *vec, double *sumVec, int L){
-    sumVec[0] = vec[0];
+void MathOps::nanCumsum(std::vector<double> vec, std::vector<double> &sumVec, int L){
+    sumVec.push_back(vec.at(0));
     for(int i = 1; i < L; i++){
-		if(std::isnan(vec[i])){
-			sumVec[i] = sumVec[i-1];
-		}else{
-			sumVec[i] = sumVec[i-1] + vec[i];
-		}
+        if(std::isnan(vec.at(i)))
+            sumVec.push_back(sumVec.at(i-1));
+        else
+            sumVec.push_back(sumVec.at(i-1) + vec.at(i));
 	}
 }
 
-void MathOps::linFit(int L, const double *x, const double *y, double *m, double *q){
+void MathOps::linFit(int L, const std::vector<double> x, const std::vector<double> y, double *m, double *q){
     double sumx = 0.0;
     double sumx2 = 0.0;
     double sumxy = 0.0;
     double sumy = 0.0;
     double sumy2 = 0.0;
     for(int i = 0; i < L; i++){
-        sumx += x[i];
-        sumx2 += x[i] * x[i];
-        sumxy += x[i] * y[i];
-        sumy += y[i];
-        sumy2 += y[i] * y[i];
+        sumx += x.at(i);
+        sumx2 += x.at(i) * x.at(i);
+        sumxy += x.at(i) * y.at(i);
+        sumy += y.at(i);
+        sumy2 += y.at(i) * y.at(i);
     }
     double denom = (L * sumx2 - sumx * sumx);
     if(denom == 0.0){
@@ -103,7 +86,7 @@ void MathOps::linFit(int L, const double *x, const double *y, double *m, double 
     }
 }
 
-void MathOps::polyFit(int obs, int degree, double *dx, double *dy, double *store)
+void MathOps::polyFit(int obs, int degree, std::vector<double> dx, std::vector<double> dy, std::vector<double> &store)
 {
     gsl_multifit_linear_workspace *ws;
     gsl_matrix *cov, *X;
@@ -118,17 +101,16 @@ void MathOps::polyFit(int obs, int degree, double *dx, double *dy, double *store
 
     for(i = 0; i < obs; i++){
         for(j = 0; j < degree; j++){
-            gsl_matrix_set(X, i, j, pow(dx[i], j));
+            gsl_matrix_set(X, i, j, pow(dx.at(i), j));
         }
-        gsl_vector_set(y, i, dy[i]);
+        gsl_vector_set(y, i, dy.at(i));
     }
 
     ws = gsl_multifit_linear_alloc(obs, degree);
     gsl_multifit_linear(X, y, c, cov, &chisq, ws);
 
-    for(i = 0; i < degree; i++){
-        store[i] = gsl_vector_get(c, i);
-    }
+    for(i = 0; i < degree; i++)
+        store.push_back(gsl_vector_get(c, i));
 
     gsl_multifit_linear_free(ws);
     gsl_matrix_free(X);
@@ -151,10 +133,16 @@ long long int MathOps::binCoeff(int a, int b){
     return fac1 / (fac2 * fac3);
 }
 
-void MathOps::gaussRand(double *vec, int len){
-    std::random_device rd{};
-    std::mt19937 gen{rd()};
-    std::normal_distribution<> d{0,1};
+void MathOps::gaussRand(std::vector<double> &vec, int len, std::mt19937 generator){
+    std::normal_distribution<> d{0, 1};
     for(int i = 0; i < len; i++)
-        vec[i] = d(gen);
+        vec.push_back(d(generator));
+}
+
+int MathOps::quantile(int len, double q)
+{
+    int idx = round(q * len);
+    if(idx == len)
+        idx = len - 1;
+    return idx;
 }

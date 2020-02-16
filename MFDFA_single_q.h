@@ -6,7 +6,7 @@
 class MFDFAsingleQ : public FA
 {
 public:
-    MFDFAsingleQ(std::string fileName_, double *ts_, int tsLen_, int minWin_, int maxWin_, int ord_, double q_, int winStep_=1, int revSeg_=1);
+    MFDFAsingleQ(std::string fileName, std::vector<double> ts, int tsLen, int minWin, int maxWin, int ord, double q, int winStep=1, int revSeg=1);
 	~MFDFAsingleQ();
     void allocateMemory() override;
 	int getTsLength();
@@ -25,7 +25,7 @@ protected:
     double q;
 	int revSeg;
 	int winStep;
-	int *s;
+    std::vector<int> s;
 	double H;
 	double Hintercept;
 };

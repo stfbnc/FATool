@@ -6,11 +6,11 @@
 class rhoDCCA
 {
 public:
-    rhoDCCA(std::string fileName_, double *ts_, int tsLen_, std::string fileName2_, double *ts2_, int tsLen2_, int minWin_, int maxWin_, int ord_, int winStep_=1, bool thresh=false);
+    rhoDCCA(std::string fileName, std::vector<double> ts, int tsLen, std::string fileName2, std::vector<double> ts2, int tsLen2, int minWin, int maxWin, int ord, int winStep=1, bool thresh=false);
 	~rhoDCCA();
     bool computeRho();
     void computeThresholds();
-    void confLevHist(double *rhos);
+    void confLevels(std::vector<double> rhos);
     int getRhoLength();
     bool threshCompute();
     std::string getFileName1();
@@ -20,19 +20,19 @@ public:
     void plot(BasePlot *plt);
 private:
 	std::string fileName;
-    double *ts;
+    std::vector<double> ts;
     int tsLen;
 	std::string fileName2;
-    double *ts2;
+    std::vector<double> ts2;
     int tsLen2;
 	int minWin;
 	int maxWin;
 	int ord;
 	int winStep;
     bool thresh;
-    double *rho;
-    double *confDown;
-    double *confUp;
+    std::vector<double> rho;
+    std::vector<double> confDown;
+    std::vector<double> confUp;
     int L;
     int N;
 

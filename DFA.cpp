@@ -1,32 +1,26 @@
 #include "DFA.h"
 
-DFA::DFA(std::string fileName_, double *ts_, int tsLen_, int minWin_, int maxWin_, int ord_, int winStep_, int revSeg_)
-    : FA(ts_, tsLen_)
+DFA::DFA(std::string fileName, std::vector<double> ts, int tsLen, int minWin, int maxWin, int ord, int winStep, int revSeg)
+    : FA(ts, tsLen)
 {
-	fileName = fileName_;
-	minWin = minWin_;
-	maxWin = maxWin_;
-	ord = ord_;
-	revSeg = revSeg_;
-	winStep = winStep_;
-    N = setTsLength();
+    this->fileName = fileName;
+    this->minWin = minWin;
+    this->maxWin = maxWin;
+    this->ord = ord;
+    this->revSeg = revSeg;
+    this->winStep = winStep;
+    N = setTsLength(ts, tsLen);
     allocateMemory();
 }
 
-DFA::~DFA()
-{
-	delAlloc<double>(t);
-	delAlloc<double>(y);
-	delAlloc<int>(s);
-	delAlloc<double>(F);
-}
+DFA::~DFA(){}
 
 void DFA::allocateMemory()
 {
-	t = new double [N];
-	y = new double [N];
-	s = new int [getRangeLength(minWin, maxWin, winStep)];
-	F = new double [getRangeLength(minWin, maxWin, winStep)];
+    t.reserve(N);
+    y.reserve(N);
+    s.reserve(getRangeLength(minWin, maxWin, winStep));
+    F.reserve(getRangeLength(minWin, maxWin, winStep));
 }
 
 int DFA::getTsLength()
@@ -42,9 +36,9 @@ bool DFA::computeFlucVec()
 	int range = getRangeLength(minWin, maxWin, winStep);
     ao.intRange(s, range, minWin, winStep);
 	int Flen = N / minWin;
-    double *Fnu1, *Fnu2;
-    Fnu1 = new double [Flen];
-    Fnu2 = new double [Flen];
+    std::vector<double> Fnu1, Fnu2;
+    Fnu1.reserve(Flen);
+    Fnu2.reserve(Flen);
 
     QProgressDialog progress(strDFA+"\n"+QString::fromStdString(fileName.substr(fileName.find_last_of("/")+1)), "Stop", 0, range);
     progress.setWindowModality(Qt::WindowModal);
@@ -57,32 +51,28 @@ bool DFA::computeFlucVec()
             execStop = true;
             break;
         }
-        int currWinSize = s[i];
+        int currWinSize = s.at(i);
         int Ns = N / currWinSize;
         ao.zeroVec(Fnu1, Flen);
         #pragma omp parallel for
         for(int v = 0; v < Ns; v++){
             int startLim = v * currWinSize;
             int endLim = (v + 1) * currWinSize - 1;
-            double *tFit, *yFit, *diffVec, *coeffs;
-            tFit = new double [currWinSize];
-            yFit = new double [currWinSize];
-            diffVec = new double [currWinSize];
-            coeffs = new double [ord+1];
+            std::vector<double> tFit, yFit, diffVec, coeffs;
+            tFit.reserve(currWinSize);
+            yFit.reserve(currWinSize);
+            diffVec.reserve(currWinSize);
+            coeffs.reserve(ord+1);
             ao.zeroVec(diffVec, currWinSize);
             ao.sliceVec(t, tFit, startLim, endLim);
             ao.sliceVec(y, yFit, startLim, endLim);
             mo.polyFit(currWinSize, ord+1, tFit, yFit, coeffs);
             for(int j = 0; j < currWinSize; j++){
                 for(int k = 0; k < ord+1; k++)
-                    diffVec[j] += coeffs[k] * pow(tFit[j], k);
-                diffVec[j] = pow(yFit[j] - diffVec[j], 2.0);
+                    diffVec.at(j) += coeffs.at(k) * pow(tFit.at(j), k);
+                diffVec.at(j) = pow(yFit.at(j) - diffVec.at(j), 2.0);
             }
-            Fnu1[v] = mo.mean(diffVec, currWinSize);
-            delAlloc<double>(tFit);
-            delAlloc<double>(yFit);
-            delAlloc<double>(diffVec);
-            delAlloc<double>(coeffs);
+            Fnu1.at(v) = mo.mean(diffVec, currWinSize);
         }
         if(revSeg == 1){
             ao.zeroVec(Fnu2, Flen);
@@ -90,35 +80,29 @@ bool DFA::computeFlucVec()
             for(int v = 0; v < Ns; v++){
                 int startLim = v * currWinSize + (N - Ns * currWinSize);
                 int endLim = (v + 1) * currWinSize + (N - Ns * currWinSize) - 1;
-                double *tFit, *yFit, *diffVec, *coeffs;
-                tFit = new double [currWinSize];
-                yFit = new double [currWinSize];
-                diffVec = new double [currWinSize];
-                coeffs = new double [ord+1];
+                std::vector<double> tFit, yFit, diffVec, coeffs;
+                tFit.reserve(currWinSize);
+                yFit.reserve(currWinSize);
+                diffVec.reserve(currWinSize);
+                coeffs.reserve(ord+1);
                 ao.zeroVec(diffVec, currWinSize);
                 ao.sliceVec(t, tFit, startLim, endLim);
                 ao.sliceVec(y, yFit, startLim, endLim);
                 mo.polyFit(currWinSize, ord+1, tFit, yFit, coeffs);
                 for(int j = 0; j < currWinSize; j++){
                     for(int k = 0; k < ord+1; k++)
-                        diffVec[j] += coeffs[k] * pow(tFit[j], k);
-                    diffVec[j] = pow(yFit[j] - diffVec[j], 2.0);
+                        diffVec.at(j) += coeffs.at(k) * pow(tFit.at(j), k);
+                    diffVec.at(j) = pow(yFit.at(j) - diffVec.at(j), 2.0);
                 }
-                Fnu2[v] = mo.mean(diffVec, currWinSize);
-                delAlloc<double>(tFit);
-                delAlloc<double>(yFit);
-                delAlloc<double>(diffVec);
-                delAlloc<double>(coeffs);
+                Fnu2.at(v) = mo.mean(diffVec, currWinSize);
             }
-            F[i] = sqrt((mo.mean(Fnu1, Ns) + mo.mean(Fnu2, Ns)) / 2.0);
+            F.at(i) = sqrt((mo.mean(Fnu1, Ns) + mo.mean(Fnu2, Ns)) / 2.0);
         }else{
-            F[i] = sqrt(mo.mean(Fnu1, Ns));
+            F.at(i) = sqrt(mo.mean(Fnu1, Ns));
         }
     }
 
     progress.setValue(range);
-    delAlloc<double>(Fnu1);
-    delAlloc<double>(Fnu2);
 
     return execStop;
 }
@@ -157,18 +141,16 @@ void DFA::fitFlucVec(int start, int end)
 {
     MathOps mo = MathOps();
 	int range = getRangeLength(start, end, winStep);
-    double *logS, *logF;
-    logS = new double [range];
-    logF = new double [range];
+    std::vector<double> logS, logF;
+    logS.reserve(range);
+    logF.reserve(range);
     int idx = 0;
     for(int i = (start-minWin)/winStep; i <= (end-minWin)/winStep; i++){
-        logS[idx] = log(s[i]);
-        logF[idx] = log(F[i]);
+        logS.at(idx) = log(s.at(i));
+        logF.at(idx) = log(F.at(i));
         idx++;
     }
     mo.linFit(range, logS, logF, &H, &Hintercept);
-    delAlloc<double>(logS);
-    delAlloc<double>(logF);
 }
 
 std::string DFA::outFileStr()
@@ -192,8 +174,8 @@ void DFA::plot(BasePlot *plt)
     int len = getRangeLength(minWin, maxWin, winStep);
     QVector<double> pltVec(len), n(len), Hfit(len);
     for(int i = 0; i < len; i++){
-        n[i] = log(s[i]);
-        pltVec[i] = log(F[i]);
+        n[i] = log(s.at(i));
+        pltVec[i] = log(F.at(i));
         Hfit[i] = Hintercept + H * n[i];
     }
     plt->addGraph();

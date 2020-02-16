@@ -1,45 +1,42 @@
 #include "DCCA.h"
 
-DCCA::DCCA(std::string fileName_, double *ts_, int tsLen_, std::string fileName2_, double *ts2_, int tsLen2_, int minWin_, int maxWin_, int ord_, std::string isAbs_, int winStep_)
-    : FA(ts_, tsLen_)
+DCCA::DCCA(std::string fileName, std::vector<double> ts, int tsLen, std::string fileName2, std::vector<double> ts2, int tsLen2, int minWin, int maxWin, int ord, std::string isAbs, int winStep, bool showProgBar)
+    : FA(ts, tsLen)
 {
-	fileName = fileName_;
-	fileName2 = fileName2_;
-    ts2 = ts2_;
-    tsLen2 = tsLen2_;
-	minWin = minWin_;
-	maxWin = maxWin_;
-	ord = ord_;
-	isAbs = isAbs_;
-	winStep = winStep_;
+    this->fileName = fileName;
+    this->fileName2 = fileName2;
+    this->tsLen2 = tsLen2;
+    this->ts2.reserve(tsLen2);
+    for(int i = 0; i < tsLen2; i++)
+        this->ts2.push_back(ts2.at(i));
+    this->minWin = minWin;
+    this->maxWin = maxWin;
+    this->ord = ord;
+    this->isAbs = isAbs;
+    this->winStep = winStep;
+    this->showProgBar = showProgBar;
     getEqualLength();
     allocateMemory();
 }
 
-DCCA::~DCCA(){
-	delAlloc<double>(t);
-	delAlloc<double>(y);
-	delAlloc<double>(y2);
-	delAlloc<int>(s);
-	delAlloc<double>(F);
-}
+DCCA::~DCCA(){}
 
 void DCCA::allocateMemory(){
-	t = new double [N];
-	y = new double [N];
-	y2 = new double [N];
-	s = new int [getRangeLength(minWin, maxWin, winStep)];
-	F = new double [getRangeLength(minWin, maxWin, winStep)];
+    t.reserve(N);
+    y.reserve(N);
+    y2.reserve(N);
+    s.reserve(getRangeLength(minWin, maxWin, winStep));
+    F.reserve(getRangeLength(minWin, maxWin, winStep));
 }
 
 void DCCA::getEqualLength(){
-    int N1 = setTsLength();
-    int N2 = setTsLength();
+    int N1 = setTsLength(ts, tsLen);
+    int N2 = setTsLength(ts2, tsLen2);
     if(N1 > N2){
         N = N2;
     }else{
 		N = N1;
-	}
+    }
 }
 
 int DCCA::getTsLength(){
@@ -48,22 +45,16 @@ int DCCA::getTsLength(){
 
 void DCCA::setFlucVectors(){
 	FA::setFlucVectors();
-    MathOps mo = MathOps();
-    FileOps fo = FileOps();
-    double *pn2, *pn2Nomean;
-    pn2 = new double [N];
-    pn2Nomean = new double [N];
-    int idx = 0;
-    for(int i = 0; i < tsLen2; i++){
-        if(!std::isnan(ts2[i])){
-            pn2[idx] = ts2[i];
-            idx++;
-        }
-    }
-	mo.subtractMean(pn2, N, pn2Nomean);
-	mo.cumsum(pn2Nomean, y2, N);
-    delAlloc<double>(pn2);
-    delAlloc<double>(pn2Nomean);
+    MathOps mo;
+    ArrayOps ao;
+    std::vector<double> pn2, pn2Nomean, pn2NoNan;
+    pn2.reserve(N);
+    pn2Nomean.reserve(N);
+    pn2NoNan.reserve(setTsLength(ts2, tsLen2));
+    ao.noNan(ts2, tsLen2, pn2NoNan);
+    ao.sliceVec(pn2NoNan, pn2, 0, N-1);
+    mo.subtractMean(pn2, N, pn2Nomean);
+    mo.cumsum(pn2Nomean, y2, N);
 }
     
 bool DCCA::computeFlucVec(){
@@ -73,22 +64,27 @@ bool DCCA::computeFlucVec(){
 	int range = getRangeLength(minWin, maxWin, winStep);
     ao.intRange(s, range, minWin, winStep);
 	int Flen = N - minWin;
-    double *Fnu;
-    Fnu = new double [Flen];
+    std::vector<double> Fnu;
+    Fnu.reserve(Flen);
 
     QProgressDialog progress(strDCCA+"\n"+QString::fromStdString(fileName.substr(fileName.find_last_of("/")+1))+
                              " vs "+QString::fromStdString(fileName2.substr(fileName2.find_last_of("/")+1)), "Stop", 0, range);
-    progress.setWindowModality(Qt::WindowModal);
-    progress.setMinimumDuration(0);
-    progress.setFixedSize(xPG, yPG);
+    progress.setAttribute(Qt::WA_DeleteOnClose, true);
+    if(showProgBar){
+        progress.setWindowModality(Qt::WindowModal);
+        progress.setMinimumDuration(0);
+        progress.setFixedSize(xPG, yPG);
+    }
 
     for(int i = 0; i < range; i++){
-        progress.setValue(i);
-        if(progress.wasCanceled()){
-            execStop = true;
-            break;
+        if(showProgBar){
+            progress.setValue(i);
+            if(progress.wasCanceled()){
+                execStop = true;
+                break;
+            }
         }
-        int currWinSize = s[i];
+        int currWinSize = s.at(i);
         int Ns = N - currWinSize;
         ao.zeroVec(Fnu, Flen);
 
@@ -96,13 +92,13 @@ bool DCCA::computeFlucVec(){
         for(int v = 0; v < Ns; v++){
             int startLim = v;
             int endLim = v + currWinSize;
-            double *tFit, *yFit1, *yFit2, *diffVec, *coeffs1, *coeffs2;
-            tFit = new double [currWinSize+1];
-            yFit1 = new double [currWinSize+1];
-            yFit2 = new double [currWinSize+1];
-            diffVec = new double [currWinSize+1];
-            coeffs1 = new double [ord+1];
-            coeffs2 = new double [ord+1];
+            std::vector<double> tFit, yFit1, yFit2, diffVec, coeffs1, coeffs2;
+            tFit.reserve(currWinSize+1);
+            yFit1.reserve(currWinSize+1);
+            yFit2.reserve(currWinSize+1);
+            diffVec.reserve(currWinSize+1);
+            coeffs1.reserve(ord+1);
+            coeffs2.reserve(ord+1);
             ao.sliceVec(t, tFit, startLim, endLim);
             ao.sliceVec(y, yFit1, startLim, endLim);
             ao.sliceVec(y2, yFit2, startLim, endLim);
@@ -112,38 +108,32 @@ bool DCCA::computeFlucVec(){
                 for(int j = 0; j <= currWinSize; j++){
                     double polySum1 = 0, polySum2 = 0;
                     for(int k = 0; k < ord+1; k++){
-                        polySum1 += coeffs1[k] * pow(tFit[j], k);
-                        polySum2 += coeffs2[k] * pow(tFit[j], k);
+                        polySum1 += coeffs1.at(k) * pow(tFit.at(j), k);
+                        polySum2 += coeffs2.at(k) * pow(tFit.at(j), k);
                     }
-                    diffVec[j] = (yFit1[j] - polySum1) * (yFit2[j] - polySum2);
+                    diffVec.push_back((yFit1.at(j) - polySum1) * (yFit2.at(j) - polySum2));
                 }
             }else if(isAbs.compare(defaultDCCA) == 0){
                 for(int j = 0; j <= currWinSize; j++){
                     double polySum1 = 0, polySum2 = 0;
                     for(int k = 0; k < ord+1; k++){
-                        polySum1 += coeffs1[k] * pow(tFit[j], k);
-                        polySum2 += coeffs2[k] * pow(tFit[j], k);
+                        polySum1 += coeffs1.at(k) * pow(tFit.at(j), k);
+                        polySum2 += coeffs2.at(k) * pow(tFit.at(j), k);
                     }
-                    diffVec[j] = fabs((yFit1[j] - polySum1) * (yFit2[j] - polySum2));
+                    diffVec.push_back(fabs((yFit1.at(j) - polySum1) * (yFit2.at(j) - polySum2)));
                 }
             }
-            Fnu[v] = mo.customMean(diffVec, currWinSize+1, currWinSize-1);
-            delAlloc<double>(tFit);
-            delAlloc<double>(yFit1);
-            delAlloc<double>(yFit2);
-            delAlloc<double>(diffVec);
-            delAlloc<double>(coeffs1);
-            delAlloc<double>(coeffs2);
+            Fnu.at(v) = mo.customMean(diffVec, currWinSize+1, currWinSize-1);
         }
         if(isAbs.compare(corrDCCA) == 0){
-            F[i] = mo.mean(Fnu, Ns);
+            F.push_back(mo.mean(Fnu, Ns));
         }else if(isAbs.compare(defaultDCCA) == 0){
-            F[i] = sqrt(mo.mean(Fnu, Ns));
+            F.push_back(sqrt(mo.mean(Fnu, Ns)));
         }
     }
 
-    progress.setValue(range);
-    delAlloc<double>(Fnu);
+    if(showProgBar)
+        progress.setValue(range);
 
     return execStop;
 }
@@ -156,7 +146,7 @@ std::string DCCA::getFileName2(){
     return fileName2;
 }
 
-double* DCCA::getF(){
+std::vector<double> DCCA::getF(){
     return F;
 }
 
@@ -179,18 +169,16 @@ double DCCA::getHintercept(){
 void DCCA::fitFlucVec(int start, int end){
     MathOps mo = MathOps();
 	int range = getRangeLength(start, end, winStep);
-    double *logS, *logF;
-    logS = new double [range];
-    logF = new double [range];
+    std::vector<double> logS, logF;
+    logS.reserve(range);
+    logF.reserve(range);
     int idx = 0;
     for(int i = (start-minWin)/winStep; i <= (end-minWin)/winStep; i++){
-        logS[idx] = log(s[i]);
-        logF[idx] = log(F[i]);
+        logS.at(idx) = log(s.at(i));
+        logF.at(idx) = log(F.at(i));
         idx++;
     }
     mo.linFit(range, logS, logF, &H, &Hintercept);
-    delAlloc<double>(logS);
-    delAlloc<double>(logF);
 }
 
 std::string DCCA::outFileStr(){
@@ -207,7 +195,7 @@ void DCCA::saveFile(std::string pathTot){
 	FILE *f;
     f = fo.openFile(pathTot+outFileStr(), "w");
     for(int i = 0; i < range; i++)
-        fprintf(f, "%d %lf\n", s[i], F[i]);
+        fprintf(f, "%d %lf\n", s.at(i), F.at(i));
     fclose(f);
 }
 
@@ -215,8 +203,8 @@ void DCCA::plot(BasePlot *plt){
     int len = getRangeLength(minWin, maxWin, winStep);
     QVector<double> pltVec(len), n(len), Hfit(len);
     for(int i = 0; i < len; i++){
-        n[i] = log(s[i]);
-        pltVec[i] = log(F[i]);
+        n[i] = log(s.at(i));
+        pltVec[i] = log(F.at(i));
         Hfit[i] = Hintercept + H * n[i];
     }
     plt->addGraph();
