@@ -1,3 +1,4 @@
 TEMPLATE = subdirs
 
-SUBDIRS = app tests
+SUBDIRS += auto
+
