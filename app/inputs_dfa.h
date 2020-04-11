@@ -8,6 +8,7 @@
 class InputsDFA : public InputsWindow
 {
 Q_OBJECT
+    friend class TestInputWin;
 public:
     explicit InputsDFA(QStringList fileNames_, QWidget *parent=nullptr);
     ~InputsDFA();

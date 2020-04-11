@@ -19,7 +19,11 @@
 class MainWindow : public QWidget
 {
 Q_OBJECT
-    friend class TestApp;
+    friend class TestClearAll;
+    friend class TestInputWin;
+    friend class TestLoading;
+    friend class TestWidgetExistence;
+    friend class TestWinDim;
 public:
     explicit MainWindow(QWidget *parent=nullptr);
     ~MainWindow();
@@ -43,22 +47,22 @@ private:
     void fillList();
     void disableButtons();
 
-    QPushButton *quitButton;
-    QPushButton *clearButton;
-    QPushButton *loadButton;
-    QPushButton *goButton;
-    QPushButton *saveButton;
-    QLabel *analysisLbl;
-    QComboBox *ddList;
+    QPushButton *quitButton = nullptr;
+    QPushButton *clearButton = nullptr;
+    QPushButton *loadButton = nullptr;
+    QPushButton *goButton = nullptr;
+    QPushButton *saveButton = nullptr;
+    QLabel *analysisLbl = nullptr;
+    QComboBox *ddList = nullptr;
     QStringList fileNames;
 
-    InputsDFA *dfaInptWin;
-    InputsDCCA *dccaInptWin;
-    InputsMFDFA *mfdfaInptWin;
-    InputsrhoDCCA *rhodccaInptWin;
-    InputsHT *htInptWin;
-    SaveWindow *saveWin;
-    StartingWindow *startWin;
+    InputsDFA *dfaInptWin = nullptr;
+    InputsDCCA *dccaInptWin = nullptr;
+    InputsMFDFA *mfdfaInptWin = nullptr;
+    InputsrhoDCCA *rhodccaInptWin = nullptr;
+    InputsHT *htInptWin = nullptr;
+    SaveWindow *saveWin = nullptr;
+    StartingWindow *startWin = nullptr;
 
     int xDim;
     int yDim;

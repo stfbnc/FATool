@@ -218,10 +218,11 @@ void InputsHT::setAnalysisObj()
         int N = fo.rowsNumber(fn);
         FILE *f;
         std::vector<double> vec(N);
-        //vec = new double [N];
         f = fo.openFile(fn, "r");
         for(int j = 0; j < N; j++){
-            fscanf(f, "%lf", &vec[j]);
+            double tmpVal;
+            fscanf(f, "%lf", &tmpVal);
+            vec.at(j) = tmpVal;
         }
         fclose(f);
         if(ms[i] != 0){
@@ -235,7 +236,6 @@ void InputsHT::setAnalysisObj()
         }else{
             ht[i] = new HT(fn, vec, N, cs[i].toStdString(), mmw[i], mMw[i], mws[i]);
         }
-        //delete [] vec;
     }
 }
 

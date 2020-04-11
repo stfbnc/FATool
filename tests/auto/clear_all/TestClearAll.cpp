@@ -1,57 +1,25 @@
 #include "main_window.h"
 
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QString>
 #include <QtTest>
+#include <QDebug>
 
-class TestApp : public QObject
+class TestClearAll : public QObject
 {
     Q_OBJECT
     
-    private slots:
-    void testWinDim();
-    void testLoading();
-    void testWidgetExistence();
-    /*    void init();
-     
-     void TestConstruction();
-     void TestSize();
-     
-     void TestClear();
-     
-     void TestConcat_data();
-     void TestConcat();*/
-    
+private slots:
+    void testClearAll();
 private:
     MainWindow mainWin;
 };
 
 //////////////////////////////////////////////////////////////////
 
-void TestApp::testWinDim()
-{
-    QVERIFY2(mainWin.width() == mainWin.xDim, "Wrong width.");
-    QVERIFY2(mainWin.height() == mainWin.yDim, "Wrong height.");
-}
-
-void TestApp::testLoading()
+void TestClearAll::testClearAll()
 {
     mainWin.onLoadClick();
-    QVERIFY2(mainWin.qplot->graphCount() == 1, "File not loaded.");
-}
-
-void TestApp::testWidgetExistence()
-{
-    QVERIFY2(mainWin.qplot, "Plot area not created.");
-    QVERIFY2(mainWin.quitButton, "Quit button not created.");
-    QVERIFY2(mainWin.clearButton, "Clear button not created.");
-    QVERIFY2(mainWin.loadButton, "Load button not created.");
-    QVERIFY2(mainWin.goButton, "Go button not created.");
-    QVERIFY2(mainWin.saveButton, "Save button not created.");
-    QVERIFY2(mainWin.analysisLbl, "Analysis label not created.");
-    QVERIFY2(mainWin.ddList, "Combo box not created.");
+    mainWin.onClearClick();
+    QVERIFY2(mainWin.qplot->graphCount() == 0, "Plots not correctly cleared.");
 }
 
 /*
@@ -131,5 +99,5 @@ void TestPanelConcat::TestConcat()
     QCOMPARE(panel.mLabelRes->text(), result);
 }*/
 
-QTEST_MAIN(TestApp)
-#include "TestApp.moc"
+QTEST_MAIN(TestClearAll)
+#include "TestClearAll.moc"

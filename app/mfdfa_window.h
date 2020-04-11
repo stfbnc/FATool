@@ -5,7 +5,6 @@
 #include "mass_exponents_window.h"
 #include "MFDFA.h"
 
-
 class MFDFAWindow : public PlotWindow
 {
 Q_OBJECT

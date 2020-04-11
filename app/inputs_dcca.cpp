@@ -130,16 +130,18 @@ void InputsDCCA::setAnalysisObj()
         int N2 = fo.rowsNumber(fn2);
         FILE *f;
         std::vector<double> vec(N), vec2(N);
-        //vec = new double [N];
-        //vec2 = new double [N2];
         f = fo.openFile(fn, "r");
         for(int j = 0; j < N; j++){
-            fscanf(f, "%lf", &vec[j]);
+            double tmpVal;
+            fscanf(f, "%lf", &tmpVal);
+            vec.at(j) = tmpVal;
         }
         fclose(f);
         f = fo.openFile(fn2, "r");
         for(int j = 0; j < N2; j++){
-            fscanf(f, "%lf", &vec2[j]);
+            double tmpVal;
+            fscanf(f, "%lf", &tmpVal);
+            vec2.at(j) = tmpVal;
         }
         fclose(f);
         MathOps mo;
@@ -149,8 +151,6 @@ void InputsDCCA::setAnalysisObj()
         if(Mw[i] > val)
             Mw[i] = val;
         dcca[i] = new DCCA(fn, vec, N, fn2, vec2, N2, mw[i], Mw[i], po[i], al[i], ws[i]);
-        //delete [] vec;
-        //delete [] vec2;
     }
 }
 

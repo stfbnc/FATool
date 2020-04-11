@@ -115,10 +115,11 @@ void InputsDFA::setAnalysisObj()
         int N = fo.rowsNumber(fn);
         FILE *f;
         std::vector<double> vec(N);
-        //vec = new double [N];
         f = fo.openFile(fn, "r");
         for(int j = 0; j < N; j++){
-            fscanf(f, "%lf", &vec[j]);
+            double tmpVal;
+            fscanf(f, "%lf", &tmpVal);
+            vec.at(j) = tmpVal;
         }
         fclose(f);
         if(mw[i] > N)
@@ -126,7 +127,6 @@ void InputsDFA::setAnalysisObj()
         if(Mw[i] > N)
             Mw[i] = N;
         dfa[i] = new DFA(fn, vec, N, mw[i], Mw[i], po[i], ws[i], rs[i]);
-        //delete [] vec;
     }
 }
 
