@@ -15,6 +15,7 @@
 #include "rhodcca_window.h"
 #include "ht_window.h"
 #include "starting_window.h"
+#include "abstract_inputs_window.h"
 
 class MainWindow : public QWidget
 {

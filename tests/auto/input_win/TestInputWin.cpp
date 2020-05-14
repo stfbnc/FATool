@@ -1,5 +1,6 @@
 #include "main_window.h"
 #include "inputs_dfa.h"
+#include "abstract_inputs_window.h"
 
 #include <QtTest>
 #include <QDebug>

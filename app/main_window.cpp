@@ -170,12 +170,15 @@ void MainWindow::onGoClick()
         }else{
             disableButtons();
             if(analysisType == strDFA){
-                dfaInptWin = new InputsDFA(fileNames);
+                AbstractInputsWindow *abWin = new AbstractInputsWindow();
+                abWin->setAttribute(Qt::WA_DeleteOnClose);
+                abWin->show();
+                /*dfaInptWin = new InputsDFA(fileNames);
                 dfaInptWin->setAttribute(Qt::WA_DeleteOnClose);
                 dfaInptWin->setWindowModality(Qt::ApplicationModal);
                 dfaInptWin->show();
                 connect(dfaInptWin, SIGNAL(dfaInputsInserted(DFA**)), this, SLOT(onCloseDFAInputWin(DFA**)), Qt::QueuedConnection);
-                connect(dfaInptWin, SIGNAL(destroyed()), this, SLOT(enableButtons()));
+                connect(dfaInptWin, SIGNAL(destroyed()), this, SLOT(enableButtons()));*/
             }else if(analysisType == strDCCA){
                 dccaInptWin = new InputsDCCA(fileNames);
                 dccaInptWin->setAttribute(Qt::WA_DeleteOnClose);

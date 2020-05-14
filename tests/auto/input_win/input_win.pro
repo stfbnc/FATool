@@ -49,6 +49,7 @@ SOURCES +=  \
     $$APPDIR/HT.cpp \
     $$APPDIR/HT_single_scale.cpp \
     $$APPDIR/legend_position_window.cpp \
+    $$APPDIR/abstract_inputs_window.cpp \
     TestInputWin.cpp
 
 HEADERS += \
@@ -86,5 +87,8 @@ HEADERS += \
     $$APPDIR/MFDFA_single_q.h \
     $$APPDIR/HT.h \
     $$APPDIR/HT_single_scale.h \
-    $$APPDIR/legend_position_window.h
+    $$APPDIR/legend_position_window.h \
+    $$APPDIR/abstract_inputs_window.h
 
+FORMS += \
+    $$APPDIR/abstract_inputs_window.ui

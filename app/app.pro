@@ -14,6 +14,7 @@ QT = core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 SOURCES +=  \
+    abstract_inputs_window.cpp \
     main.cpp \
     log_window.cpp \
     mass_exponents_window.cpp \
@@ -49,6 +50,7 @@ SOURCES +=  \
     legend_position_window.cpp
 
 HEADERS += \
+    abstract_inputs_window.h \
     constants.h \
     log_window.h \
     mass_exponents_window.h \
@@ -86,3 +88,6 @@ HEADERS += \
 
 DISTFILES += \
     prefs.txt
+
+FORMS += \
+    abstract_inputs_window.ui
