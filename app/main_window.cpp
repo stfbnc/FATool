@@ -170,8 +170,7 @@ void MainWindow::onGoClick()
         }else{
             disableButtons();
             if(analysisType == strDFA){
-                AbstractInputsWindow *abWin = new AbstractInputsWindow();
-                abWin->setAttribute(Qt::WA_DeleteOnClose);
+                AbstractInputsWindow *abWin = new AbstractInputsWindow("Inputs");
                 abWin->show();
                 /*dfaInptWin = new InputsDFA(fileNames);
                 dfaInptWin->setAttribute(Qt::WA_DeleteOnClose);
