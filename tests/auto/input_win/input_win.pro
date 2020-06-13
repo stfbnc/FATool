@@ -4,12 +4,24 @@ CONFIG += qt warn_on depend_includepath testcase
 
 APPDIR = ../../../app
 INCLUDEPATH += $$APPDIR
-INCLUDEPATH += /opt/local/include/
-INCLUDEPATH += /opt/local/include/libomp/
-LIBS += -L/opt/local/lib/libomp -lomp
-LIBS += -L/opt/local/lib/ -lgsl -lgslcblas -lm
-QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp
-LIBS += -Xpreprocessor -fopenmp
+
+unix:!macx {
+    INCLUDEPATH += usr/include
+    INCLUDEPATH += /lib/gcc/x86_64-linux-gnu/9/include
+    LIBS += -L/lib/gcc/x86_64-linux-gnu/9 -lgomp
+    LIBS += -L/lib/x86_64-linux-gnu -lgsl -lgslcblas -lm
+    QMAKE_CXXFLAGS += -fopenmp
+    LIBS += -fopenmp
+}
+
+macx: {
+    INCLUDEPATH += /opt/local/include/
+    INCLUDEPATH += /opt/local/include/libomp/
+    LIBS += -L/opt/local/lib/libomp -lomp
+    LIBS += -L/opt/local/lib/ -lgsl -lgslcblas -lm
+    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp
+    LIBS += -Xpreprocessor -fopenmp
+}
 
 QT = core testlib
 
