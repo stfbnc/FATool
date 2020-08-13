@@ -16,6 +16,8 @@
 #include "ht_window.h"
 #include "starting_window.h"
 #include "abstract_inputs_window.h"
+#include "load_files_window.h"
+#include "data_file.h"
 
 class MainWindow : public QWidget
 {
@@ -31,6 +33,7 @@ public:
     BasePlot *qplot;
 private slots:
     void onLoadClick();
+    void onFilesSpecsInserted(QString, QString, std::map<QString, std::pair<QString, QString>>);
     void onSaveClick();
     void onGoClick();
     void onCloseDFAInputWin(DFA **dfa);
@@ -56,6 +59,7 @@ private:
     QLabel *analysisLbl = nullptr;
     QComboBox *ddList = nullptr;
     QStringList fileNames;
+    std::map<QString, DataFile*> dataMap = std::map<QString, DataFile*>();
 
     InputsDFA *dfaInptWin = nullptr;
     InputsDCCA *dccaInptWin = nullptr;

@@ -47,5 +47,10 @@ const QVector<Qt::PenStyle> lineStyles = {Qt::SolidLine, Qt::DashLine, Qt::DotLi
 //font dimensions
 const int fontBig = 14;
 const int fontSmall = 12;
+//file types
+const QString xVec = "x axis";
+const QString yVec = "y axis";
+const QString flucVec = "fluctuations vector";
+const QString scalesVec = "scales vector";
 
 #endif

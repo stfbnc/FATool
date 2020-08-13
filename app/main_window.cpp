@@ -97,9 +97,22 @@ void MainWindow::onLoadClick()
     if(dialog.exec())
         fileNames.append(dialog.selectedFiles());
     fileNames.removeDuplicates();
-    qplot->legend->clearItems();
-    qplot->clearGraphs();
-    for(int i = 0; i < fileNames.size(); i++){
+
+    if(fileNames.size() > 0)
+    {
+        LoadFilesWindow *fWin;
+        if(fileNames.size() > 1)
+            fWin = new LoadFilesWindow(QString::number(fileNames.size()) + " files");
+        else
+            fWin = new LoadFilesWindow(fileNames.at(0));
+        connect(fWin, SIGNAL(filesSpecsInserted(QString, QString, std::map<QString, std::pair<QString, QString>>)),
+                this, SLOT(onFilesSpecsInserted(QString, QString, std::map<QString, std::pair<QString, QString>>)));
+        fWin->show();
+    }
+
+//    qplot->legend->clearItems();
+//    qplot->clearGraphs();
+/*    for(int i = 0; i < fileNames.size(); i++){
         std::string fn = fileNames.at(i).toLocal8Bit().constData();
         FileOps fo;
         int len = fo.rowsNumber(fn);
@@ -113,18 +126,31 @@ void MainWindow::onLoadClick()
             }
         }
         fclose(f);
-        qplot->addGraph();
-        QPen pen;
-        pen.setColor(colours[i%colours.size()]);
-        qplot->graph(i)->setPen(pen);
-        qplot->graph(i)->setName(QString::fromStdString(fn).split("/").last());
-        qplot->graph(i)->setData(t, vec);
-        i==0 ? qplot->graph(i)->rescaleAxes() : qplot->graph(i)->rescaleAxes(true);
-    }
-    if(fileNames.size() > 0){
-        qplot->legend->setVisible(true);
-        qplot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignLeft);
-        qplot->replot();
+*/
+//        qplot->addGraph();
+//        QPen pen;
+//        pen.setColor(colours[i%colours.size()]);
+//        qplot->graph(i)->setPen(pen);
+//      qplot->graph(i)->setName(QString::fromStdString(fn).split("/").last());
+//        qplot->graph(i)->setData(t, vec);
+//        i==0 ? qplot->graph(i)->rescaleAxes() : qplot->graph(i)->rescaleAxes(true);
+//    }
+//    if(fileNames.size() > 0){
+//        qplot->legend->setVisible(true);
+//        qplot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignLeft);
+//        qplot->replot();
+//    }
+}
+
+void MainWindow::onFilesSpecsInserted(QString del, QString header, std::map<QString, std::pair<QString, QString>> map)
+{
+    for(int i = 0; i < int(fileNames.size()); i++)
+    {
+        DataFile *df = new DataFile(fileNames.at(i), del, header.toInt());
+        df->setNamesAndTypes(map);
+        df->setData(); // questa da fare in un thread separato, mentre setto la tabella nella mainWindow
+                       // quando ha finito aggiungere alla mappa nella mainWindow
+        // aggiungere il record nella tabella della mainwindow -> nome_file | nome_colonna (numero_colonna) | tipo_colonna
     }
 }
 

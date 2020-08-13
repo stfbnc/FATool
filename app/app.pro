@@ -26,6 +26,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 SOURCES +=  \
     abstract_inputs_window.cpp \
+    data_file.cpp \
+    load_files_window.cpp \
     main.cpp \
     log_window.cpp \
     mass_exponents_window.cpp \
@@ -63,6 +65,8 @@ SOURCES +=  \
 HEADERS += \
     abstract_inputs_window.h \
     constants.h \
+    data_file.h \
+    load_files_window.h \
     log_window.h \
     mass_exponents_window.h \
     plot_window.h \
@@ -101,4 +105,5 @@ DISTFILES += \
     prefs.txt
 
 FORMS += \
-    abstract_inputs_window.ui
+    abstract_inputs_window.ui \
+    load_files.ui
