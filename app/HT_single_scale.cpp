@@ -40,7 +40,7 @@ bool HTsingleScale::computeFlucVec(){
     progress.setMinimumDuration(0);
     progress.setFixedSize(xPG, yPG);
 
-    //#pragma omp parallel for ---- no parallel for with graphic components or break statement
+//  #pragma omp parallel for ---- no parallel for with graphic components or break statement
     for(int v = 0; v < range; v++){
         progress.setValue(v);
         if(progress.wasCanceled()){

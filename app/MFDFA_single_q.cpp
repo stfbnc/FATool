@@ -54,7 +54,7 @@ bool MFDFAsingleQ::computeFlucVec(){
         int currWinSize = s.at(i);
         int Ns = N / currWinSize;
         ao.zeroVec(Fnu1, Flen);
-        #pragma omp parallel for
+//        #pragma omp parallel for
         for(int v = 0; v < Ns; v++){
             int startLim = v * currWinSize;
             int endLim = (v + 1) * currWinSize - 1;
@@ -80,7 +80,7 @@ bool MFDFAsingleQ::computeFlucVec(){
         }
         if(revSeg == 1){
             ao.zeroVec(Fnu2, Flen);
-            #pragma omp parallel for
+//            #pragma omp parallel for
             for(int v = 0; v < Ns; v++){
                 int startLim = v * currWinSize + (N - Ns * currWinSize);
                 int endLim = (v + 1) * currWinSize + (N - Ns * currWinSize) - 1;
