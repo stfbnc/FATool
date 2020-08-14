@@ -4,7 +4,9 @@
 #include <vector>
 #include <map>
 #include <QString>
-#include <file_ops.h>
+#include "constants.h"
+#include <QFile>
+#include <QTextStream>
 
 class DataFile
 {
@@ -17,6 +19,8 @@ public:
     QString getTypeOfColumn(int col);
     void setData();
     void setNamesAndTypes(std::map<QString, std::pair<QString, QString>> map);
+    int getXAxisColumn();
+    std::vector<int> getColumns();
 private:
     QString name = "";
     QString del = "";
@@ -24,6 +28,8 @@ private:
     std::map<int, std::vector<double>> fileMap = std::map<int, std::vector<double>>();
     std::map<int, QString> namesMap = std::map<int, QString>();
     std::map<int, QString> typesMap = std::map<int, QString>();
+    QStringList columns;
+    int xCol = 0;
 };
 
 #endif // DATA_FILE_H

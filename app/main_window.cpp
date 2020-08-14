@@ -1,48 +1,58 @@
 #include "main_window.h"
+#include "ui_main_window.h"
 
-MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
+MainWindow::MainWindow(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::MainWindow)
 {
+    ui->setupUi(this);
     //set dimensions
-    setDimensions();
+    //setDimensions();
     //set title
-    setWindowTitle("FATool (v "+VERSION+")");
+    setWindowTitle("FATool (v "+ VERSION +")");
     //win size
-    setFixedSize(xDim, yDim);
+    setFixedSize(800, 500);
     //plot section
-    qplot = new BasePlot(this);
+    /*qplot = new BasePlot(this);
     qplot->setGeometry(padX, padY+yHeight, xDim-2*padX, yDim-yHeight-2*padY);
     qplot->setBasePlot();
     qplot->xAxis->setLabel("time");
     qplot->yAxis->setLabel("Time series");
-    qplot->replot();
+    qplot->replot();*/
     //load button
-    loadButton = new QPushButton("Load file(s)", this);
-    loadButton->setGeometry(padX/2, padY/2, xWidth, yHeight);
-    connect(loadButton, SIGNAL(clicked()), this, SLOT(onLoadClick()));
+    //loadButton = new QPushButton("Load file(s)", this);
+    //loadButton->setGeometry(padX/2, padY/2, xWidth, yHeight);
+    connect(ui->loadButton, SIGNAL(clicked()), this, SLOT(onLoadClick()));
     //save button
-    saveButton = new QPushButton("Save plot", this);
-    saveButton->setGeometry(padX/2+xWidth, padY/2, xWidth, yHeight);
-    connect(saveButton, SIGNAL(clicked()), this, SLOT(onSaveClick()));
+    //saveButton = new QPushButton("Save plot", this);
+    //saveButton->setGeometry(padX/2+xWidth, padY/2, xWidth, yHeight);
+    //connect(saveButton, SIGNAL(clicked()), this, SLOT(onSaveClick()));
     //dropdown text
-    analysisLbl = new QLabel("Type of analysis:", this);
-    analysisLbl->setGeometry(padX+2*xWidth, padY/2, xWidth, yHeight);
-    analysisLbl->setStyleSheet("font-weight: bold");
+    //analysisLbl = new QLabel("Type of analysis:", this);
+    //analysisLbl->setGeometry(padX+2*xWidth, padY/2, xWidth, yHeight);
+    //analysisLbl->setStyleSheet("font-weight: bold");
     //dropdown list
-    ddList = new QComboBox(this);
+    //ddList = new QComboBox(this);
     fillList();
-    ddList->setGeometry(padX*3/2+3*xWidth, padY/2+2, xWidth, yHeight);
+    //ddList->setGeometry(padX*3/2+3*xWidth, padY/2+2, xWidth, yHeight);
     //go button
-    goButton = new QPushButton("Go!", this);
-    goButton->setGeometry(padX*2+4*xWidth, padY/2, xWidth, yHeight);
-    connect(goButton, SIGNAL(clicked()), this, SLOT(onGoClick()));
+    //goButton = new QPushButton("Go!", this);
+    //goButton->setGeometry(padX*2+4*xWidth, padY/2, xWidth, yHeight);
+    connect(ui->goButton, SIGNAL(clicked()), this, SLOT(onGoClick()));
     //clear button
-    clearButton = new QPushButton("Clear all", this);
-    clearButton->setGeometry(padX*5/2+5*xWidth, padY/2, xWidth, yHeight);
-    connect(clearButton, SIGNAL(clicked()), this, SLOT(onClearClick()));
+    //clearButton = new QPushButton("Clear all", this);
+    //clearButton->setGeometry(padX*5/2+5*xWidth, padY/2, xWidth, yHeight);
+    connect(ui->clearButton, SIGNAL(clicked()), this, SLOT(onClearClick()));
     //quit button
-    quitButton = new QPushButton("Quit", this);
-    quitButton->setGeometry(xDim-xWidth-padX/2, padY/2, xWidth, yHeight);
-    connect(quitButton, SIGNAL(clicked()), QApplication::instance(), SLOT(quit()));
+    //quitButton = new QPushButton("Quit", this);
+    //quitButton->setGeometry(xDim-xWidth-padX/2, padY/2, xWidth, yHeight);
+    connect(ui->quitButton, SIGNAL(clicked()), QApplication::instance(), SLOT(quit()));
+
+    ui->tableWidget->setColumnCount(3);
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableWidget->setHorizontalHeaderLabels({"File name", "Vector name", "Vector type"});
+    ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+
     //instructions window
     instrWindow();
 }
@@ -80,16 +90,18 @@ void MainWindow::instrWindow()
 
 void MainWindow::fillList()
 {
-    ddList->addItem("-");
-    ddList->addItem(strDFA);
-    ddList->addItem(strMFDFA);
-    ddList->addItem(strDCCA);
-    ddList->addItem(strHT);
-    ddList->addItem(strRHODCCA);
+    ui->ddList->addItem("-");
+    ui->ddList->addItem(strDFA);
+    ui->ddList->addItem(strMFDFA);
+    ui->ddList->addItem(strDCCA);
+    ui->ddList->addItem(strHT);
+    ui->ddList->addItem(strRHODCCA);
 }
 
 void MainWindow::onLoadClick()
 {
+    fileNames.clear();
+
     QFileDialog dialog(this);
     dialog.setDirectory(QDir::homePath());
     dialog.setFileMode(QFileDialog::ExistingFiles);
@@ -150,44 +162,70 @@ void MainWindow::onFilesSpecsInserted(QString del, QString header, std::map<QStr
         df->setNamesAndTypes(map);
         df->setData(); // questa da fare in un thread separato, mentre setto la tabella nella mainWindow
                        // quando ha finito aggiungere alla mappa nella mainWindow
-        // aggiungere il record nella tabella della mainwindow -> nome_file | nome_colonna (numero_colonna) | tipo_colonna
+
+        for(int col : df->getColumns())
+        {
+            int xCol = df->getXAxisColumn();
+            if(col != xCol)
+            {
+                ui->tableWidget->insertRow(ui->tableWidget->rowCount());
+                ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 0,
+                                         new QTableWidgetItem(fileNames.at(i)));
+                if(xCol != 0)
+                {
+                    ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 1,
+                                             new QTableWidgetItem(df->getNameOfColumn(xCol) + " (column " + QString::number(xCol) + ")\n" +
+                                                                  df->getNameOfColumn(col) + " (column " + QString::number(col) + ")"));
+                    ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 2,
+                                             new QTableWidgetItem(df->getTypeOfColumn(xCol) + "\n" + df->getTypeOfColumn(col)));
+                }
+                else
+                {
+                    ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 1,
+                                             new QTableWidgetItem(df->getNameOfColumn(col) + " (column " + QString::number(col) + ")"));
+                    ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 2,
+                                             new QTableWidgetItem(df->getTypeOfColumn(col)));
+                }
+            }
+        }
+        ui->tableWidget->update();
     }
 }
 
 void MainWindow::onSaveClick()
 {
-    if(qplot->graphCount() > 0){
+    /*if(qplot->graphCount() > 0){
         disableButtons();
         saveWin = new SaveWindow(qplot);
         saveWin->setAttribute(Qt::WA_DeleteOnClose);
         saveWin->setWindowModality(Qt::ApplicationModal);
         saveWin->show();
         connect(saveWin, SIGNAL(destroyed()), this, SLOT(enableButtons()));
-    }
+    }*/
 }
 
 void MainWindow::disableButtons()
 {
-    loadButton->setEnabled(false);
-    goButton->setEnabled(false);
-    saveButton->setEnabled(false);
-    ddList->setEnabled(false);
-    clearButton->setEnabled(false);
+    ui->loadButton->setEnabled(false);
+    ui->goButton->setEnabled(false);
+    //ui->saveButton->setEnabled(false);
+    ui->ddList->setEnabled(false);
+    ui->clearButton->setEnabled(false);
 }
 
 void MainWindow::enableButtons()
 {
-    loadButton->setEnabled(true);
-    goButton->setEnabled(true);
-    saveButton->setEnabled(true);
-    ddList->setEnabled(true);
-    clearButton->setEnabled(true);
+    ui->loadButton->setEnabled(true);
+    ui->goButton->setEnabled(true);
+    //ui->saveButton->setEnabled(true);
+    ui->ddList->setEnabled(true);
+    ui->clearButton->setEnabled(true);
 }
 
 void MainWindow::onGoClick()
 {
-    QString analysisType = ddList->currentText();
-    if(analysisType != "-" && qplot->graphCount() > 0){
+    QString analysisType = ui->ddList->currentText();
+    if(analysisType != "-"){// && qplot->graphCount() > 0){
         if((analysisType == strDCCA || analysisType == strRHODCCA) && fileNames.size() < 2){
             QMessageBox messageBox;
             QString errToShow = "This type of analysis requires\nat least two data files";
@@ -311,11 +349,11 @@ void MainWindow::onCloseHTInputWin(HT **ht)
 
 void MainWindow::onClearClick()
 {
-    if(qplot->graphCount() > 0){
+    /*if(qplot->graphCount() > 0){
         fileNames.clear();
         qplot->legend->setVisible(false);
         qplot->legend->clearItems();
         qplot->clearGraphs();
         qplot->replot();
-    }
+    }*/
 }

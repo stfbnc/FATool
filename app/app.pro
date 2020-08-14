@@ -106,4 +106,5 @@ DISTFILES += \
 
 FORMS += \
     abstract_inputs_window.ui \
-    load_files.ui
+    load_files.ui \
+    main_window.ui

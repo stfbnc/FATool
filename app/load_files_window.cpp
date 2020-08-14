@@ -39,18 +39,47 @@ void LoadFilesWindow::onOkClick()
 {
     std::map<QString, std::pair<QString, QString>> colsMap = std::map<QString, std::pair<QString, QString>>();
 
+    bool xVectorFound = false;
+    bool xError = false;
     for(int i = 0; i < vLayout->count(); i+=2)
     {
         QString col = qobject_cast<QLabel*>(vLayout->itemAt(i)->widget())->text();
         QHBoxLayout *hLayout = qobject_cast<QHBoxLayout*>(vLayout->itemAt(i+1)->widget()->layout());
         QString name = qobject_cast<QLineEdit*>(hLayout->itemAt(1)->widget())->text();
         QString type = qobject_cast<QComboBox*>(hLayout->itemAt(2)->widget())->currentText();
+        if((type == xVec) || (type == scalesVec))
+        {
+            if(!xVectorFound)
+            {
+                xVectorFound = true;
+            }
+            else
+            {
+                xError = true;
+                break;
+            }
+        }
 
-        colsMap.emplace(col.split(" ").last(), std::pair<QString, QString>(name, type));
+        if(!xError)
+            colsMap.emplace(col.split(" ").last(), std::pair<QString, QString>(name, type));
     }
-    emit filesSpecsInserted(ui->delEdit->text(), ui->headEdit->text(), colsMap);
 
-    this->close();
+    if(!xError)
+    {
+        if(ui->headEdit->text().isEmpty())
+            emit filesSpecsInserted(ui->delEdit->text(), QString::number(0), colsMap);
+        else
+            emit filesSpecsInserted(ui->delEdit->text(), ui->headEdit->text(), colsMap);
+
+        this->close();
+    }
+    else
+    {
+        QMessageBox messageBox;
+        QString errToShow = "There can only be one column representing a x-axis vector.";
+        messageBox.critical(nullptr, "Error", errToShow);
+        messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
+    }
 }
 
 void LoadFilesWindow::onTextChanged(QString text)
@@ -70,7 +99,7 @@ void LoadFilesWindow::onTextChanged(QString text)
            colsList.at(i).trimmed() != "")
         {
             QMessageBox messageBox;
-            QString errToShow = "Columns must be positive numbers.";
+            QString errToShow = "Column number must be greater than zero.";
             messageBox.critical(nullptr, "Error", errToShow);
             messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
         }

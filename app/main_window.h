@@ -19,6 +19,10 @@
 #include "load_files_window.h"
 #include "data_file.h"
 
+namespace Ui{
+    class MainWindow;
+}
+
 class MainWindow : public QWidget
 {
 Q_OBJECT
@@ -30,7 +34,7 @@ Q_OBJECT
 public:
     explicit MainWindow(QWidget *parent=nullptr);
     ~MainWindow();
-    BasePlot *qplot;
+    //BasePlot *qplot;
 private slots:
     void onLoadClick();
     void onFilesSpecsInserted(QString, QString, std::map<QString, std::pair<QString, QString>>);
@@ -51,13 +55,13 @@ private:
     void fillList();
     void disableButtons();
 
-    QPushButton *quitButton = nullptr;
-    QPushButton *clearButton = nullptr;
-    QPushButton *loadButton = nullptr;
-    QPushButton *goButton = nullptr;
-    QPushButton *saveButton = nullptr;
-    QLabel *analysisLbl = nullptr;
-    QComboBox *ddList = nullptr;
+    //QPushButton *quitButton = nullptr;
+    //QPushButton *clearButton = nullptr;
+    //QPushButton *loadButton = nullptr;
+    //QPushButton *goButton = nullptr;
+    //QPushButton *saveButton = nullptr;
+    //QLabel *analysisLbl = nullptr;
+    //QComboBox *ddList = nullptr;
     QStringList fileNames;
     std::map<QString, DataFile*> dataMap = std::map<QString, DataFile*>();
 
@@ -68,6 +72,8 @@ private:
     InputsHT *htInptWin = nullptr;
     SaveWindow *saveWin = nullptr;
     StartingWindow *startWin = nullptr;
+
+    Ui::MainWindow *ui;
 
     int xDim;
     int yDim;

@@ -63,6 +63,7 @@ SOURCES +=  \
     $$APPDIR/legend_position_window.cpp \
     $$APPDIR/abstract_inputs_window.cpp \
     $$APPDIR/load_files_window.cpp \
+    $$APPDIR/data_file.cpp \
     TestInputWin.cpp
 
 HEADERS += \
@@ -102,8 +103,10 @@ HEADERS += \
     $$APPDIR/HT_single_scale.h \
     $$APPDIR/legend_position_window.h \
     $$APPDIR/abstract_inputs_window.h \
-    $$APPDIR/load_files_window.h
+    $$APPDIR/load_files_window.h \
+    $$APPDIR/data_file.h
 
 FORMS += \
     $$APPDIR/abstract_inputs_window.ui \
-    $$APPDIR/load_files.ui
+    $$APPDIR/load_files.ui \
+    $$APPDIR/main_window.ui

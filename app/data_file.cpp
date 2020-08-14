@@ -26,30 +26,53 @@ QString DataFile::getTypeOfColumn(int col)
 
 void DataFile::setData()
 {
-    // aprire il file, leggere riga per riga (se > header),
-    // fare lo split in base a del, appendere nella mappa dei dati
-    // in base alle colonne che mi servono
+    QFile inputFile(this->name);
+    if(inputFile.open(QIODevice::ReadOnly))
+    {
+        for(auto const& [key, val] : typesMap)
+            fileMap.emplace(key, std::vector<double>());
 
-    std::string fn = name.toLocal8Bit().constData();
-    FileOps fo;
-    int len = fo.rowsNumber(fn);
-    std::vector<double> t(len), vec(len);
-    FILE *f;
-    f = fo.openFile(fn, "r");
-    if(f){
-        for(int j = 0; j < len; j++){
-            t[j] = j;
-            fscanf(f, "%lf", &vec[j]);
+        QTextStream in(&inputFile);
+        int headCount = 0;
+        while (!in.atEnd())
+        {
+            headCount++;
+            if(headCount > this->headers)
+            {
+                QStringList elems = in.readLine().split(this->del);
+                for(int i = 0; i < int(elems.size()); i++)
+                {
+                    if(columns.contains(QString::number(i + 1)))
+                        fileMap.at(i + 1).push_back(elems.at(i).toDouble());
+                }
+            }
         }
+        inputFile.close();
     }
-    fclose(f);
 }
 
 void DataFile::setNamesAndTypes(std::map<QString, std::pair<QString, QString>> map)
 {
     for(auto const& [key, val] : map)
     {
+        if((val.second == xVec) || (val.second == scalesVec))
+            xCol = key.toInt();
+        columns.append(key);
         this->namesMap.emplace(key.toInt(), val.first);
         this->typesMap.emplace(key.toInt(), val.second);
     }
+}
+
+int DataFile::getXAxisColumn()
+{
+    return xCol;
+}
+
+std::vector<int> DataFile::getColumns()
+{
+    std::vector<int> cols = std::vector<int>();
+    for(QString col : columns)
+        cols.push_back(col.toInt());
+
+    return cols;
 }

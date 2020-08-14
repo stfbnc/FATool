@@ -37,7 +37,7 @@ void TestInputWin::testSimple()
 
 void TestInputWin::testInputWin()
 {
-    qRegisterMetaType<DFA**>("DFA**");
+    /*qRegisterMetaType<DFA**>("DFA**");
     qDebug() << "\n";
     qDebug() << "####### Inside testInputWin() #######";
     QTRY_VERIFY2_WITH_TIMEOUT(mainWin.fileNames.size()  > 0, "File not selected.", 10000);
@@ -60,7 +60,7 @@ void TestInputWin::testInputWin()
     qDebug() << "Signals emitted: " + QString::number(spy.count());
     QCOMPARE(spy.count(), 1);
     qDebug() << "####### Outside testInputWin() #######";
-    qDebug() << "\n";
+    qDebug() << "\n";*/
 }
 
 /*void TestInputWin::testDFAInputs()
