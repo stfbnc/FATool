@@ -52,6 +52,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidget->setHorizontalHeaderLabels({"File name", "Vector name", "Vector type"});
     ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->tableWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(openContextMenu(const QPoint&)));
 
     //instructions window
     instrWindow();
@@ -163,6 +164,8 @@ void MainWindow::onFilesSpecsInserted(QString del, QString header, std::map<QStr
         df->setData(); // questa da fare in un thread separato, mentre setto la tabella nella mainWindow
                        // quando ha finito aggiungere alla mappa nella mainWindow
 
+        dataMap.emplace(fileNames.at(i), df);
+
         for(int col : df->getColumns())
         {
             int xCol = df->getXAxisColumn();
@@ -189,6 +192,65 @@ void MainWindow::onFilesSpecsInserted(QString del, QString header, std::map<QStr
             }
         }
         ui->tableWidget->update();
+    }
+}
+
+void MainWindow::openContextMenu(const QPoint& pos)
+{
+    QMenu menu(ui->tableWidget);
+    QAction singlePlotAction("Single plot");
+    QAction multiplePlotsAction("Multiple plots");
+    QAction deleteAction("Delete");
+    QAction modifyAction("Modifiy");
+
+    menu.addAction(&singlePlotAction);
+    if(ui->tableWidget->selectionModel()->selectedRows().size() > 1)
+        menu.addAction(&multiplePlotsAction);
+    menu.addAction(&deleteAction);
+    menu.addAction(&modifyAction);
+
+    connect(&singlePlotAction, SIGNAL(triggered()), this, SLOT(singlePlot()));
+    //connect(multiplePlotsAction, SIGNAL(triggered()), this, SLOT());
+    //connect(deleteAction, SIGNAL(triggered()), this, SLOT());
+    //connect(modifyAction, SIGNAL(triggered()), this, SLOT());
+
+    menu.exec(mapToGlobal(pos));
+}
+
+void MainWindow::singlePlot()
+{
+    QModelIndexList idxs = ui->tableWidget->selectionModel()->selectedRows(0);
+    QStringList types;
+    std::vector<int> cols(idxs.size());
+    std::vector<DataFile*> data(idxs.size());
+
+    for(int i = 0; i < int(idxs.size()); i++)
+    {
+        QModelIndex idx = idxs.at(i);
+        data.at(i) = dataMap.at(ui->tableWidget->item(idx.row(), 0)->text());
+        cols.at(i) = ui->tableWidget->item(idx.row(), 1)->text().split("\n").last().split(" ").last().front().digitValue();
+        types.append(ui->tableWidget->item(idx.row(), 2)->text().split("\n").last());
+    }
+
+    if((types.contains(yVec)) && (types.contains(flucVec)))
+    {
+        QMessageBox messageBox;
+        QString errToShow = "Cannot plot fluctuations and series together.";
+        messageBox.critical(nullptr, "Error", errToShow);
+        messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
+    }
+    else
+    {
+        if(types.at(0) == yVec)
+        {
+            DataPlotWindow *plot = new DataPlotWindow(data, cols);
+            plot->show();
+        }
+        else if(types.at(0) == flucVec)
+        {
+            // TODO: altra finestra con più opzioni se voglio modificare i fit, fit multipli,
+            // scale log (anche su più fluttuazioni nello stesso grafico)
+        }
     }
 }
 

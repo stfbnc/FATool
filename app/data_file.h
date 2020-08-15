@@ -7,6 +7,8 @@
 #include "constants.h"
 #include <QFile>
 #include <QTextStream>
+#include <QDebug>
+#include <QRegularExpression>
 
 class DataFile
 {
@@ -21,6 +23,8 @@ public:
     void setNamesAndTypes(std::map<QString, std::pair<QString, QString>> map);
     int getXAxisColumn();
     std::vector<int> getColumns();
+    QString getFileName();
+    int getDataLength();
 private:
     QString name = "";
     QString del = "";
@@ -30,6 +34,7 @@ private:
     std::map<int, QString> typesMap = std::map<int, QString>();
     QStringList columns;
     int xCol = 0;
+    int N = 0;
 };
 
 #endif // DATA_FILE_H

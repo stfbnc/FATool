@@ -8,13 +8,13 @@ DFAWindow::DFAWindow(DFA *dfa_, QWidget *parent) : PlotWindow(parent)
     QString winTitle = strDFA+" - "+fileName;
     setTitle(winTitle);
     //refit button
-    addRefitButton();
+    addFitButtons();
     //fits log button
-    addFitLogButton();
+    //addFitLogButton();
     //plot
     plotData();
     //plot fields
-    addPlotFields();
+    setPlotLimits();
     //legend
     addLegend();
 }

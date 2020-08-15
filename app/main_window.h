@@ -18,6 +18,7 @@
 #include "abstract_inputs_window.h"
 #include "load_files_window.h"
 #include "data_file.h"
+#include "data_plot_window.h"
 
 namespace Ui{
     class MainWindow;
@@ -38,6 +39,8 @@ public:
 private slots:
     void onLoadClick();
     void onFilesSpecsInserted(QString, QString, std::map<QString, std::pair<QString, QString>>);
+    void openContextMenu(const QPoint&);
+    void singlePlot();
     void onSaveClick();
     void onGoClick();
     void onCloseDFAInputWin(DFA **dfa);

@@ -7,20 +7,12 @@ INCLUDEPATH += $$APPDIR
 
 unix:!macx {
     INCLUDEPATH += usr/include
-#    INCLUDEPATH += /lib/gcc/x86_64-linux-gnu/9/include
-#    LIBS += -L/lib/gcc/x86_64-linux-gnu/9 -lgomp
     LIBS += -L/lib/x86_64-linux-gnu -lgsl -lgslcblas -lm
-#    QMAKE_CXXFLAGS += -fopenmp
-#    LIBS += -fopenmp
 }
 
 macx: {
     INCLUDEPATH += /opt/local/include/
-#    INCLUDEPATH += /opt/local/include/libomp/
-#    LIBS += -L/opt/local/lib/libomp -lomp
     LIBS += -L/opt/local/lib/ -lgsl -lgslcblas -lm
-#    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp
-#    LIBS += -Xpreprocessor -fopenmp
 }
 
 QT = core testlib
@@ -64,6 +56,7 @@ SOURCES +=  \
     $$APPDIR/abstract_inputs_window.cpp \
     $$APPDIR/load_files_window.cpp \
     $$APPDIR/data_file.cpp \
+    $$APPDIR/data_plot_window.cpp \
     TestInputWin.cpp
 
 HEADERS += \
@@ -104,9 +97,11 @@ HEADERS += \
     $$APPDIR/legend_position_window.h \
     $$APPDIR/abstract_inputs_window.h \
     $$APPDIR/load_files_window.h \
-    $$APPDIR/data_file.h
+    $$APPDIR/data_file.h \
+    $$APPDIR/data_plot_window.h
 
 FORMS += \
     $$APPDIR/abstract_inputs_window.ui \
     $$APPDIR/load_files.ui \
-    $$APPDIR/main_window.ui
+    $$APPDIR/main_window.ui \
+    $$APPDIR/plot_window.ui

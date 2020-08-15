@@ -4,20 +4,12 @@ ICON = logo.icns
 
 unix:!macx {
     INCLUDEPATH += usr/include
-#    INCLUDEPATH += /lib/gcc/x86_64-linux-gnu/9/include
-#    LIBS += -L/lib/gcc/x86_64-linux-gnu/9 -lgomp
     LIBS += -L/lib/x86_64-linux-gnu -lgsl -lgslcblas -lm
-#    QMAKE_CXXFLAGS += -fopenmp
-#    LIBS += -fopenmp
 }
 
 macx: {
     INCLUDEPATH += /opt/local/include/
-#    INCLUDEPATH += /opt/local/include/libomp/
-#    LIBS += -L/opt/local/lib/libomp -lomp
     LIBS += -L/opt/local/lib/ -lgsl -lgslcblas -lm
-#    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp
-#    LIBS += -Xpreprocessor -fopenmp
 }
 
 QT = core gui
@@ -27,6 +19,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 SOURCES +=  \
     abstract_inputs_window.cpp \
     data_file.cpp \
+    data_plot_window.cpp \
     load_files_window.cpp \
     main.cpp \
     log_window.cpp \
@@ -66,6 +59,7 @@ HEADERS += \
     abstract_inputs_window.h \
     constants.h \
     data_file.h \
+    data_plot_window.h \
     load_files_window.h \
     log_window.h \
     mass_exponents_window.h \
@@ -107,4 +101,5 @@ DISTFILES += \
 FORMS += \
     abstract_inputs_window.ui \
     load_files.ui \
-    main_window.ui
+    main_window.ui \
+    plot_window.ui

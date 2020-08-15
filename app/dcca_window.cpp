@@ -10,13 +10,13 @@ DCCAWindow::DCCAWindow(DCCA *dcca_, QWidget *parent) : PlotWindow(parent)
     winTitle.append(" & "+fileName2);
     setTitle(winTitle);
     //refit button
-    addRefitButton();
+    addFitButtons();
     //fits log button
-    addFitLogButton();
+    //addFitLogButton();
     //plot
     plotData();
     //plot fields
-    addPlotFields();
+    setPlotLimits();
     //legend
     addLegend();
 }

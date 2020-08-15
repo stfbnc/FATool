@@ -10,7 +10,7 @@ HTWindow::HTWindow(HT *ht_, QWidget *parent) : PlotWindow(parent)
     //plot
     plotData();
     //plot fields
-    addPlotFields();
+    setPlotLimits();
     //legend
     addLegend();
 }

@@ -66,12 +66,26 @@ void LoadFilesWindow::onOkClick()
 
     if(!xError)
     {
-        if(ui->headEdit->text().isEmpty())
-            emit filesSpecsInserted(ui->delEdit->text(), QString::number(0), colsMap);
+        QRegularExpression regex("^[0-9]+$");
+        if(!regex.match(ui->headEdit->text().trimmed()).hasMatch())
+        {
+            QMessageBox messageBox;
+            QString errToShow = "Header lines must be zero or more.";
+            messageBox.critical(nullptr, "Error", errToShow);
+            messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
+        }
+        else if((ui->delEdit->text().isEmpty()) && (colsMap.size() != 1))
+        {
+            QMessageBox messageBox;
+            QString errToShow = "An empty delimiter can only be associated to a single-column file. Column number must be set to 1.";
+            messageBox.critical(nullptr, "Error", errToShow);
+            messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
+        }
         else
+        {
             emit filesSpecsInserted(ui->delEdit->text(), ui->headEdit->text(), colsMap);
-
-        this->close();
+            this->close();
+        }
     }
     else
     {
@@ -103,40 +117,39 @@ void LoadFilesWindow::onTextChanged(QString text)
             messageBox.critical(nullptr, "Error", errToShow);
             messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
         }
-    }
-
-    for(int i = 0; i < colsList.size(); i++)
-    {
-        if(colsList.at(i).trimmed() != "")
+        else
         {
-            QLabel *label = new QLabel("Column " + colsList.at(i).trimmed());
-            int width = label->fontMetrics().boundingRect(label->text()).width() + 10;
-            label->setGeometry(0, 0, width, widgetHeight);
-            label->setContentsMargins(0, 0, 0, 0);
-            vLayout->addWidget(label);
+            if(colsList.at(i).trimmed() != "")
+            {
+                QLabel *label = new QLabel("Column " + colsList.at(i).trimmed());
+                int width = label->fontMetrics().boundingRect(label->text()).width() + 10;
+                label->setGeometry(0, 0, width, widgetHeight);
+                label->setContentsMargins(0, 0, 0, 0);
+                vLayout->addWidget(label);
 
-            QWidget *w2 = new QWidget();
-            w2->setContentsMargins(0, 0, 0, 0);
-            QHBoxLayout *hl = new QHBoxLayout(w2);
-            hl->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-            hl->setContentsMargins(10, 0, 0, 0);
+                QWidget *w2 = new QWidget();
+                w2->setContentsMargins(0, 0, 0, 0);
+                QHBoxLayout *hl = new QHBoxLayout(w2);
+                hl->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+                hl->setContentsMargins(10, 0, 0, 0);
 
-            QLabel *label2 = new QLabel("Name: ");
-            width = label2->fontMetrics().boundingRect(label2->text()).width() + 10;
-            label2->setGeometry(0, 0, width, widgetHeight);
-            label2->setContentsMargins(0, 0, 0, 0);
-            hl->addWidget(label2);
+                QLabel *label2 = new QLabel("Name: ");
+                width = label2->fontMetrics().boundingRect(label2->text()).width() + 10;
+                label2->setGeometry(0, 0, width, widgetHeight);
+                label2->setContentsMargins(0, 0, 0, 0);
+                hl->addWidget(label2);
 
-            QLineEdit *lineEdit = new QLineEdit();
-            lineEdit->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-            lineEdit->setContentsMargins(0, 0, 0, 0);
-            hl->addWidget(lineEdit);
+                QLineEdit *lineEdit = new QLineEdit();
+                lineEdit->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+                lineEdit->setContentsMargins(0, 0, 0, 0);
+                hl->addWidget(lineEdit);
 
-            QComboBox *comboBox = new QComboBox();
-            comboBox->addItems(typesList);
-            hl->addWidget(comboBox);
+                QComboBox *comboBox = new QComboBox();
+                comboBox->addItems(typesList);
+                hl->addWidget(comboBox);
 
-            vLayout->addWidget(w2);
+                vLayout->addWidget(w2);
+            }
         }
     }
 }

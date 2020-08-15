@@ -29,6 +29,7 @@ void DataFile::setData()
     QFile inputFile(this->name);
     if(inputFile.open(QIODevice::ReadOnly))
     {
+        QStringList realColumns;
         for(auto const& [key, val] : typesMap)
             fileMap.emplace(key, std::vector<double>());
 
@@ -39,15 +40,44 @@ void DataFile::setData()
             headCount++;
             if(headCount > this->headers)
             {
-                QStringList elems = in.readLine().split(this->del);
-                for(int i = 0; i < int(elems.size()); i++)
+                if(!this->del.isEmpty())
                 {
-                    if(columns.contains(QString::number(i + 1)))
-                        fileMap.at(i + 1).push_back(elems.at(i).toDouble());
+                    QStringList elems = in.readLine().split(QRegularExpression(this->del));
+                    for(int i = 0; i < int(elems.size()); i++)
+                    {
+                        if(columns.contains(QString::number(i + 1)))
+                        {
+                            fileMap.at(i + 1).push_back(elems.at(i).toDouble());
+                            realColumns.append(QString::number(i + 1));
+                        }
+                    }
                 }
+                else
+                {
+                    QString elems = in.readLine();
+                    if(columns.contains(QString::number(1)))
+                    {
+                        fileMap.at(1).push_back(elems.toDouble());
+                        realColumns.append(QString::number(1));
+                    }
+                }
+                N++;
             }
         }
         inputFile.close();
+
+        for(QString c : columns)
+        {
+            if(!realColumns.contains(c))
+            {
+                fileMap.erase(c.toInt());
+                namesMap.erase(c.toInt());
+                typesMap.erase(c.toInt());
+                columns.removeOne(c);
+            }
+            if(!columns.contains(QString::number(xCol)))
+                xCol = 0;
+        }
     }
 }
 
@@ -75,4 +105,14 @@ std::vector<int> DataFile::getColumns()
         cols.push_back(col.toInt());
 
     return cols;
+}
+
+QString DataFile::getFileName()
+{
+    return this->name;
+}
+
+int DataFile::getDataLength()
+{
+    return N;
 }

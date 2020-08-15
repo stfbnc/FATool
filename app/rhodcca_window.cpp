@@ -12,7 +12,7 @@ rhoDCCAWindow::rhoDCCAWindow(rhoDCCA *rhodcca_, QWidget *parent) : PlotWindow(pa
     //plot
     plotData();
     //plot fields
-    addPlotFields();
+    setPlotLimits();
     //legend
     addLegend();
 }

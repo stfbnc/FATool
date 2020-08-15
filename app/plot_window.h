@@ -5,23 +5,28 @@
 #include "refit_window.h"
 #include "legend_position_window.h"
 #include "log_window.h"
+#include "constants.h"
+
+namespace Ui{
+    class PlotWindow;
+}
 
 class PlotWindow : public QWidget
 {
 Q_OBJECT
 public:
     explicit PlotWindow(QWidget *parent=nullptr);
-    ~PlotWindow();
+    virtual ~PlotWindow();
 protected:
+    Ui::PlotWindow *ui;
     BasePlot *plt;
     QString fileName;
     QString fileName2;
 
     void setTitle(QString winTitle);
-    void addPlotFields();
+    void setPlotLimits();
     void addLegend();
-    void addRefitButton();
-    void addFitLogButton();
+    void addFitButtons();
     void addSpectrumButton();
     void addMassExponentsButton();
 private slots:
@@ -37,43 +42,11 @@ private slots:
     void newFitPlot(int start, int end, int keep, int clear);
     void enableButtons();
 private:
-	void addButtons();
     void disableButtons();
     virtual void refitData(int start, int end, double *hSlope, double *hIntcpt);
-	virtual void plotData();
-
-	const int xDim = 800;
-    const int yDim = 500;
-    const int xWidth = 110;
-    const int yHeight = 30;
-    const int padX = 10;
-    const int padY = 10;
+    virtual void plotData() = 0;
 
     QString fitLog;
-    QLabel *xLimLbl;
-    QLabel *yLimLbl;
-    QLabel *titleLbl;
-    QLabel *xLabelLbl;
-    QLabel *yLabelLbl;
-    QLabel *legendLbl;
-    QLabel *isLegendLbl;
-    QLineEdit *xLimTxt;
-    QLineEdit *yLimTxt;
-    QLineEdit *titleTxt;
-    QLineEdit *xLabelTxt;
-    QLineEdit *yLabelTxt;
-    QTextEdit *legendTxt;
-    QCheckBox *isLegendBox;
-
-    QPushButton *moveLegendBtn;
-    QPushButton *massExpBtn;
-    QPushButton *spectBtn;
-    QPushButton *fitLogBtn;
-    QPushButton *refitBtn;
-    QPushButton *replotBtn;
-    QPushButton *savePlotBtn;
-    QPushButton *saveTxtBtn;
-    QPushButton *closeBtn;
 
     RefitWindow *refitWin;
     MoveLegendWindow *moveLegendWin;

@@ -10,7 +10,7 @@ SpectrumWindow::SpectrumWindow(MFDFA *mfdfa_, QString fileName_, QWidget *parent
     //plot
     plotData();
     //plot fields
-    addPlotFields();
+    setPlotLimits();
     //legend
     addLegend();
 }

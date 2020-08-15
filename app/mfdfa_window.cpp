@@ -14,7 +14,7 @@ MFDFAWindow::MFDFAWindow(MFDFA *mfdfa_, QWidget *parent) : PlotWindow(parent)
     //plot
     plotData();
     //plot fields
-    addPlotFields();
+    setPlotLimits();
     //legend
     addLegend();
 }

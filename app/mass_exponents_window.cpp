@@ -10,7 +10,7 @@ MassExponentsWindow::MassExponentsWindow(MFDFA *mfdfa_, QString fileName_, QWidg
     //plot
     plotData();
     //plot fields
-    addPlotFields();
+    setPlotLimits();
     //legend
     addLegend();
 }

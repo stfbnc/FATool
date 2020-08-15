@@ -1,20 +1,30 @@
 #include "plot_window.h"
+#include "ui_plot_window.h"
 
-PlotWindow::PlotWindow(QWidget *parent) : QWidget(parent)
+PlotWindow::PlotWindow(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::PlotWindow)
 {
-    fileName2 = "";
-	//win size
-	setFixedSize(xDim, yDim);
-	//plot section
+    ui->setupUi(this);
+    this->setFixedSize(this->width(), this->height());
+    this->setAttribute(Qt::WA_DeleteOnClose);
+
+    this->fileName2 = "";
+
     plt = new BasePlot(this);
-    plt->setGeometry(xDim/4, padY, xDim*3/4-padX, yDim-yHeight-2*padY);
     plt->setBasePlot();
-    //not plot section
-    refitBtn = nullptr;
-    fitLogBtn = nullptr;
-    spectBtn = nullptr;
-    massExpBtn = nullptr;
-    addButtons();
+    ui->plotLayout->addWidget(plt);
+
+    ui->refitBtn->hide();
+    ui->fitLogBtn->hide();
+    ui->spectBtn->hide();
+    ui->massExpBtn->hide();
+
+    connect(ui->replotBtn, SIGNAL(clicked()), this, SLOT(onReplotClick()));
+    connect(ui->savePlotBtn, SIGNAL(clicked()), this, SLOT(onSavePlotClick()));
+    connect(ui->saveTxtBtn, SIGNAL(clicked()), this, SLOT(onSaveTxtClick()));
+    connect(ui->closeBtn, SIGNAL(clicked()), this, SLOT(close()));
+    connect(ui->moveLegendBtn, SIGNAL(clicked()), this, SLOT(onMoveLegendClick()));
 }
 
 PlotWindow::~PlotWindow(){}
@@ -24,140 +34,79 @@ void PlotWindow::setTitle(QString winTitle)
     setWindowTitle(winTitle);
 }
 
-void PlotWindow::addButtons()
+void PlotWindow::addFitButtons()
 {
-	//replot button
-	replotBtn = new QPushButton("Replot", this);
-	replotBtn->setGeometry(xDim-4*xWidth-padX*2, yDim-yHeight-padY/2, xWidth, yHeight);
-	connect(replotBtn, SIGNAL(clicked()), this, SLOT(onReplotClick()));
-	//save_plot button
-	savePlotBtn = new QPushButton("Save plot", this);
-	savePlotBtn->setGeometry(xDim-3*xWidth-padX*3/2, yDim-yHeight-padY/2, xWidth, yHeight);
-	connect(savePlotBtn, SIGNAL(clicked()), this, SLOT(onSavePlotClick()));
-	//save_txt button
-	saveTxtBtn = new QPushButton("Save data", this);
-	saveTxtBtn->setGeometry(xDim-2*xWidth-padX, yDim-yHeight-padY/2, xWidth, yHeight);
-	connect(saveTxtBtn, SIGNAL(clicked()), this, SLOT(onSaveTxtClick()));
-	//close button
-	closeBtn = new QPushButton("Close", this);
-	closeBtn->setGeometry(xDim-xWidth-padX/2, yDim-yHeight-padY/2, xWidth, yHeight);
-	connect(closeBtn, SIGNAL(clicked()), this, SLOT(close()));
-	//move legend button
-	moveLegendBtn = new QPushButton("Move legend", this);
-	moveLegendBtn->setGeometry(padX/2, yDim-yHeight-padY/2, xWidth, yHeight);
-	connect(moveLegendBtn, SIGNAL(clicked()), this, SLOT(onMoveLegendClick()));
-}
+    ui->refitBtn->show();
+    connect(ui->refitBtn, SIGNAL(clicked()), this, SLOT(onRefitClick()));
 
-void PlotWindow::addRefitButton()
-{
-	//refit button
-	refitBtn = new QPushButton("Refit", this);
-	refitBtn->setGeometry(xDim-5*xWidth-padX*5/2, yDim-yHeight-padY/2, xWidth, yHeight);
-	connect(refitBtn, SIGNAL(clicked()), this, SLOT(onRefitClick()));
-}
-
-void PlotWindow::addFitLogButton()
-{
-    //fit log button
-    fitLogBtn = new QPushButton("Fits log", this);
-    fitLogBtn->setGeometry(xDim-6*xWidth-padX*3, yDim-yHeight-padY/2, xWidth, yHeight);
-    connect(fitLogBtn, SIGNAL(clicked()), this, SLOT(onFitLogClick()));
+    ui->fitLogBtn->show();
+    connect(ui->fitLogBtn, SIGNAL(clicked()), this, SLOT(onFitLogClick()));
 }
 
 void PlotWindow::addSpectrumButton()
 {
-    //spectrum button
-    spectBtn = new QPushButton("Spectrum", this);
-    spectBtn->setGeometry(xDim-5*xWidth-padX*5/2, yDim-yHeight-padY/2, xWidth, yHeight);
-    connect(spectBtn, SIGNAL(clicked()), this, SLOT(onSpectrumClick()));
+    ui->spectBtn->show();
+    connect(ui->spectBtn, SIGNAL(clicked()), this, SLOT(onSpectrumClick()));
 }
 
 void PlotWindow::addMassExponentsButton()
 {
-    //mass exponents button
-    massExpBtn = new QPushButton("Mass exps", this);
-    massExpBtn->setGeometry(xDim-6*xWidth-padX*3, yDim-yHeight-padY/2, xWidth, yHeight);
-    connect(massExpBtn, SIGNAL(clicked()), this, SLOT(onMassExponentsClick()));
+    ui->massExpBtn->show();
+    connect(ui->massExpBtn, SIGNAL(clicked()), this, SLOT(onMassExponentsClick()));
 }
 
-void PlotWindow::addPlotFields()
+void PlotWindow::setPlotLimits()
 {
-	//ranges
-	xLimLbl = new QLabel("x limits (comma-separated)", this);
-	xLimLbl->setGeometry(padX, padY/2, xWidth*7/4, yHeight*2/3);
-    xLimTxt = new QLineEdit(QString::number(plt->xAxis->range().lower)+","+QString::number(plt->xAxis->range().upper), this);
-    xLimTxt->setGeometry(padX, padY+yHeight*2/3, xWidth*3/2, yHeight);
-	yLimLbl = new QLabel("y limits (comma-separated)", this);
-	yLimLbl->setGeometry(padX, padY*3/2+yHeight*5/3, xWidth*7/4, yHeight*2/3);
-    yLimTxt = new QLineEdit(QString::number(plt->yAxis->range().lower)+","+QString::number(plt->yAxis->range().upper), this);
-    yLimTxt->setGeometry(padX, 2*padY+yHeight*7/3, xWidth*3/2, yHeight);
-	//labels
-	titleLbl = new QLabel("Title", this);
-	titleLbl->setGeometry(padX, padY*5/2+yHeight*10/3, xWidth*7/4, yHeight*2/3);
-	titleTxt = new QLineEdit(plt->xAxis2->label(), this);
-	titleTxt->setGeometry(padX, 3*padY+yHeight*4, xWidth*3/2, yHeight);
-	xLabelLbl = new QLabel("x label", this);
-	xLabelLbl->setGeometry(padX, padY*7/2+yHeight*5, xWidth*7/4, yHeight*2/3);
-	xLabelTxt = new QLineEdit(plt->xAxis->label(), this);
-	xLabelTxt->setGeometry(padX, 4*padY+yHeight*17/3, xWidth*3/2, yHeight);
-	yLabelLbl = new QLabel("y label", this);
-	yLabelLbl->setGeometry(padX, padY*9/2+yHeight*20/3, xWidth*7/4, yHeight*2/3);
-	yLabelTxt = new QLineEdit(plt->yAxis->label(), this);
-	yLabelTxt->setGeometry(padX, 5*padY+yHeight*22/3, xWidth*3/2, yHeight);
+    ui->xLimTxt->setText(QString::number(plt->xAxis->range().lower)+","+QString::number(plt->xAxis->range().upper));
+    ui->yLimTxt->setText(QString::number(plt->yAxis->range().lower)+","+QString::number(plt->yAxis->range().upper));
 }
 
 void PlotWindow::addLegend()
 {
-	//legend
-	legendLbl = new QLabel("Legend (semicolon-separated)", this);
-	legendLbl->setGeometry(padX, padY*11/2+yHeight*25/3, xWidth*7/4, yHeight*2/3);
-	QString lgnd = plt->graph(0)->name();
+    QString lgnd = plt->graph(0)->name();
 	for(int i = 1; i < plt->legend->itemCount(); i++)
-		lgnd += ";"+plt->graph(i)->name();
-	legendTxt = new QTextEdit(lgnd.toHtmlEscaped(), this);
-	legendTxt->setTabChangesFocus(true);
-	legendTxt->setGeometry(padX, 6*padY+yHeight*9, xWidth*3/2, 3*yHeight);
-	isLegendLbl = new QLabel("Hide legend", this);
-	isLegendLbl->setGeometry(padX, 7*padY+yHeight*12, xWidth*4/5, yHeight*2/3);
-	isLegendBox = new QCheckBox(this);
-	isLegendBox->setGeometry(padX+xWidth*4/5, 7*padY+yHeight*12, xWidth, yHeight*2/3);
-	connect(isLegendBox, SIGNAL(clicked()), this, SLOT(onIsLegendCheck()));
+        lgnd += ";"+plt->graph(i)->name();
+
+    ui->legendTxt->setText(lgnd.toHtmlEscaped());
+    ui->legendTxt->setTabChangesFocus(true);
+
+    connect(ui->isLegendBox, SIGNAL(clicked()), this, SLOT(onIsLegendCheck()));
 }
 
 void PlotWindow::plotData(){}
 
 void PlotWindow::disableButtons()
 {
-    moveLegendBtn->setEnabled(false);
-    replotBtn->setEnabled(false);
-    savePlotBtn->setEnabled(false);
-    saveTxtBtn->setEnabled(false);
-    closeBtn->setEnabled(false);
-	if(refitBtn != nullptr)
-		refitBtn->setEnabled(false);
-    if(fitLogBtn != nullptr)
-        fitLogBtn->setEnabled(false);
-    if(spectBtn != nullptr)
-        spectBtn->setEnabled(false);
-    if(massExpBtn != nullptr)
-        massExpBtn->setEnabled(false);
+    ui->moveLegendBtn->setEnabled(false);
+    ui->replotBtn->setEnabled(false);
+    ui->savePlotBtn->setEnabled(false);
+    ui->saveTxtBtn->setEnabled(false);
+    ui->closeBtn->setEnabled(false);
+    if(!ui->refitBtn->isHidden())
+        ui->refitBtn->setEnabled(false);
+    if(!ui->fitLogBtn->isHidden())
+        ui->fitLogBtn->setEnabled(false);
+    if(!ui->spectBtn->isHidden())
+        ui->spectBtn->setEnabled(false);
+    if(!ui->massExpBtn->isHidden())
+        ui->massExpBtn->setEnabled(false);
 }
 
 void PlotWindow::enableButtons()
 {
-    moveLegendBtn->setEnabled(true);
-    replotBtn->setEnabled(true);
-    savePlotBtn->setEnabled(true);
-    saveTxtBtn->setEnabled(true);
-    closeBtn->setEnabled(true);
-	if(refitBtn != nullptr)
-		refitBtn->setEnabled(true);
-    if(fitLogBtn != nullptr)
-        fitLogBtn->setEnabled(true);
-    if(spectBtn != nullptr)
-        spectBtn->setEnabled(true);
-    if(massExpBtn != nullptr)
-        massExpBtn->setEnabled(true);
+    ui->moveLegendBtn->setEnabled(true);
+    ui->replotBtn->setEnabled(true);
+    ui->savePlotBtn->setEnabled(true);
+    ui->saveTxtBtn->setEnabled(true);
+    ui->closeBtn->setEnabled(true);
+    if(!ui->refitBtn->isHidden())
+        ui->refitBtn->setEnabled(true);
+    if(!ui->fitLogBtn->isHidden())
+        ui->fitLogBtn->setEnabled(true);
+    if(!ui->spectBtn->isHidden())
+        ui->spectBtn->setEnabled(true);
+    if(!ui->massExpBtn->isHidden())
+        ui->massExpBtn->setEnabled(true);
 }
 
 void PlotWindow::onSpectrumClick(){}
@@ -185,7 +134,7 @@ void PlotWindow::onMoveLegendClick()
 
 void PlotWindow::onIsLegendCheck()
 {
-    if(isLegendBox->isChecked())
+    if(ui->isLegendBox->isChecked())
         plt->legend->setVisible(false);
     else
         plt->legend->setVisible(true);
@@ -205,26 +154,35 @@ void PlotWindow::onRefitClick()
 
 void PlotWindow::newFitPlot(int start, int end, int keep, int clear)
 {
-    if(end < start){
+    if(end < start)
+    {
         int tmp = end;
         end = start;
         start = tmp;
     }
+
     double HIntercept = 0.0, H = 0.0;
     refitData(start, end, &H, &HIntercept);
-    if(clear == 1){
+
+    if(clear == 1)
+    {
         for(int i = 1; i < plt->graphCount(); i++)
             plt->removeGraph(i);
     }
-    if(keep == 0 && plt->graphCount() != 1){
+
+    if(keep == 0 && plt->graphCount() != 1)
+    {
         plt->removeGraph(plt->graphCount()-1);
     }
+
     int len = end - start + 1;
     QVector<double> n(len), Hfit(len);
-    for(int i = 0; i < len; i++){
+    for(int i = 0; i < len; i++)
+    {
         n[i] = log(start+i);
         Hfit[i] = HIntercept + H * n[i];
     }
+
     plt->addGraph();
     plt->graph(plt->graphCount()-1)->setData(n, Hfit);
     QPen pen;
@@ -237,8 +195,8 @@ void PlotWindow::newFitPlot(int start, int end, int keep, int clear)
     QString lgnd = plt->graph(0)->name();
     for(int i = 1; i < plt->legend->itemCount(); i++)
         lgnd += ";"+plt->graph(i)->name();
-    legendTxt->clear();
-    legendTxt->setText(lgnd);
+    ui->legendTxt->clear();
+    ui->legendTxt->setText(lgnd);
 
     fitLog.append("start: "+QString::number(start)+
                    "\nend: "+QString::number(end)+
@@ -247,15 +205,22 @@ void PlotWindow::newFitPlot(int start, int end, int keep, int clear)
                    "\n----------------------------\n");
 }
 
-void PlotWindow::refitData(int start, int end, double *hSlope, double *hIntcpt){}
+void PlotWindow::refitData(int start, int end, double *hSlope, double *hIntcpt)
+{
+    start = 0;
+    end = 0;
+    *hSlope = 0.0;
+    *hIntcpt = 0.0;
+}
 
 void PlotWindow::onReplotClick()
 {
-    QStringList xl = xLimTxt->text().replace(QRegExp("\\s+"), "").split(",");
-    QStringList yl = yLimTxt->text().replace(QRegExp("\\s+"), "").split(",");
-    QStringList lg = legendTxt->toPlainText().split(";");
+    QStringList xl = ui->xLimTxt->text().replace(QRegExp("\\s+"), "").split(",");
+    QStringList yl = ui->yLimTxt->text().replace(QRegExp("\\s+"), "").split(",");
+    QStringList lg = ui->legendTxt->toPlainText().split(";");
     QStringList repAlert;
     QRegExp rgx("^[-]?[0-9]+[.]?[0-9]*$");
+
     if(xl.size() != 2 ||
        (!xl.first().contains(rgx) || !xl.last().contains(rgx)))
         repAlert.append("\n- x limits");
@@ -264,16 +229,20 @@ void PlotWindow::onReplotClick()
         repAlert.append("\n- y limits");
     if(lg.size() != plt->legend->itemCount() || (lg.size() == 1 && lg.first() == ""))
         repAlert.append("\n- legend");
-    if(repAlert.size() == 0){
+
+    if(repAlert.size() == 0)
+    {
         plt->xAxis->setRange(xl.first().trimmed().toDouble(), xl.last().trimmed().toDouble());
         plt->yAxis->setRange(yl.first().trimmed().toDouble(), yl.last().trimmed().toDouble());
-        plt->xAxis->setLabel(xLabelTxt->text().trimmed());
-        plt->yAxis->setLabel(yLabelTxt->text().trimmed());
-        plt->xAxis2->setLabel(titleTxt->text().trimmed());
+        plt->xAxis->setLabel(ui->xLabelTxt->text().trimmed());
+        plt->yAxis->setLabel(ui->yLabelTxt->text().trimmed());
+        plt->xAxis2->setLabel(ui->titleTxt->text().trimmed());
         for(int i = 0; i < plt->legend->itemCount(); i++)
             plt->graph(i)->setName(lg[i].trimmed());
         plt->replot();
-    }else{
+    }
+    else
+    {
         QMessageBox messageBox;
         QString errToShow = "An error occured in\n the following fields:\n";
         for(int i = 0; i < repAlert.size(); i++)
@@ -289,12 +258,19 @@ void PlotWindow::onSavePlotClick()
     QFileDialog saveDialog;
     saveFile = saveDialog.getSaveFileName();
     QString fileExt = saveFile.split(".").last();
-    if(!fileExt.isNull() && !fileExt.isEmpty()){
+
+    if(!fileExt.isNull() && !fileExt.isEmpty())
+    {
         if(fileExt == "pdf")
+        {
             plt->savePdf(saveFile);
+        }
         else if(fileExt == "png")
+        {
             plt->savePng(saveFile);
-        else{
+        }
+        else
+        {
             QMessageBox messageBox;
             QString errToShow = "Supported formats are:\n- pdf\n- png";
             messageBox.critical(nullptr, "Error", errToShow);
