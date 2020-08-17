@@ -6,47 +6,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    //set dimensions
-    //setDimensions();
-    //set title
     setWindowTitle("FATool (v "+ VERSION +")");
-    //win size
-    setFixedSize(800, 500);
-    //plot section
-    /*qplot = new BasePlot(this);
-    qplot->setGeometry(padX, padY+yHeight, xDim-2*padX, yDim-yHeight-2*padY);
-    qplot->setBasePlot();
-    qplot->xAxis->setLabel("time");
-    qplot->yAxis->setLabel("Time series");
-    qplot->replot();*/
-    //load button
-    //loadButton = new QPushButton("Load file(s)", this);
-    //loadButton->setGeometry(padX/2, padY/2, xWidth, yHeight);
+    setFixedSize(this->width(), this->height());
+
     connect(ui->loadButton, SIGNAL(clicked()), this, SLOT(onLoadClick()));
-    //save button
-    //saveButton = new QPushButton("Save plot", this);
-    //saveButton->setGeometry(padX/2+xWidth, padY/2, xWidth, yHeight);
-    //connect(saveButton, SIGNAL(clicked()), this, SLOT(onSaveClick()));
-    //dropdown text
-    //analysisLbl = new QLabel("Type of analysis:", this);
-    //analysisLbl->setGeometry(padX+2*xWidth, padY/2, xWidth, yHeight);
-    //analysisLbl->setStyleSheet("font-weight: bold");
-    //dropdown list
-    //ddList = new QComboBox(this);
-    fillList();
-    //ddList->setGeometry(padX*3/2+3*xWidth, padY/2+2, xWidth, yHeight);
-    //go button
-    //goButton = new QPushButton("Go!", this);
-    //goButton->setGeometry(padX*2+4*xWidth, padY/2, xWidth, yHeight);
     connect(ui->goButton, SIGNAL(clicked()), this, SLOT(onGoClick()));
-    //clear button
-    //clearButton = new QPushButton("Clear all", this);
-    //clearButton->setGeometry(padX*5/2+5*xWidth, padY/2, xWidth, yHeight);
     connect(ui->clearButton, SIGNAL(clicked()), this, SLOT(onClearClick()));
-    //quit button
-    //quitButton = new QPushButton("Quit", this);
-    //quitButton->setGeometry(xDim-xWidth-padX/2, padY/2, xWidth, yHeight);
     connect(ui->quitButton, SIGNAL(clicked()), QApplication::instance(), SLOT(quit()));
+
+    fillList();
 
     ui->tableWidget->setColumnCount(3);
     ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -54,11 +22,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->tableWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(openContextMenu(const QPoint&)));
 
-    //instructions window
     instrWindow();
+
+    dataMap = new FilesData();
 }
 
-MainWindow::~MainWindow(){}
+MainWindow::~MainWindow()
+{
+    delete dataMap;
+    delete ui;
+}
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
@@ -80,7 +53,7 @@ void MainWindow::instrWindow()
 {
     QFile f(prefsFile);
     QTextStream in(&f);
-    QString str;
+    QString str = hideStartWin;
     if(f.open(QFile::ReadWrite)){
         str = in.readLine();
         f.close();
@@ -122,77 +95,60 @@ void MainWindow::onLoadClick()
                 this, SLOT(onFilesSpecsInserted(QString, QString, std::map<QString, std::pair<QString, QString>>)));
         fWin->show();
     }
-
-//    qplot->legend->clearItems();
-//    qplot->clearGraphs();
-/*    for(int i = 0; i < fileNames.size(); i++){
-        std::string fn = fileNames.at(i).toLocal8Bit().constData();
-        FileOps fo;
-        int len = fo.rowsNumber(fn);
-        QVector<double> t(len), vec(len);
-        FILE *f;
-        f = fo.openFile(fn, "r");
-        if(f){
-            for(int j = 0; j < len; j++){
-                t[j] = j;
-                fscanf(f, "%lf", &vec[j]);
-            }
-        }
-        fclose(f);
-*/
-//        qplot->addGraph();
-//        QPen pen;
-//        pen.setColor(colours[i%colours.size()]);
-//        qplot->graph(i)->setPen(pen);
-//      qplot->graph(i)->setName(QString::fromStdString(fn).split("/").last());
-//        qplot->graph(i)->setData(t, vec);
-//        i==0 ? qplot->graph(i)->rescaleAxes() : qplot->graph(i)->rescaleAxes(true);
-//    }
-//    if(fileNames.size() > 0){
-//        qplot->legend->setVisible(true);
-//        qplot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignLeft);
-//        qplot->replot();
-//    }
 }
 
 void MainWindow::onFilesSpecsInserted(QString del, QString header, std::map<QString, std::pair<QString, QString>> map)
 {
-    for(int i = 0; i < int(fileNames.size()); i++)
+    QApplication::processEvents();
+    auto dataFuture = std::async(std::launch::async, &FilesData::setDataMap, dataMap, fileNames, del, header, map);
+    dataFuture.get();
+    updateFilesTable();
+}
+
+void MainWindow::updateFilesTable()
+{
+    clearFilesTable();
+
+    std::map<QString, DataFile*> mapForTable = dataMap->getDataMap();
+    for(auto const& [key, val] : mapForTable)
     {
-        DataFile *df = new DataFile(fileNames.at(i), del, header.toInt());
-        df->setNamesAndTypes(map);
-        df->setData(); // questa da fare in un thread separato, mentre setto la tabella nella mainWindow
-                       // quando ha finito aggiungere alla mappa nella mainWindow
-
-        dataMap.emplace(fileNames.at(i), df);
-
-        for(int col : df->getColumns())
+        for(int col : val->getColumns())
         {
-            int xCol = df->getXAxisColumn();
+            int xCol = val->getXAxisColumn();
             if(col != xCol)
             {
                 ui->tableWidget->insertRow(ui->tableWidget->rowCount());
                 ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 0,
-                                         new QTableWidgetItem(fileNames.at(i)));
+                                         new QTableWidgetItem(key));
                 if(xCol != 0)
                 {
                     ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 1,
-                                             new QTableWidgetItem(df->getNameOfColumn(xCol) + " (column " + QString::number(xCol) + ")\n" +
-                                                                  df->getNameOfColumn(col) + " (column " + QString::number(col) + ")"));
+                                             new QTableWidgetItem(val->getNameOfColumn(xCol) +
+                                                                  " (column " + QString::number(xCol) + ")\n" +
+                                                                  val->getNameOfColumn(col) +
+                                                                  " (column " + QString::number(col) + ")"));
                     ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 2,
-                                             new QTableWidgetItem(df->getTypeOfColumn(xCol) + "\n" + df->getTypeOfColumn(col)));
+                                             new QTableWidgetItem(val->getTypeOfColumn(xCol) +
+                                                                  "\n" +
+                                                                  val->getTypeOfColumn(col)));
                 }
                 else
                 {
                     ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 1,
-                                             new QTableWidgetItem(df->getNameOfColumn(col) + " (column " + QString::number(col) + ")"));
+                                             new QTableWidgetItem(val->getNameOfColumn(col) +
+                                                                  " (column " + QString::number(col) + ")"));
                     ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 2,
-                                             new QTableWidgetItem(df->getTypeOfColumn(col)));
+                                             new QTableWidgetItem(val->getTypeOfColumn(col)));
                 }
             }
         }
         ui->tableWidget->update();
     }
+}
+
+void MainWindow::clearFilesTable()
+{
+    ui->tableWidget->setRowCount(0);
 }
 
 void MainWindow::openContextMenu(const QPoint& pos)
@@ -227,7 +183,7 @@ void MainWindow::singlePlot()
     for(int i = 0; i < int(idxs.size()); i++)
     {
         QModelIndex idx = idxs.at(i);
-        data.at(i) = dataMap.at(ui->tableWidget->item(idx.row(), 0)->text());
+        data.at(i) = dataMap->getDataMap().at(ui->tableWidget->item(idx.row(), 0)->text());
         cols.at(i) = ui->tableWidget->item(idx.row(), 1)->text().split("\n").last().split(" ").last().front().digitValue();
         types.append(ui->tableWidget->item(idx.row(), 2)->text().split("\n").last());
     }

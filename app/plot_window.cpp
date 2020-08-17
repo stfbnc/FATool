@@ -27,7 +27,10 @@ PlotWindow::PlotWindow(QWidget *parent) :
     connect(ui->moveLegendBtn, SIGNAL(clicked()), this, SLOT(onMoveLegendClick()));
 }
 
-PlotWindow::~PlotWindow(){}
+PlotWindow::~PlotWindow()
+{
+    delete ui;
+}
 
 void PlotWindow::setTitle(QString winTitle)
 {

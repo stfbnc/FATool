@@ -57,6 +57,7 @@ SOURCES +=  \
     $$APPDIR/load_files_window.cpp \
     $$APPDIR/data_file.cpp \
     $$APPDIR/data_plot_window.cpp \
+    $$APPDIR/files_data.cpp \
     TestInputWin.cpp
 
 HEADERS += \
@@ -98,7 +99,8 @@ HEADERS += \
     $$APPDIR/abstract_inputs_window.h \
     $$APPDIR/load_files_window.h \
     $$APPDIR/data_file.h \
-    $$APPDIR/data_plot_window.h
+    $$APPDIR/data_plot_window.h \
+    $$APPDIR/files_data.h
 
 FORMS += \
     $$APPDIR/abstract_inputs_window.ui \

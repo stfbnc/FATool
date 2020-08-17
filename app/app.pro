@@ -20,6 +20,7 @@ SOURCES +=  \
     abstract_inputs_window.cpp \
     data_file.cpp \
     data_plot_window.cpp \
+    files_data.cpp \
     load_files_window.cpp \
     main.cpp \
     log_window.cpp \
@@ -60,6 +61,7 @@ HEADERS += \
     constants.h \
     data_file.h \
     data_plot_window.h \
+    files_data.h \
     load_files_window.h \
     log_window.h \
     mass_exponents_window.h \

@@ -83,8 +83,9 @@ void LoadFilesWindow::onOkClick()
         }
         else
         {
+            this->hide();
             emit filesSpecsInserted(ui->delEdit->text(), ui->headEdit->text(), colsMap);
-            this->close();
+            this->deleteLater();
         }
     }
     else

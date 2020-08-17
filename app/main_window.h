@@ -1,6 +1,7 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
+#include <future>
 #include <QDebug>
 #include "file_ops.h"
 #include "save_window.h"
@@ -19,6 +20,7 @@
 #include "load_files_window.h"
 #include "data_file.h"
 #include "data_plot_window.h"
+#include "files_data.h"
 
 namespace Ui{
     class MainWindow;
@@ -35,7 +37,6 @@ Q_OBJECT
 public:
     explicit MainWindow(QWidget *parent=nullptr);
     ~MainWindow();
-    //BasePlot *qplot;
 private slots:
     void onLoadClick();
     void onFilesSpecsInserted(QString, QString, std::map<QString, std::pair<QString, QString>>);
@@ -57,16 +58,11 @@ private:
     void instrWindow();
     void fillList();
     void disableButtons();
+    void updateFilesTable();
+    void clearFilesTable();
 
-    //QPushButton *quitButton = nullptr;
-    //QPushButton *clearButton = nullptr;
-    //QPushButton *loadButton = nullptr;
-    //QPushButton *goButton = nullptr;
-    //QPushButton *saveButton = nullptr;
-    //QLabel *analysisLbl = nullptr;
-    //QComboBox *ddList = nullptr;
     QStringList fileNames;
-    std::map<QString, DataFile*> dataMap = std::map<QString, DataFile*>();
+    FilesData *dataMap = nullptr;
 
     InputsDFA *dfaInptWin = nullptr;
     InputsDCCA *dccaInptWin = nullptr;
