@@ -2,6 +2,8 @@
 #define MAIN_WINDOW_H
 
 #include <future>
+#include <thread>
+#include <chrono>
 #include <QDebug>
 #include "file_ops.h"
 #include "save_window.h"
@@ -40,6 +42,9 @@ public:
 private slots:
     void onLoadClick();
     void onFilesSpecsInserted(QString, QString, std::map<QString, std::pair<QString, QString>>);
+    void afterAllFilesLoaded();
+    void updateFilesTable();
+    void onMapReady();
     void openContextMenu(const QPoint&);
     void singlePlot();
     void onSaveClick();
@@ -51,6 +56,8 @@ private slots:
     void onCloseHTInputWin(HT **ht);
     void enableButtons();
     void onClearClick();
+signals:
+    void allFilesLoaded();
 private:
     void closeEvent(QCloseEvent *event);
     void setDimensions();
@@ -58,7 +65,6 @@ private:
     void instrWindow();
     void fillList();
     void disableButtons();
-    void updateFilesTable();
     void clearFilesTable();
 
     QStringList fileNames;

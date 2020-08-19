@@ -18,6 +18,7 @@ public:
     void updateMap();
     void deleteFromMap();
     void clearMap();
+    QStringList getKeys();
 private:
     std::mutex *dataMutex;
     std::map<QString, DataFile*> dataMap;

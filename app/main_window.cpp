@@ -22,6 +22,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->tableWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(openContextMenu(const QPoint&)));
 
+    connect(this, SIGNAL(allFilesLoaded()), this, SLOT(afterAllFilesLoaded()));
+
     instrWindow();
 
     dataMap = new FilesData();
@@ -82,7 +84,24 @@ void MainWindow::onLoadClick()
     dialog.setNameFilter(dataFilter);
     if(dialog.exec())
         fileNames.append(dialog.selectedFiles());
-    fileNames.removeDuplicates();
+
+    QStringList alreadyLoadedFiles;
+    for(QString f : fileNames)
+    {
+        if(dataMap->getKeys().contains(f))
+            alreadyLoadedFiles.append(f);
+    }
+    for(QString f : alreadyLoadedFiles)
+        fileNames.removeOne(f);
+
+    if(alreadyLoadedFiles.size() > 0)
+    {
+        QString w = "These files have already been loaded and will be ignored, you can modify them from the table.\n -";
+        w.append(alreadyLoadedFiles.join("\n- "));
+        QMessageBox messageBox;
+        messageBox.warning(nullptr, "Warning", w);
+        messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
+    }
 
     if(fileNames.size() > 0)
     {
@@ -99,17 +118,25 @@ void MainWindow::onLoadClick()
 
 void MainWindow::onFilesSpecsInserted(QString del, QString header, std::map<QString, std::pair<QString, QString>> map)
 {
+    ui->statusLabel->setText("Loading files...");
     QApplication::processEvents();
+
     auto dataFuture = std::async(std::launch::async, &FilesData::setDataMap, dataMap, fileNames, del, header, map);
-    dataFuture.get();
+    while(dataFuture.wait_for(std::chrono::milliseconds(100)) != std::future_status::ready)
+        updateFilesTable();
+
     updateFilesTable();
+    onMapReady();
 }
 
 void MainWindow::updateFilesTable()
 {
     clearFilesTable();
 
+    dataMap->lock();
     std::map<QString, DataFile*> mapForTable = dataMap->getDataMap();
+    dataMap->unlock();
+
     for(auto const& [key, val] : mapForTable)
     {
         for(int col : val->getColumns())
@@ -144,6 +171,22 @@ void MainWindow::updateFilesTable()
         }
         ui->tableWidget->update();
     }
+}
+
+void MainWindow::onMapReady()
+{
+    ui->statusLabel->setText("All files loaded");
+
+    std::thread statusThread([this](){
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+        emit allFilesLoaded();
+    });
+    statusThread.detach();
+}
+
+void MainWindow::afterAllFilesLoaded()
+{
+    ui->statusLabel->setText("");
 }
 
 void MainWindow::clearFilesTable()
