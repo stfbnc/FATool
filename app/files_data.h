@@ -16,7 +16,7 @@ public:
     std::map<QString, DataFile*> getDataMap();
     void setDataMap(QStringList fileNames, QString del, QString header, std::map<QString, std::pair<QString, QString>> fileSpecsMap);
     void updateMap();
-    void deleteFromMap();
+    void deleteFromMap(std::vector<std::pair<QString, int>> items);
     void clearMap();
     QStringList getKeys();
 private:

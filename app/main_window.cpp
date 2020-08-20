@@ -123,7 +123,10 @@ void MainWindow::onFilesSpecsInserted(QString del, QString header, std::map<QStr
 
     auto dataFuture = std::async(std::launch::async, &FilesData::setDataMap, dataMap, fileNames, del, header, map);
     while(dataFuture.wait_for(std::chrono::milliseconds(100)) != std::future_status::ready)
+    {
         updateFilesTable();
+        QApplication::processEvents();
+    }
 
     updateFilesTable();
     onMapReady();
@@ -209,9 +212,9 @@ void MainWindow::openContextMenu(const QPoint& pos)
     menu.addAction(&modifyAction);
 
     connect(&singlePlotAction, SIGNAL(triggered()), this, SLOT(singlePlot()));
-    //connect(multiplePlotsAction, SIGNAL(triggered()), this, SLOT());
-    //connect(deleteAction, SIGNAL(triggered()), this, SLOT());
-    //connect(modifyAction, SIGNAL(triggered()), this, SLOT());
+    //connect(&multiplePlotsAction, SIGNAL(triggered()), this, SLOT());
+    connect(&deleteAction, SIGNAL(triggered()), this, SLOT(deleteRows()));
+    connect(&modifyAction, SIGNAL(triggered()), this, SLOT(updateRows()));
 
     menu.exec(mapToGlobal(pos));
 }
@@ -253,6 +256,49 @@ void MainWindow::singlePlot()
     }
 }
 
+void MainWindow::deleteRows()
+{
+    QModelIndexList idxs = ui->tableWidget->selectionModel()->selectedRows(0);
+    std::vector<std::pair<QString, int>> toDelete = std::vector<std::pair<QString, int>>();
+    for(int i = 0; i < int(idxs.size()); i++)
+    {
+        QModelIndex idx = idxs.at(i);
+        QString data = ui->tableWidget->item(idx.row(), 0)->text();
+        int col = ui->tableWidget->item(idx.row(), 1)->text().split("\n").last().split(" ").last().front().digitValue();
+        toDelete.push_back(std::pair<QString, int>(data, col));
+    }
+    dataMap->deleteFromMap(toDelete);
+    updateFilesTable();
+}
+
+void MainWindow::updateRows()
+{
+    QModelIndexList idxs = ui->tableWidget->selectionModel()->selectedRows(0);
+    QStringList files, cols, names, types;
+    for(int i = 0; i < int(idxs.size()); i++)
+    {
+        QModelIndex idx = idxs.at(i);
+        files.append(ui->tableWidget->item(idx.row(), 0)->text());
+        cols.append(QString::number(ui->tableWidget->item(idx.row(), 1)->text().split("\n").last().split(" ").last().front().digitValue()));
+        names.append(ui->tableWidget->item(idx.row(), 1)->text().split("\n").last().split("(").first().trimmed());
+        types.append(ui->tableWidget->item(idx.row(), 2)->text().split("\n").last());
+    }
+    UpdateTableWidget *w = new UpdateTableWidget(files, cols, names, types, "Modify records");
+    connect(w, SIGNAL(newTableValues(QStringList, QStringList, QStringList, QStringList)),
+            this, SLOT(onTableModified(QStringList, QStringList, QStringList, QStringList)));
+    w->show();
+}
+
+void MainWindow::onTableModified(QStringList f, QStringList c, QStringList n, QStringList t)
+{
+    for(int i = 0; i < int(f.size()); i++)
+    {
+        dataMap->getDataMap().at(f.at(i))->setNameOfColumn(c.at(i).toInt(), n.at(i));
+        dataMap->getDataMap().at(f.at(i))->setTypeOfColumn(c.at(i).toInt(), t.at(i));
+    }
+    updateFilesTable();
+}
+
 void MainWindow::onSaveClick()
 {
     /*if(qplot->graphCount() > 0){
@@ -269,7 +315,6 @@ void MainWindow::disableButtons()
 {
     ui->loadButton->setEnabled(false);
     ui->goButton->setEnabled(false);
-    //ui->saveButton->setEnabled(false);
     ui->ddList->setEnabled(false);
     ui->clearButton->setEnabled(false);
 }
@@ -278,7 +323,6 @@ void MainWindow::enableButtons()
 {
     ui->loadButton->setEnabled(true);
     ui->goButton->setEnabled(true);
-    //ui->saveButton->setEnabled(true);
     ui->ddList->setEnabled(true);
     ui->clearButton->setEnabled(true);
 }
@@ -286,7 +330,7 @@ void MainWindow::enableButtons()
 void MainWindow::onGoClick()
 {
     QString analysisType = ui->ddList->currentText();
-    if(analysisType != "-"){// && qplot->graphCount() > 0){
+    if(analysisType != "-"){
         if((analysisType == strDCCA || analysisType == strRHODCCA) && fileNames.size() < 2){
             QMessageBox messageBox;
             QString errToShow = "This type of analysis requires\nat least two data files";
@@ -410,11 +454,6 @@ void MainWindow::onCloseHTInputWin(HT **ht)
 
 void MainWindow::onClearClick()
 {
-    /*if(qplot->graphCount() > 0){
-        fileNames.clear();
-        qplot->legend->setVisible(false);
-        qplot->legend->clearItems();
-        qplot->clearGraphs();
-        qplot->replot();
-    }*/
+    clearFilesTable();
+    dataMap->clearMap();
 }

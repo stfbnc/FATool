@@ -22,6 +22,7 @@ public:
     void setNameOfColumn(int col, QString colName);
     QString getTypeOfColumn(int col);
     void setTypeOfColumn(int col, QString typeName);
+    void removeColumn(int col);
     void setData();
     void setNamesAndTypes(std::map<QString, std::pair<QString, QString>> map);
     int getXAxisColumn();

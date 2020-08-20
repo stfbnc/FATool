@@ -26,8 +26,10 @@ protected:
     QPushButton* addThirdButton(QString text);
     QCheckBox* addBottomCheckbox(QString text, bool isBold=false);
     void addLabel(QString text, bool isBold=false);
-    QList<QLineEdit *> addLabeledLineEdit(QStringList text, bool isSmall=true, bool isBold=false);
+    QList<QLineEdit *> addLabeledLineEdits(QStringList text, bool isSmall=true, bool isBold=false);
+    QLineEdit* addLabeledLineEdit(QString text, bool isSmall=true, bool isBold=false);
     QCheckBox* addCheckbox(QString text="", bool isBold=false);
+    QComboBox* addComboBox(QStringList list, QString text="", bool isBold=false);
 private:
     void setDimension();
 

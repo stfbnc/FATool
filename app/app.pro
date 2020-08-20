@@ -13,6 +13,7 @@ macx: {
 }
 
 QT = core gui
+CONFIG += c++17
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
@@ -54,7 +55,8 @@ SOURCES +=  \
     MFDFA_single_q.cpp \
     HT.cpp \
     HT_single_scale.cpp \
-    legend_position_window.cpp
+    legend_position_window.cpp \
+    update_table_widget.cpp
 
 HEADERS += \
     abstract_inputs_window.h \
@@ -95,7 +97,8 @@ HEADERS += \
     MFDFA_single_q.h \
     HT.h \
     HT_single_scale.h \
-    legend_position_window.h
+    legend_position_window.h \
+    update_table_widget.h
 
 DISTFILES += \
     prefs.txt
@@ -104,4 +107,5 @@ FORMS += \
     abstract_inputs_window.ui \
     load_files.ui \
     main_window.ui \
-    plot_window.ui
+    plot_window.ui \
+    update_table_window.ui

@@ -7,6 +7,7 @@ AbstractInputsWindow::AbstractInputsWindow(QString title, QWidget *parent) :
 {
     ui->setupUi(this);
     this->setAttribute(Qt::WA_DeleteOnClose);
+    setFixedSize(this->width(), this->height());
     setWindowTitle(title);
 
     connect(ui->okButton, SIGNAL(clicked()), this, SLOT(onOkClick()));
@@ -27,7 +28,7 @@ AbstractInputsWindow::AbstractInputsWindow(QString title, QWidget *parent) :
     ui->thirdButton->hide();
     ui->allCheckBox->hide();
 
-    addWidgets();
+    //addWidgets();
     setDimension();
 }
 
@@ -75,7 +76,7 @@ void AbstractInputsWindow::onThirdButtonClick(){}
 
 void AbstractInputsWindow::addWidgets()
 {
-    for(int i = 0; i < 6; i++){
+    /*for(int i = 0; i < 6; i++){
         addLabel("File_" + QString::number(i) + ".txt", true);
 
         QStringList winSizesText {"Windows from", "to", "every"};
@@ -88,7 +89,7 @@ void AbstractInputsWindow::addWidgets()
     }
 
     QCheckBox *bottomCb = addBottomCheckbox("Copy to all");
-    QPushButton* btn = addThirdButton("Apply");
+    QPushButton* btn = addThirdButton("Apply");*/
 }
 
 QPushButton* AbstractInputsWindow::getOkButton()
@@ -130,7 +131,7 @@ void AbstractInputsWindow::addLabel(QString text, bool isBold)
     vLayout->addWidget(label);
 }
 
-QList<QLineEdit *> AbstractInputsWindow::addLabeledLineEdit(QStringList text, bool isSmall, bool isBold)
+QList<QLineEdit *> AbstractInputsWindow::addLabeledLineEdits(QStringList text, bool isSmall, bool isBold)
 {
     QWidget *widget = new QWidget();
     widget->setContentsMargins(0, 0, 0, 0);
@@ -166,6 +167,37 @@ QList<QLineEdit *> AbstractInputsWindow::addLabeledLineEdit(QStringList text, bo
     return lineEdits;
 }
 
+QLineEdit* AbstractInputsWindow::addLabeledLineEdit(QString text, bool isSmall, bool isBold)
+{
+    QWidget *widget = new QWidget();
+    widget->setContentsMargins(0, 0, 0, 0);
+    QHBoxLayout *hl = new QHBoxLayout(widget);
+    hl->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    hl->setContentsMargins(10, 0, 0, 0);
+
+    QLabel *label = new QLabel(text);
+    int w = label->fontMetrics().boundingRect(label->text()).width() + 10;
+    if(isBold)
+        label->setStyleSheet("font-weight: bold");
+    label->setFixedSize(w, widgetHeight);
+    label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    label->setContentsMargins(0, 0, 0, 0);
+    hl->addWidget(label);
+
+    QLineEdit *lineEdit = new QLineEdit();
+    if(isSmall)
+        lineEdit->setFixedSize(2*widgetHeight, widgetHeight);
+    else
+        lineEdit->setFixedSize(6*widgetHeight, widgetHeight);
+    lineEdit->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    lineEdit->setContentsMargins(0, 0, 0, 0);
+    hl->addWidget(lineEdit);
+
+    vLayout->addWidget(widget);
+
+    return lineEdit;
+}
+
 QCheckBox* AbstractInputsWindow::addCheckbox(QString text, bool isBold)
 {
     QWidget *widget = new QWidget();
@@ -179,6 +211,33 @@ QCheckBox* AbstractInputsWindow::addCheckbox(QString text, bool isBold)
         cb->setStyleSheet("font-weight: bold");
     if(text != "")
         cb->setText(text);
+    cb->setContentsMargins(10, 0, 0, 0);
+    hl->addWidget(cb);
+
+    vLayout->addWidget(widget);
+
+    return cb;
+}
+
+QComboBox* AbstractInputsWindow::addComboBox(QStringList list, QString text, bool isBold)
+{
+    QWidget *widget = new QWidget();
+    widget->setContentsMargins(0, 0, 0, 0);
+    QHBoxLayout *hl = new QHBoxLayout(widget);
+    hl->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    hl->setContentsMargins(10, 0, 0, 0);
+
+    QLabel *label = new QLabel(text);
+    int w = label->fontMetrics().boundingRect(label->text()).width() + 10;
+    if(isBold)
+        label->setStyleSheet("font-weight: bold");
+    label->setFixedSize(w, widgetHeight);
+    label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    label->setContentsMargins(0, 0, 0, 0);
+    hl->addWidget(label);
+
+    QComboBox *cb = new QComboBox();
+    cb->addItems(list);
     cb->setContentsMargins(10, 0, 0, 0);
     hl->addWidget(cb);
 

@@ -82,6 +82,14 @@ void DataFile::setTypeOfColumn(int col, QString typeName)
     typesMap.at(col) = typeName;
 }
 
+void DataFile::removeColumn(int col)
+{
+    fileMap.erase(fileMap.find(col));
+    namesMap.erase(namesMap.find(col));
+    typesMap.erase(typesMap.find(col));
+    columns.removeOne(QString::number(col));
+}
+
 void DataFile::setData()
 {
     QFile inputFile(this->name);
@@ -128,9 +136,9 @@ void DataFile::setData()
         {
             if(!realColumns.contains(c))
             {
-                fileMap.erase(c.toInt());
-                namesMap.erase(c.toInt());
-                typesMap.erase(c.toInt());
+                fileMap.erase(fileMap.find(c.toInt()));
+                namesMap.erase(namesMap.find(c.toInt()));
+                typesMap.erase(typesMap.find(c.toInt()));
                 columns.removeOne(c);
             }
             if(!columns.contains(QString::number(xCol)))

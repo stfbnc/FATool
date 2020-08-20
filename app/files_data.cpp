@@ -67,3 +67,24 @@ QStringList FilesData::getKeys()
 
     return keyList;
 }
+
+void FilesData::deleteFromMap(std::vector<std::pair<QString, int> > items)
+{
+    for(int i = 0; i < int(items.size()); i++)
+    {
+        DataFile *df = dataMap.at(items.at(i).first);
+        df->removeColumn(items.at(i).second);
+        if(df->getColumns().size() == 0)
+        {
+            delete df;
+            dataMap.erase(dataMap.find(items.at(i).first));
+        }
+    }
+}
+
+void FilesData::clearMap()
+{
+    for(auto const& [key, val] : dataMap)
+        delete dataMap.at(key);
+    dataMap.clear();
+}

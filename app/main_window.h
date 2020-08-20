@@ -23,6 +23,7 @@
 #include "data_file.h"
 #include "data_plot_window.h"
 #include "files_data.h"
+#include "update_table_widget.h"
 
 namespace Ui{
     class MainWindow;
@@ -47,6 +48,9 @@ private slots:
     void onMapReady();
     void openContextMenu(const QPoint&);
     void singlePlot();
+    void deleteRows();
+    void updateRows();
+    void onTableModified(QStringList, QStringList, QStringList, QStringList);
     void onSaveClick();
     void onGoClick();
     void onCloseDFAInputWin(DFA **dfa);

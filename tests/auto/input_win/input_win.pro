@@ -16,6 +16,7 @@ macx: {
 }
 
 QT = core testlib
+CONFIG += c++17
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
@@ -58,6 +59,7 @@ SOURCES +=  \
     $$APPDIR/data_file.cpp \
     $$APPDIR/data_plot_window.cpp \
     $$APPDIR/files_data.cpp \
+    $$APPDIR/update_table_widget.cpp \
     TestInputWin.cpp
 
 HEADERS += \
@@ -100,7 +102,8 @@ HEADERS += \
     $$APPDIR/load_files_window.h \
     $$APPDIR/data_file.h \
     $$APPDIR/data_plot_window.h \
-    $$APPDIR/files_data.h
+    $$APPDIR/files_data.h \
+    $$APPDIR/update_table_widget.h
 
 FORMS += \
     $$APPDIR/abstract_inputs_window.ui \
