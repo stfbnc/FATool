@@ -9,6 +9,7 @@ UpdateTableWidget::UpdateTableWidget(QStringList files, QStringList cols, QStrin
     this->oldTypes = types;
 
     addWidgets();
+    //setDimension();
 }
 
 UpdateTableWidget::~UpdateTableWidget(){}
@@ -24,7 +25,7 @@ void UpdateTableWidget::onOkClick()
     if(!checkInputs())
     {
         QMessageBox messageBox;
-        QString errToShow = "There can only be one column representing a x-axis vector, or there cannot be series and fluctuations columns in the same file.";
+        QString errToShow = "There cannot be series and fluctuations columns in the same file.";
         messageBox.critical(nullptr, "Error", errToShow);
         messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
     }
@@ -41,8 +42,8 @@ void UpdateTableWidget::addWidgets()
     for(int i = 0; i < int(files.size()); i++)
     {
         addLabel(files.at(i) + " (column " + cols.at(i) + ")", true);
-        inputNames.append(addLabeledLineEdit({"Name: "}));
-        inputTypes.append(addComboBox({yVec, flucVec}));
+        inputNames.append(addLabeledLineEdit({"Name: "}, false));
+        inputTypes.append(addComboBox({yVec, flucVec}, "Type: "));
     }
 }
 

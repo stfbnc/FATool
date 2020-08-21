@@ -107,5 +107,4 @@ FORMS += \
     abstract_inputs_window.ui \
     load_files.ui \
     main_window.ui \
-    plot_window.ui \
-    update_table_window.ui
+    plot_window.ui

@@ -21,6 +21,7 @@ protected slots:
     virtual void onBottomCheck();
 protected:
     virtual void addWidgets();
+    void setDimension();
     QPushButton* getOkButton();
     QPushButton* getCancelButton();
     QPushButton* addThirdButton(QString text);
@@ -30,10 +31,9 @@ protected:
     QLineEdit* addLabeledLineEdit(QString text, bool isSmall=true, bool isBold=false);
     QCheckBox* addCheckbox(QString text="", bool isBold=false);
     QComboBox* addComboBox(QStringList list, QString text="", bool isBold=false);
-private:
-    void setDimension();
 
     Ui::AbstractInputsWindow *ui;
+private:
     QWidget *mainWidget = nullptr;
     QVBoxLayout *vLayout = nullptr;
 

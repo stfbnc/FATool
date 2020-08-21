@@ -27,9 +27,6 @@ AbstractInputsWindow::AbstractInputsWindow(QString title, QWidget *parent) :
 
     ui->thirdButton->hide();
     ui->allCheckBox->hide();
-
-    //addWidgets();
-    setDimension();
 }
 
 AbstractInputsWindow::~AbstractInputsWindow()
@@ -48,12 +45,12 @@ void AbstractInputsWindow::setDimension()
         ui->scrollArea->resize(ui->scrollArea->width(), hTot);
         mainWidget->resize(mainWidget->width(), hTot);
 
-        ui->okButton->setGeometry(ui->okButton->x(), mainWidget->height()+10,
+        /*ui->okButton->setGeometry(ui->okButton->x(), mainWidget->height()+10,
                                   ui->okButton->width(), ui->okButton->height());
         ui->cancelButton->setGeometry(ui->cancelButton->x(), mainWidget->height()+10,
                                       ui->cancelButton->width(), ui->cancelButton->height());
         ui->allCheckBox->setGeometry(ui->allCheckBox->x(), mainWidget->height()+10,
-                                     ui->allCheckBox->width(), ui->allCheckBox->height());
+                                     ui->allCheckBox->width(), ui->allCheckBox->height());*/
 
         int newHeight = mainWidget->height() + 10 + ui->okButton->height();
         this->setFixedSize(this->width(), newHeight);
@@ -74,23 +71,7 @@ void AbstractInputsWindow::onBottomCheck(){}
 
 void AbstractInputsWindow::onThirdButtonClick(){}
 
-void AbstractInputsWindow::addWidgets()
-{
-    /*for(int i = 0; i < 6; i++){
-        addLabel("File_" + QString::number(i) + ".txt", true);
-
-        QStringList winSizesText {"Windows from", "to", "every"};
-        QList<QLineEdit *> winSizes = addLabeledLineEdit(winSizesText);
-
-        QStringList polyText {"Polynomial order"};
-        QList<QLineEdit *> polyOrder = addLabeledLineEdit(polyText);
-
-        QCheckBox *backComputation = addCheckbox("Backward computation");
-    }
-
-    QCheckBox *bottomCb = addBottomCheckbox("Copy to all");
-    QPushButton* btn = addThirdButton("Apply");*/
-}
+void AbstractInputsWindow::addWidgets(){}
 
 QPushButton* AbstractInputsWindow::getOkButton()
 {
@@ -126,7 +107,7 @@ void AbstractInputsWindow::addLabel(QString text, bool isBold)
     int w = label->fontMetrics().boundingRect(label->text()).width() + 10;
     if(isBold)
         label->setStyleSheet("font-weight: bold");
-    label->setGeometry(0, 0, w, widgetHeight);
+    label->setWordWrap(true);
     label->setContentsMargins(0, 0, 0, 0);
     vLayout->addWidget(label);
 }
@@ -176,19 +157,18 @@ QLineEdit* AbstractInputsWindow::addLabeledLineEdit(QString text, bool isSmall, 
     hl->setContentsMargins(10, 0, 0, 0);
 
     QLabel *label = new QLabel(text);
-    int w = label->fontMetrics().boundingRect(label->text()).width() + 10;
+    //int w = label->fontMetrics().boundingRect(label->text()).width() + 10;
     if(isBold)
         label->setStyleSheet("font-weight: bold");
-    label->setFixedSize(w, widgetHeight);
     label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     label->setContentsMargins(0, 0, 0, 0);
     hl->addWidget(label);
 
     QLineEdit *lineEdit = new QLineEdit();
-    if(isSmall)
-        lineEdit->setFixedSize(2*widgetHeight, widgetHeight);
-    else
-        lineEdit->setFixedSize(6*widgetHeight, widgetHeight);
+    //if(isSmall)
+    //    lineEdit->setFixedWidth(2*widgetHeight);
+    //else
+    //    lineEdit->setFixedSize(6*widgetHeight, widgetHeight);
     lineEdit->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     lineEdit->setContentsMargins(0, 0, 0, 0);
     hl->addWidget(lineEdit);
@@ -228,10 +208,10 @@ QComboBox* AbstractInputsWindow::addComboBox(QStringList list, QString text, boo
     hl->setContentsMargins(10, 0, 0, 0);
 
     QLabel *label = new QLabel(text);
-    int w = label->fontMetrics().boundingRect(label->text()).width() + 10;
+    //int w = label->fontMetrics().boundingRect(label->text()).width() + 10;
     if(isBold)
         label->setStyleSheet("font-weight: bold");
-    label->setFixedSize(w, widgetHeight);
+    //label->setFixedSize(w, widgetHeight);
     label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     label->setContentsMargins(0, 0, 0, 0);
     hl->addWidget(label);
