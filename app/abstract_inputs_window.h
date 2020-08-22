@@ -2,7 +2,7 @@
 #define ABSTRACT_INPUTS_WINDOW_H
 
 #include <QtWidgets>
-#include "constants.h"
+//#include "constants.h"
 
 namespace Ui{
     class AbstractInputsWindow;
@@ -28,7 +28,7 @@ protected:
     QCheckBox* addBottomCheckbox(QString text, bool isBold=false);
     void addLabel(QString text, bool isBold=false);
     QList<QLineEdit *> addLabeledLineEdits(QStringList text, bool isSmall=true, bool isBold=false);
-    QLineEdit* addLabeledLineEdit(QString text, bool isSmall=true, bool isBold=false);
+    QLineEdit* addLabeledLineEdit(QString text, bool isBold=false);
     QCheckBox* addCheckbox(QString text="", bool isBold=false);
     QComboBox* addComboBox(QStringList list, QString text="", bool isBold=false);
 
@@ -37,7 +37,7 @@ private:
     QWidget *mainWidget = nullptr;
     QVBoxLayout *vLayout = nullptr;
 
-    const int widgetHeight = 20;
+    //const int widgetHeight = 20;
 };
 
 #endif // ABSTRACT_INPUTS_WINDOW_H

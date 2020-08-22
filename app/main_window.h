@@ -48,10 +48,10 @@ private slots:
     void onMapReady();
     void openContextMenu(const QPoint&);
     void singlePlot();
+    void multiplePlots();
     void deleteRows();
     void updateRows();
-    void onTableModified(QStringList, QStringList, QStringList, QStringList);
-    void onSaveClick();
+    void onTableModified(QStringList, QStringList, QStringList);
     void onGoClick();
     void onCloseDFAInputWin(DFA **dfa);
     void onCloseDCCAInputWin(DCCA **dcca);
@@ -64,8 +64,6 @@ signals:
     void allFilesLoaded();
 private:
     void closeEvent(QCloseEvent *event);
-    void setDimensions();
-    void initializeParamHash();
     void instrWindow();
     void fillList();
     void disableButtons();
@@ -79,17 +77,9 @@ private:
     InputsMFDFA *mfdfaInptWin = nullptr;
     InputsrhoDCCA *rhodccaInptWin = nullptr;
     InputsHT *htInptWin = nullptr;
-    SaveWindow *saveWin = nullptr;
     StartingWindow *startWin = nullptr;
 
     Ui::MainWindow *ui;
-
-    int xDim;
-    int yDim;
-    int xWidth;
-    int yHeight;
-    int padX;
-    int padY;
 };
 
 #endif // MAIN_WINDOW_H

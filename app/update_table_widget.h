@@ -8,24 +8,20 @@ class UpdateTableWidget : public AbstractInputsWindow
 {
 Q_OBJECT
 public:
-    explicit UpdateTableWidget(QStringList files, QStringList cols, QStringList names, QStringList types, QString title="", QWidget *parent=nullptr);
+    explicit UpdateTableWidget(QStringList files, QStringList cols, QStringList names, QString title="", QWidget *parent=nullptr);
     virtual ~UpdateTableWidget();
 private slots:
     void onOkClick() override;
 signals:
-    void newTableValues(QStringList, QStringList, QStringList, QStringList);
+    void newTableValues(QStringList, QStringList, QStringList);
 private:
     void addWidgets() override;
-    bool checkInputs();
 
     QList<QLineEdit *> inputNames;
-    QList<QComboBox *> inputTypes;
     QStringList files;
     QStringList cols;
     QStringList oldNames;
-    QStringList oldTypes;
     QStringList newNames;
-    QStringList newTypes;
 };
 
 #endif // UPDATE_TABLE_WIDGET_H

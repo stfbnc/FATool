@@ -41,16 +41,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
         QApplication::quit();
 }
 
-void MainWindow::setDimensions()
-{
-    xDim = 800;
-    yDim = 500;
-    xWidth = 110;
-    yHeight = 30;
-    padX = 10;
-    padY = 10;
-}
-
 void MainWindow::instrWindow()
 {
     QFile f(prefsFile);
@@ -212,7 +202,7 @@ void MainWindow::openContextMenu(const QPoint& pos)
     menu.addAction(&modifyAction);
 
     connect(&singlePlotAction, SIGNAL(triggered()), this, SLOT(singlePlot()));
-    //connect(&multiplePlotsAction, SIGNAL(triggered()), this, SLOT());
+    connect(&multiplePlotsAction, SIGNAL(triggered()), this, SLOT(multiplePlots()));
     connect(&deleteAction, SIGNAL(triggered()), this, SLOT(deleteRows()));
     connect(&modifyAction, SIGNAL(triggered()), this, SLOT(updateRows()));
 
@@ -221,6 +211,8 @@ void MainWindow::openContextMenu(const QPoint& pos)
 
 void MainWindow::singlePlot()
 {
+    QApplication::processEvents();
+
     QModelIndexList idxs = ui->tableWidget->selectionModel()->selectedRows(0);
     QStringList types;
     std::vector<int> cols(idxs.size());
@@ -256,6 +248,32 @@ void MainWindow::singlePlot()
     }
 }
 
+void MainWindow::multiplePlots()
+{
+    QApplication::processEvents();
+
+    QModelIndexList idxs = ui->tableWidget->selectionModel()->selectedRows(0);
+
+    for(int i = 0; i < int(idxs.size()); i++)
+    {
+        QModelIndex idx = idxs.at(i);
+        DataFile *data = dataMap->getDataMap().at(ui->tableWidget->item(idx.row(), 0)->text());
+        int col = ui->tableWidget->item(idx.row(), 1)->text().split("\n").last().split(" ").last().front().digitValue();
+        QString type = ui->tableWidget->item(idx.row(), 2)->text().split("\n").last();
+
+        if(type == yVec)
+        {
+            DataPlotWindow *plot = new DataPlotWindow(std::vector<DataFile*> {data}, std::vector<int> {col});
+            plot->show();
+        }
+        else if(type == flucVec)
+        {
+            // TODO: altra finestra con più opzioni se voglio modificare i fit, fit multipli,
+            // scale log (anche su più fluttuazioni nello stesso grafico)
+        }
+    }
+}
+
 void MainWindow::deleteRows()
 {
     QModelIndexList idxs = ui->tableWidget->selectionModel()->selectedRows(0);
@@ -274,41 +292,26 @@ void MainWindow::deleteRows()
 void MainWindow::updateRows()
 {
     QModelIndexList idxs = ui->tableWidget->selectionModel()->selectedRows(0);
-    QStringList files, cols, names, types;
+    QStringList files, cols, names;
     for(int i = 0; i < int(idxs.size()); i++)
     {
         QModelIndex idx = idxs.at(i);
         files.append(ui->tableWidget->item(idx.row(), 0)->text());
         cols.append(QString::number(ui->tableWidget->item(idx.row(), 1)->text().split("\n").last().split(" ").last().front().digitValue()));
         names.append(ui->tableWidget->item(idx.row(), 1)->text().split("\n").last().split("(").first().trimmed());
-        types.append(ui->tableWidget->item(idx.row(), 2)->text().split("\n").last());
     }
-    UpdateTableWidget *w = new UpdateTableWidget(files, cols, names, types, "Modify records");
-    connect(w, SIGNAL(newTableValues(QStringList, QStringList, QStringList, QStringList)),
-            this, SLOT(onTableModified(QStringList, QStringList, QStringList, QStringList)));
+    UpdateTableWidget *w = new UpdateTableWidget(files, cols, names, "Modify records");
+    connect(w, SIGNAL(newTableValues(QStringList, QStringList, QStringList)),
+            this, SLOT(onTableModified(QStringList, QStringList, QStringList)));
     w->show();
 }
 
-void MainWindow::onTableModified(QStringList f, QStringList c, QStringList n, QStringList t)
+void MainWindow::onTableModified(QStringList f, QStringList c, QStringList n)
 {
     for(int i = 0; i < int(f.size()); i++)
-    {
         dataMap->getDataMap().at(f.at(i))->setNameOfColumn(c.at(i).toInt(), n.at(i));
-        dataMap->getDataMap().at(f.at(i))->setTypeOfColumn(c.at(i).toInt(), t.at(i));
-    }
-    updateFilesTable();
-}
 
-void MainWindow::onSaveClick()
-{
-    /*if(qplot->graphCount() > 0){
-        disableButtons();
-        saveWin = new SaveWindow(qplot);
-        saveWin->setAttribute(Qt::WA_DeleteOnClose);
-        saveWin->setWindowModality(Qt::ApplicationModal);
-        saveWin->show();
-        connect(saveWin, SIGNAL(destroyed()), this, SLOT(enableButtons()));
-    }*/
+    updateFilesTable();
 }
 
 void MainWindow::disableButtons()

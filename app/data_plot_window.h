@@ -3,6 +3,7 @@
 
 #include "plot_window.h"
 #include "data_file.h"
+#include "future"
 
 class DataPlotWindow : public PlotWindow
 {
