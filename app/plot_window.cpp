@@ -118,21 +118,14 @@ void PlotWindow::onMassExponentsClick(){}
 
 void PlotWindow::onFitLogClick()
 {
-    logWin = new LogWindow(fitLog, fileName, fileName2);
-    logWin->setAttribute(Qt::WA_DeleteOnClose);
+    LogWindow *logWin = new LogWindow(fitLog, fileName, fileName2);
     logWin->show();
-    disableButtons();
-    connect(logWin, SIGNAL(destroyed()), this, SLOT(enableButtons()));
 }
 
 void PlotWindow::onMoveLegendClick()
 {
-    moveLegendWin = new MoveLegendWindow(plt);
-    moveLegendWin->setAttribute(Qt::WA_DeleteOnClose);
-    moveLegendWin->setWindowModality(Qt::ApplicationModal);
+    MoveLegendWindow *moveLegendWin = new MoveLegendWindow(plt);
     moveLegendWin->show();
-    disableButtons();
-    connect(moveLegendWin, SIGNAL(destroyed()), this, SLOT(enableButtons()));
 }
 
 void PlotWindow::onIsLegendCheck()
@@ -146,13 +139,9 @@ void PlotWindow::onIsLegendCheck()
 
 void PlotWindow::onRefitClick()
 {
-    refitWin = new RefitWindow();
-    refitWin->setAttribute(Qt::WA_DeleteOnClose);
-    refitWin->setWindowModality(Qt::ApplicationModal);
+    RefitWindow *refitWin = new RefitWindow();
     refitWin->show();
-    disableButtons();
     connect(refitWin, SIGNAL(inputsInserted(int, int, int, int)), this, SLOT(newFitPlot(int, int, int, int)));
-    connect(refitWin, SIGNAL(destroyed()), this, SLOT(enableButtons()));
 }
 
 void PlotWindow::newFitPlot(int start, int end, int keep, int clear)

@@ -6,8 +6,8 @@
 class rhoDCCA
 {
 public:
-    rhoDCCA(std::string fileName, std::vector<double> ts, int tsLen, std::string fileName2, std::vector<double> ts2, int tsLen2, int minWin, int maxWin, int ord, int winStep=1, bool thresh=false);
-	~rhoDCCA();
+    explicit rhoDCCA(std::string fileName, std::vector<double> ts, int tsLen, std::string fileName2, std::vector<double> ts2, int tsLen2, int minWin, int maxWin, int ord, int winStep=1, bool thresh=false);
+    virtual ~rhoDCCA();
     bool computeRho();
     void computeThresholds();
     void confLevels(std::vector<double> rhos);

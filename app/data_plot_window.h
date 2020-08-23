@@ -10,9 +10,7 @@ class DataPlotWindow : public PlotWindow
 Q_OBJECT
 public:
     explicit DataPlotWindow(std::vector<DataFile*> dataFile, std::vector<int> cols, QWidget *parent=nullptr);
-    ~DataPlotWindow();
-//private slots:
-//    void onSaveTxtClick() override;
+    virtual ~DataPlotWindow();
 private:
     void plotData() override;
 

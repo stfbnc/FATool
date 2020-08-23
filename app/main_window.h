@@ -24,6 +24,7 @@
 #include "data_plot_window.h"
 #include "files_data.h"
 #include "update_table_widget.h"
+#include "log_window.h"
 
 namespace Ui{
     class MainWindow;
@@ -39,7 +40,7 @@ Q_OBJECT
     friend class TestWinDim;
 public:
     explicit MainWindow(QWidget *parent=nullptr);
-    ~MainWindow();
+    virtual ~MainWindow();
 private slots:
     void onLoadClick();
     void onFilesSpecsInserted(QString, QString, std::map<QString, std::pair<QString, QString>>);

@@ -10,7 +10,7 @@ class InputsrhoDCCA : public InputsWindow
 Q_OBJECT
 public:
     explicit InputsrhoDCCA(QStringList fileNames_, QWidget *parent=nullptr);
-    ~InputsrhoDCCA();
+    virtual ~InputsrhoDCCA();
 signals:
     void rhodccaInputsInserted(rhoDCCA **rhodcca);
 private slots:

@@ -8,7 +8,7 @@ class StartingWindow
 {
 public:
     explicit StartingWindow();
-    ~StartingWindow();
+    virtual ~StartingWindow();
 private:
     QString getInstrText();
     void onOKClick();

@@ -33,29 +33,10 @@ void FilesData::setDataMap(QStringList fileNames, QString del, QString header, s
 {
     for(int i = 0; i < int(fileNames.size()); i++)
     {
-        /*if(dataMap.find(fileNames.at(i)) != dataMap.end())
-        {
-            DataFile *df = dataMap.at(fileNames.at(i));
-            for(auto const& [key, val] : fileSpecsMap)
-            {
-                if(std::find(df->getColumns().begin(), df->getColumns().end(), key.toInt()) != df->getColumns().end())
-                {
-                    df->setNameOfColumn(key.toInt(), val.first);
-                    df->setTypeOfColumn(key.toInt(), val.second);
-                }
-                else
-                {
-
-                }
-            }
-        }
-        else
-        {*/
         DataFile *df = new DataFile(fileNames.at(i), del, header.toInt());
         df->setNamesAndTypes(fileSpecsMap);
         df->setData();
         dataMap.emplace(fileNames.at(i), df);
-        //}
     }
 }
 

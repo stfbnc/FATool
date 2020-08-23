@@ -14,54 +14,6 @@ std::vector<double> DataFile::getDataOfColumn(int col)
     return fileMap.at(col);
 }
 
-void DataFile::setDataOfColumn(int col)
-{
-    /*QFile inputFile(this->name);
-    if(inputFile.open(QIODevice::ReadOnly))
-    {
-        QTextStream in(&inputFile);
-        int headCount = 0;
-        fileMap.erase(fileMap.find(col));
-
-        while (!in.atEnd())
-        {
-            headCount++;
-            if(headCount > this->headers)
-            {
-                if(!this->del.isEmpty())
-                {
-                    QStringList elems = in.readLine().split(QRegularExpression(this->del));
-                    fileMap.at(col).push_back(elems.at(col - 1).toDouble());
-                }
-                else
-                {
-                    QString elems = in.readLine();
-                    if(columns.contains(QString::number(1)))
-                    {
-                        fileMap.at(1).push_back(elems.toDouble());
-                        realColumns.append(QString::number(1));
-                    }
-                }
-                N++;
-            }
-        }
-        inputFile.close();
-
-        for(QString c : columns)
-        {
-            if(!realColumns.contains(c))
-            {
-                fileMap.erase(c.toInt());
-                namesMap.erase(c.toInt());
-                typesMap.erase(c.toInt());
-                columns.removeOne(c);
-            }
-            if(!columns.contains(QString::number(xCol)))
-                xCol = 0;
-        }
-    }*/
-}
-
 QString DataFile::getNameOfColumn(int col)
 {
     return namesMap.at(col);

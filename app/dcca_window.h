@@ -9,7 +9,7 @@ class DCCAWindow : public PlotWindow
 Q_OBJECT
 public:
     explicit DCCAWindow(DCCA *dcca_, QWidget *parent=nullptr);
-    ~DCCAWindow();
+    virtual ~DCCAWindow();
 private slots:
     void onSaveTxtClick() override;
 private:

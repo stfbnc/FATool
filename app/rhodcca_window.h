@@ -9,7 +9,7 @@ class rhoDCCAWindow : public PlotWindow
 Q_OBJECT
 public:
     explicit rhoDCCAWindow(rhoDCCA *rhodcca_, QWidget *parent=nullptr);
-    ~rhoDCCAWindow();
+    virtual ~rhoDCCAWindow();
 private slots:
     void onSaveTxtClick() override;
 private:

@@ -1,107 +1,147 @@
 #include "legend_position_window.h"
+#include "ui_move_legend_window.h"
 
-MoveLegendWindow::MoveLegendWindow(QCustomPlot *plt, QWidget *parent) : QWidget(parent)
+MoveLegendWindow::MoveLegendWindow(QCustomPlot *plt, QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::MoveLegendWindow)
 {
-    //set dimensions
-    setDimensions();
-    //set title
+    ui->setupUi(this);
+    this->setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle("Legend position");
-    //win size
-    setFixedSize(xDim, yDim);
-    //apply button
-    applyButton = new QPushButton("Apply", this);
-    applyButton->setGeometry(xDim-padX-xWidth*6, yDim-yHeight-padY, xWidth*3, yHeight);
-    applyButton->setEnabled(false);
-    connect(applyButton, &QPushButton::clicked, [=](){this->refreshLegend(plt);});
-    //close button
-    closeButton = new QPushButton("Close", this);
-    closeButton->setGeometry(xDim-padX*3/2-xWidth*9, yDim-yHeight-padY, xWidth*3, yHeight);
-    connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
-    //checkboxes
-    numCbs = 5;
-    cbSelected = -1;
-    labels.append({"Top left", "Top right", "Bottom left", "Bottom right", "Coordinates (comma-separated)"});
-    cbs = new QCheckBox* [numCbs];
-    for(int i = 0; i < numCbs; i++){
-        cbs[i] = new QCheckBox(labels[i], this);
-        cbs[i]->setGeometry(padX, padY+yHeight*i, xWidth*8, yHeight);
-        connect(cbs[i], &QCheckBox::clicked, [=](){this->onCheckBoxClick(i);});
-    }
-    coordTxt = new QLineEdit(this);
-    coordTxt->setGeometry(padX+xWidth*8, padY+yHeight*4, xWidth*3, yHeight);
-    coordTxt->setEnabled(false);
+    this->setFixedSize(this->width(), this->height());
+
+    connect(ui->applyButton, &QPushButton::clicked, [=](){this->refreshLegend(plt);});
+    connect(ui->closeButton, SIGNAL(clicked()), this, SLOT(close()));
+    connect(ui->tlCb, SIGNAL(clicked()), this, SLOT(onTopLeftCheckboxClick()));
+    connect(ui->trCb, SIGNAL(clicked()), this, SLOT(onTopRightCheckboxClick()));
+    connect(ui->blCb, SIGNAL(clicked()), this, SLOT(onBottomLeftCheckboxClick()));
+    connect(ui->brCb, SIGNAL(clicked()), this, SLOT(onBottomRightCheckboxClick()));
+    connect(ui->coordCb, SIGNAL(clicked()), this, SLOT(onCustomCoordsCheckboxClick()));
+
+    ui->coordTxt->setEnabled(false);
 }
 
 MoveLegendWindow::~MoveLegendWindow(){}
 
-void MoveLegendWindow::setDimensions()
+void MoveLegendWindow::onTopLeftCheckboxClick()
 {
-    xDim = 360;
-    yDim = 200;
-    xWidth = 30;
-    yHeight = 30;
-    padX = 10;
-    padY = 5;
+    ui->trCb->setChecked(false);
+    ui->blCb->setChecked(false);
+    ui->brCb->setChecked(false);
+    ui->coordCb->setChecked(false);
+    ui->coordTxt->setEnabled(false);
+
+    if(cbSelected != topLeft)
+        cbSelected = topLeft;
+    else
+        cbSelected = noCheck;
 }
 
-void MoveLegendWindow::onCheckBoxClick(int idx)
+void MoveLegendWindow::onTopRightCheckboxClick()
 {
-    for(int i = 0; i < numCbs; i++){
-        if(i != idx)
-            cbs[i]->setChecked(false);
-    }
-    if(idx != numCbs-1)
-        coordTxt->setEnabled(false);
+    ui->tlCb->setChecked(false);
+    ui->blCb->setChecked(false);
+    ui->brCb->setChecked(false);
+    ui->coordCb->setChecked(false);
+    ui->coordTxt->setEnabled(false);
+
+    if(cbSelected != topRight)
+        cbSelected = topRight;
     else
-        coordTxt->setEnabled(true);
-    if(idx == cbSelected && !cbs[idx]->isChecked()){
-        coordTxt->setEnabled(false);
-        applyButton->setEnabled(false);
-    }else{
-        cbSelected = idx;
-        applyButton->setEnabled(true);
+        cbSelected = noCheck;
+}
+
+void MoveLegendWindow::onBottomLeftCheckboxClick()
+{
+    ui->tlCb->setChecked(false);
+    ui->trCb->setChecked(false);
+    ui->brCb->setChecked(false);
+    ui->coordCb->setChecked(false);
+    ui->coordTxt->setEnabled(false);
+
+    if(cbSelected != bottomLeft)
+        cbSelected = bottomLeft;
+    else
+        cbSelected = noCheck;
+}
+
+void MoveLegendWindow::onBottomRightCheckboxClick()
+{
+    ui->tlCb->setChecked(false);
+    ui->trCb->setChecked(false);
+    ui->blCb->setChecked(false);
+    ui->coordCb->setChecked(false);
+    ui->coordTxt->setEnabled(false);
+
+    if(cbSelected != bottomRight)
+        cbSelected = bottomRight;
+    else
+        cbSelected = noCheck;
+}
+
+void MoveLegendWindow::onCustomCoordsCheckboxClick()
+{
+    ui->tlCb->setChecked(false);
+    ui->trCb->setChecked(false);
+    ui->blCb->setChecked(false);
+    ui->brCb->setChecked(false);
+
+    if(cbSelected != custom)
+    {
+        ui->coordTxt->setEnabled(true);
+        cbSelected = custom;
+    }
+    else
+    {
+        ui->coordTxt->setEnabled(false);
+        cbSelected = noCheck;
     }
 }
 
 void MoveLegendWindow::refreshLegend(QCustomPlot *plt)
 {
     switch(cbSelected){
-        case 0:
+        case topLeft:
             plt->axisRect()->insetLayout()->setInsetPlacement(0, QCPLayoutInset::ipBorderAligned);
             plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft|Qt::AlignTop);
             break;
-        case 1:
+        case topRight:
             plt->axisRect()->insetLayout()->setInsetPlacement(0, QCPLayoutInset::ipBorderAligned);
             plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignRight|Qt::AlignTop);
             break;
-        case 2:
+        case bottomLeft:
             plt->axisRect()->insetLayout()->setInsetPlacement(0, QCPLayoutInset::ipBorderAligned);
             plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft|Qt::AlignBottom);
             break;
-        case 3:
+        case bottomRight:
             plt->axisRect()->insetLayout()->setInsetPlacement(0, QCPLayoutInset::ipBorderAligned);
             plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignRight|Qt::AlignBottom);
             break;
-        case 4:
-            QStringList xl = coordTxt->text().replace(QRegExp("\\s+"), "").split(",");
+        case custom:
+            QStringList xl = ui->coordTxt->text().replace(QRegExp("\\s+"), "").split(",");
             QRegExp rgx("^[-]?[0-9]+[.]?[0-9]*$");
-            if(xl.size() != 2 || (!xl.first().contains(rgx) || !xl.last().contains(rgx))){
+            if((xl.size() != 2) || ((!xl.first().contains(rgx)) || (!xl.last().contains(rgx))))
+            {
                 QMessageBox messageBox;
                 QString errToShow = "Input must be numeric and\nmust contain two values!";
                 messageBox.critical(nullptr, "Error", errToShow);
                 messageBox.setFixedSize(200,200);
-            }else{
+            }
+            else
+            {
                 QFont qFont = QFont(font().family(), fontSmall);
                 plt->axisRect()->insetLayout()->setInsetPlacement(0, QCPLayoutInset::ipFree);
                 QFontMetrics fm(qFont);
                 int numGraphs = plt->itemCount();
                 int pixelsWide = 0;
-                for(int i = 0; i < numGraphs; i++){
+                for(int i = 0; i < numGraphs; i++)
+                {
                     int w = fm.width(plt->graph(i)->name());
                     if(w > pixelsWide)
                         pixelsWide = w;
                 }
                 int pixelsHigh = fm.height() * numGraphs;
+                // *** magic *** //
                 double xPad = plt->xAxis->pixelToCoord(23) - plt->xAxis->pixelToCoord(10);
                 double yPad = plt->yAxis->pixelToCoord(21) - plt->yAxis->pixelToCoord(10);
                 double xMin = plt->xAxis->range().lower + xPad;
@@ -110,8 +150,8 @@ void MoveLegendWindow::refreshLegend(QCustomPlot *plt)
                 double yMax = plt->yAxis->range().upper + yPad;
                 double xRange = xMax - xMin;
                 double yRange = yMin - yMax;
-                QPointF crd((coordTxt->text().split(",").first().trimmed().toDouble()-xMin)/static_cast<double>(xRange),
-                            (coordTxt->text().split(",").last().trimmed().toDouble()-yMax)/static_cast<double>(yRange));
+                QPointF crd((ui->coordTxt->text().split(",").first().trimmed().toDouble() - xMin) / static_cast<double>(xRange),
+                            (ui->coordTxt->text().split(",").last().trimmed().toDouble() - yMax) / static_cast<double>(yRange));
                 QRectF rect = plt->axisRect()->insetLayout()->insetRect(0);
                 rect.moveTopLeft(crd);
                 rect.setWidth(pixelsWide);

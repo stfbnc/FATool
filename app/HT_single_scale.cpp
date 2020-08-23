@@ -1,7 +1,7 @@
 #include "HT_single_scale.h"
 
-HTsingleScale::HTsingleScale(std::string fileName, std::vector<double> ts, int tsLen, int scale)
-    : FA(ts, tsLen)
+HTsingleScale::HTsingleScale(std::string fileName, std::vector<double> ts, int tsLen, int scale) :
+    FA(ts, tsLen)
 {
     this->fileName = fileName;
     this->scale = scale;
@@ -40,7 +40,6 @@ bool HTsingleScale::computeFlucVec(){
     progress.setMinimumDuration(0);
     progress.setFixedSize(xPG, yPG);
 
-//  #pragma omp parallel for ---- no parallel for with graphic components or break statement
     for(int v = 0; v < range; v++){
         progress.setValue(v);
         if(progress.wasCanceled()){

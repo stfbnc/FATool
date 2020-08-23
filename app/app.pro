@@ -105,6 +105,9 @@ DISTFILES += \
 
 FORMS += \
     abstract_inputs_window.ui \
+    fit_log.ui \
     load_files.ui \
     main_window.ui \
-    plot_window.ui
+    move_legend_window.ui \
+    plot_window.ui \
+    refit_dialog.ui

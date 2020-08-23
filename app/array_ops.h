@@ -8,8 +8,8 @@
 class ArrayOps
 {
 public:
-    ArrayOps();
-	~ArrayOps();
+    explicit ArrayOps();
+    virtual ~ArrayOps();
     void sliceVec(std::vector<double> allVec, std::vector<double> &slicedVec, int start, int end);
     void concatenate(std::vector<double> &vecTo, std::vector<double> vecFrom1, std::vector<double> vecFrom2, int L);
     void vecCopy(std::vector<double> &vecTo, std::vector<double> vecFrom, int L);

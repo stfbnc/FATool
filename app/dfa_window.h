@@ -9,7 +9,7 @@ class DFAWindow : public PlotWindow
 Q_OBJECT
 public:
     explicit DFAWindow(DFA *dfa_, QWidget *parent=nullptr);
-    ~DFAWindow();
+    virtual ~DFAWindow();
 private slots:
     void onSaveTxtClick() override;
 private:

@@ -10,7 +10,7 @@ class MFDFAWindow : public PlotWindow
 Q_OBJECT
 public:
     explicit MFDFAWindow(MFDFA *mfdfa_, QWidget *parent=nullptr);
-    ~MFDFAWindow();
+    virtual ~MFDFAWindow();
 private slots:
     void onSaveTxtClick() override;
 private:

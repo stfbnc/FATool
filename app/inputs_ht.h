@@ -10,7 +10,7 @@ class InputsHT : public InputsWindow
 Q_OBJECT
 public:
     explicit InputsHT(QStringList fileNames_, QWidget *parent=nullptr);
-    ~InputsHT();
+    virtual ~InputsHT();
 signals:
     void htInputsInserted(HT **ht);
 private slots:

@@ -9,7 +9,7 @@ class MassExponentsWindow : public PlotWindow
 Q_OBJECT
 public:
     explicit MassExponentsWindow(MFDFA *mfdfa_, QString fileName_, QWidget *parent=nullptr);
-    ~MassExponentsWindow();
+    virtual ~MassExponentsWindow();
 private slots:
     void onSaveTxtClick() override;
 private:

@@ -6,8 +6,8 @@
 class DFA : public FA
 {
 public:
-    DFA(std::string fileName, std::vector<double> ts, int tsLen, int minWin, int maxWin, int ord, int winStep=1, int revSeg=1);
-	~DFA();
+    explicit DFA(std::string fileName, std::vector<double> ts, int tsLen, int minWin, int maxWin, int ord, int winStep=1, int revSeg=1);
+    virtual ~DFA();
     void allocateMemory() override;
 	int getTsLength();
     bool computeFlucVec() override;

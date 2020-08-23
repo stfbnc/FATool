@@ -11,7 +11,7 @@ Q_OBJECT
     friend class TestInputWin;
 public:
     explicit InputsDFA(QStringList fileNames_, QWidget *parent=nullptr);
-    ~InputsDFA();
+    virtual ~InputsDFA();
 signals:
     void dfaInputsInserted(DFA **dfa);
 private slots:

@@ -9,7 +9,7 @@ class SaveWindow : public QWidget
 {
 public:
     explicit SaveWindow(QCustomPlot *plt, QWidget *parent=nullptr);
-    ~SaveWindow();
+    virtual ~SaveWindow();
 private:
     void setDimensions();
     void onApply(QCustomPlot *plt);

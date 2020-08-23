@@ -10,7 +10,7 @@ class InputsDCCA : public InputsWindow
 Q_OBJECT
 public:
     explicit InputsDCCA(QStringList fileNames_, QWidget *parent=nullptr);
-    ~InputsDCCA();
+    virtual ~InputsDCCA();
 signals:
     void dccaInputsInserted(DCCA **dcca);
 private slots:

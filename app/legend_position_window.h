@@ -5,29 +5,37 @@
 #include "qcustomplot.h"
 #include "constants.h"
 
+namespace Ui{
+    class MoveLegendWindow;
+}
+
 class MoveLegendWindow : public QWidget
 {
+Q_OBJECT
 public:
     explicit MoveLegendWindow(QCustomPlot *plt, QWidget *parent=nullptr);
-    ~MoveLegendWindow();
+    virtual ~MoveLegendWindow();
+private slots:
+    void onTopLeftCheckboxClick();
+    void onTopRightCheckboxClick();
+    void onBottomLeftCheckboxClick();
+    void onBottomRightCheckboxClick();
+    void onCustomCoordsCheckboxClick();
 private:
-    void setDimensions();
-    void onCheckBoxClick(int idx);
     void refreshLegend(QCustomPlot *plt);
 
-    QPushButton *applyButton;
-    QPushButton *closeButton;
-    QCheckBox **cbs;
-    QLineEdit *coordTxt;
-    QStringList labels;
-    int numCbs;
-    int cbSelected;
-    int xDim;
-    int yDim;
-    int xWidth;
-    int yHeight;
-    int padX;
-    int padY;
+    Ui::MoveLegendWindow *ui;
+    int cbSelected = -1;
+
+    enum
+    {
+        noCheck = -1,
+        topLeft = 0,
+        topRight = 1,
+        bottomLeft = 2,
+        bottomRight = 3,
+        custom = 4
+    };
 };
 
 #endif // LEGEND_POSITION_WINDOW_H

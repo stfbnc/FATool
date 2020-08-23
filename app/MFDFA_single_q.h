@@ -6,8 +6,8 @@
 class MFDFAsingleQ : public FA
 {
 public:
-    MFDFAsingleQ(std::string fileName, std::vector<double> ts, int tsLen, int minWin, int maxWin, int ord, double q, int winStep=1, int revSeg=1);
-	~MFDFAsingleQ();
+    explicit MFDFAsingleQ(std::string fileName, std::vector<double> ts, int tsLen, int minWin, int maxWin, int ord, double q, int winStep=1, int revSeg=1);
+    virtual ~MFDFAsingleQ();
     void allocateMemory() override;
 	int getTsLength();
     bool computeFlucVec() override;

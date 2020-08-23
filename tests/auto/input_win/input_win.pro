@@ -109,4 +109,7 @@ FORMS += \
     $$APPDIR/abstract_inputs_window.ui \
     $$APPDIR/load_files.ui \
     $$APPDIR/main_window.ui \
-    $$APPDIR/plot_window.ui
+    $$APPDIR/plot_window.ui \
+    $$APPDIR/move_legend_window.ui \
+    $$APPDIR/refit_dialog.ui \
+    $$APPDIR/fit_log.ui

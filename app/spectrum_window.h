@@ -9,7 +9,7 @@ class SpectrumWindow : public PlotWindow
 Q_OBJECT
 public:
     explicit SpectrumWindow(MFDFA *mfdfa_, QString fileName_, QWidget *parent=nullptr);
-    ~SpectrumWindow();
+    virtual ~SpectrumWindow();
 private slots:
     void onSaveTxtClick() override;
 private:

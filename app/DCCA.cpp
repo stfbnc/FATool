@@ -88,7 +88,6 @@ bool DCCA::computeFlucVec(){
         int Ns = N - currWinSize;
         ao.zeroVec(Fnu, Flen);
 
-//        #pragma omp parallel for
         for(int v = 0; v < Ns; v++){
             int startLim = v;
             int endLim = v + currWinSize;

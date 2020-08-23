@@ -47,10 +47,6 @@ private:
     virtual void plotData() = 0;
 
     QString fitLog;
-
-    RefitWindow *refitWin;
-    MoveLegendWindow *moveLegendWin;
-    LogWindow *logWin;
 };
 
 #endif // PLOT_WINDOW_H

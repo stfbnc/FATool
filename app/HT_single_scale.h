@@ -7,8 +7,8 @@
 class HTsingleScale : public FA
 {
 public:
-    HTsingleScale(std::string fileName, std::vector<double> ts, int tsLen, int scale);
-	~HTsingleScale();
+    explicit HTsingleScale(std::string fileName, std::vector<double> ts, int tsLen, int scale);
+    virtual ~HTsingleScale();
     void allocateMemory() override;
 	int getTsLength();
     std::string getFileName();

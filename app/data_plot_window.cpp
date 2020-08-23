@@ -1,4 +1,5 @@
 #include "data_plot_window.h"
+#include "ui_plot_window.h"
 
 DataPlotWindow::DataPlotWindow(std::vector<DataFile*> dataFile, std::vector<int> cols, QWidget *parent) :
     PlotWindow(parent)
@@ -10,6 +11,8 @@ DataPlotWindow::DataPlotWindow(std::vector<DataFile*> dataFile, std::vector<int>
         setTitle("Single plot");
     else
         setTitle(this->dataFile.at(0)->getFileName());
+
+    ui->saveTxtBtn->hide();
 
     plotData();
     setPlotLimits();

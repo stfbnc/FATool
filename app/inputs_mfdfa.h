@@ -10,7 +10,7 @@ class InputsMFDFA : public InputsWindow
 Q_OBJECT
 public:
     explicit InputsMFDFA(QStringList fileNames_, QWidget *parent=nullptr);
-    ~InputsMFDFA();
+    virtual ~InputsMFDFA();
 signals:
     void mfdfaInputsInserted(MFDFA **mfdfa);
 private slots:

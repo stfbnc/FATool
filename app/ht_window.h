@@ -9,7 +9,7 @@ class HTWindow : public PlotWindow
 Q_OBJECT
 public:
     explicit HTWindow(HT *ht_, QWidget *parent=nullptr);
-    ~HTWindow();
+    virtual ~HTWindow();
 private slots:
     void onSaveTxtClick() override;
 private:

@@ -1,6 +1,7 @@
 #include "mass_exponents_window.h"
 
-MassExponentsWindow::MassExponentsWindow(MFDFA *mfdfa_, QString fileName_, QWidget *parent) : PlotWindow(parent)
+MassExponentsWindow::MassExponentsWindow(MFDFA *mfdfa_, QString fileName_, QWidget *parent) :
+    PlotWindow(parent)
 {
     mfdfa = mfdfa_;
     fileName = fileName_;

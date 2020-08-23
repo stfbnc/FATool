@@ -9,7 +9,7 @@ class BasePlot : public QCustomPlot
 {
 public:
     explicit BasePlot(QWidget *parent=nullptr);
-    ~BasePlot();
+    virtual ~BasePlot();
     void setBasePlot();
     void setLogAxes(int logAx);
 

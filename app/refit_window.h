@@ -4,12 +4,16 @@
 #include <QtWidgets>
 #include "constants.h"
 
+namespace Ui{
+    class RefitDialog;
+}
+
 class RefitWindow : public QWidget
 {
 Q_OBJECT
 public:
     explicit RefitWindow(QWidget *parent=nullptr);
-    ~RefitWindow();
+    virtual ~RefitWindow();
 signals:
     void inputsInserted(int mw, int Mw, int keep, int clear);
 private slots:
@@ -17,9 +21,11 @@ private slots:
     void onKeepFitsClick();
     void onClearFitsClick();
 private:
-    void setDimensions();
+    //void setDimensions();
 
-    QPushButton *okButton;
+    Ui::RefitDialog *ui;
+
+    /*QPushButton *okButton;
     QPushButton *closeButton;
     QLabel *minWin;
     QLabel *maxWin;
@@ -28,14 +34,14 @@ private:
     QLabel *keepTxt;
     QCheckBox *keepFits;
     QLabel *clearTxt;
-    QCheckBox *clearFits;
+    QCheckBox *clearFits;*/
 
-    int xDim;
+    /*int xDim;
     int yDim;
     int xWidth;
     int yHeight;
     int padX;
-    int padY;
+    int padY;*/
 };
 
 #endif // REFIT_WINDOW_H

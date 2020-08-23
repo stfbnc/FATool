@@ -6,8 +6,8 @@
 class DCCA : public FA
 {
 public:
-    DCCA(std::string fileName, std::vector<double> ts, int tsLen, std::string fileName2, std::vector<double> ts2, int tsLen2, int minWin, int maxWin, int ord, std::string isAbs, int winStep, bool showProgBar=true);
-	~DCCA();
+    explicit DCCA(std::string fileName, std::vector<double> ts, int tsLen, std::string fileName2, std::vector<double> ts2, int tsLen2, int minWin, int maxWin, int ord, std::string isAbs, int winStep, bool showProgBar=true);
+    virtual ~DCCA();
     void allocateMemory() override;
     void getEqualLength();
 	int getTsLength();

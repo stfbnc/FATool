@@ -10,7 +10,7 @@ class InputsWindow : public QWidget
 Q_OBJECT
 public:
     explicit InputsWindow(QWidget *parent=nullptr);
-    ~InputsWindow();
+    virtual ~InputsWindow();
 private slots:
     virtual void onOKClick();
 private:

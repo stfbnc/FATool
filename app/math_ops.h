@@ -10,8 +10,8 @@
 class MathOps
 {
 public:
-    MathOps();
-	~MathOps();
+    explicit MathOps();
+    virtual ~MathOps();
     double mean(std::vector<double> vec, int L);
     double nanMean(std::vector<double> vec, int L);
     double customMean(std::vector<double> vec, int vecL, int L);

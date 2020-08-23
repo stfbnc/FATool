@@ -17,7 +17,6 @@ public:
     virtual ~DataFile();
 
     std::vector<double> getDataOfColumn(int col);
-    void setDataOfColumn(int col);
     QString getNameOfColumn(int col);
     void setNameOfColumn(int col, QString colName);
     QString getTypeOfColumn(int col);

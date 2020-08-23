@@ -4,7 +4,8 @@ FileOps::FileOps() {}
 
 FileOps::~FileOps() {}
 
-int FileOps::rowsNumber(std::string fName){
+int FileOps::rowsNumber(std::string fName)
+{
     int stop;
     int lines = 0;
     FILE *f;
@@ -18,13 +19,9 @@ int FileOps::rowsNumber(std::string fName){
     return lines;
 }
 
-FILE* FileOps::openFile(std::string fName, const char *mode){
-    //char *fileName;
-    //fileName = new char [fName.length()+1];
-    //strcpy(fileName, fName.c_str());
+FILE* FileOps::openFile(std::string fName, const char *mode)
+{
     FILE *fl;
-    //fl = fopen(fileName, mode);
     fl = fopen(fName.c_str(), mode);
-    //delete fileName;
     return fl;
 }

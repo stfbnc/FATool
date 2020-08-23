@@ -27,6 +27,9 @@ MainWindow::MainWindow(QWidget *parent) :
     instrWindow();
 
     dataMap = new FilesData();
+
+    LogWindow *w = new LogWindow("a", "b", "c");
+    w->show();
 }
 
 MainWindow::~MainWindow()

@@ -10,7 +10,7 @@
 class FA
 {
 public:
-    FA(std::vector<double> ts, int tsLen){
+    explicit FA(std::vector<double> ts, int tsLen){
         this->tsLen = tsLen;
         this->ts.reserve(tsLen);
         for(int i = 0; i < tsLen; i++)
