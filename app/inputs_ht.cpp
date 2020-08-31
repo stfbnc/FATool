@@ -1,91 +1,86 @@
 #include "inputs_ht.h"
 
-InputsHT::InputsHT(QStringList fileNames_, QWidget *parent) : InputsWindow(parent)
+InputsHT::InputsHT(QStringList fileNames, QStringList columns, QWidget *parent) :
+    AbstractInputsWindow(strHT + " inputs", parent)
 {
-    fileNames = fileNames_;
-    numComp = 4;
-    ms = nullptr;
-    cs = nullptr;
-    //set title
-    setWindowTitle(strHT);
-    //set window size
-    setFixedSize(xDim, (fileNames.size()*numComp+1)*(yHeight+padY)+2*padY);
-    //set graphic components
-    setInputsComponents();
+    this->fileNames = fileNames;
+    this->columns = columns;
+
+    addWidgets();
 }
 
 InputsHT::~InputsHT(){}
 
-void InputsHT::setInputsComponents()
+void InputsHT::addWidgets()
 {
     QStringList labels;
     labels.append({"Total scales", "from", "every"});
-    QStringList mLabels;
-    mLabels.append({"MFDFA windows size from", "to", "every"});
-    rangeBox = new QCheckBox* [fileNames.size()];
-    scalesAndStep = new QLineEdit** [fileNames.size()];
-    stringBox = new QCheckBox* [fileNames.size()];
-    customScales = new QLineEdit* [fileNames.size()];
-    winsAndStep = new QLineEdit** [fileNames.size()];
 
-    for(int i = 0; i < fileNames.size(); i++){
-        addLabel(fileNames[i].split("/").last(), i*numComp);
+    for(int i = 0; i < fileNames.size(); i++)
+    {
+        addLabel(fileNames.at(i).split("/").last(), true);
 
-        rangeBox[i] = addCheckBox(i*numComp+1);
-        connect(rangeBox[i], &QCheckBox::clicked, [=](){this->onRangeChkBoxClick(i);});
+        rangeBox.append(addCheckbox());
+        connect(rangeBox.at(i), &QCheckBox::clicked, [=](){this->onRangeChkBoxClick(i);});
 
-        scalesAndStep[i] = new QLineEdit* [labels.size()];
-        addLabeledEditBoxArray(labels, scalesAndStep[i], i*numComp+1, 1);
-        scalesAndStep[i][2]->setText("1");
+        scalesAndStep.append(addLabeledLineEdits(labels));
+        scalesAndStep.at(i).at(2)->setText("1");
         for(int j = 0; j < labels.size(); j++)
-            scalesAndStep[i][j]->setEnabled(false);
+            scalesAndStep.at(i).at(j)->setEnabled(false);
 
-        stringBox[i] = addCheckBox(i*numComp+2);
-        connect(stringBox[i], &QCheckBox::clicked, [=](){this->onStringChkBoxClick(i);});
+        stringBox.append(addCheckbox());
+        connect(stringBox.at(i), &QCheckBox::clicked, [=](){this->onStringChkBoxClick(i);});
 
-        customScales[i] = addLabeledEditBox("Windows sizes (comma separated)", i*numComp+2, 1, 0);
-        customScales[i]->setEnabled(false);
+        customScales.append(addLabeledLineEdit({"Windows sizes (comma separated)"}));
+        customScales.at(i)->setEnabled(false);
 
-        winsAndStep[i] = new QLineEdit* [mLabels.size()];
-        addLabeledEditBoxArray(mLabels, winsAndStep[i], i*numComp+3);
-        winsAndStep[i][2]->setText("1");
+        winsAndStep.append(addLabeledLineEdits({"MFDFA windows size from", "to", "every"}));
+        winsAndStep.at(i).at(2)->setText("1");
     }
-    addButtons(fileNames.size()*numComp);
+
+    if(fileNames.size() > 0)
+        addThirdButton("Copy to all");
 }
 
 void InputsHT::onRangeChkBoxClick(int idx)
 {
-    if(rangeBox[idx]->isChecked()){
-        scalesAndStep[idx][0]->setEnabled(true);
-        scalesAndStep[idx][1]->setEnabled(true);
-        scalesAndStep[idx][2]->setEnabled(true);
-        stringBox[idx]->setChecked(false);
-        customScales[idx]->setText("");
-        customScales[idx]->setEnabled(false);
-    }else{
-        scalesAndStep[idx][0]->setText("");
-        scalesAndStep[idx][0]->setEnabled(false);
-        scalesAndStep[idx][1]->setText("");
-        scalesAndStep[idx][1]->setEnabled(false);
-        scalesAndStep[idx][2]->setText("1");
-        scalesAndStep[idx][2]->setEnabled(false);
+    if(rangeBox.at(idx)->isChecked())
+    {
+        scalesAndStep.at(idx).at(0)->setEnabled(true);
+        scalesAndStep.at(idx).at(1)->setEnabled(true);
+        scalesAndStep.at(idx).at(2)->setEnabled(true);
+        stringBox.at(idx)->setChecked(false);
+        customScales.at(idx)->setText("");
+        customScales.at(idx)->setEnabled(false);
+    }
+    else
+    {
+        scalesAndStep.at(idx).at(0)->setText("");
+        scalesAndStep.at(idx).at(0)->setEnabled(false);
+        scalesAndStep.at(idx).at(1)->setText("");
+        scalesAndStep.at(idx).at(1)->setEnabled(false);
+        scalesAndStep.at(idx).at(2)->setText("1");
+        scalesAndStep.at(idx).at(2)->setEnabled(false);
     }
 }
 
 void InputsHT::onStringChkBoxClick(int idx)
 {
-    if(stringBox[idx]->isChecked()){
-        customScales[idx]->setEnabled(true);
-        rangeBox[idx]->setChecked(false);
-        scalesAndStep[idx][0]->setText("");
-        scalesAndStep[idx][0]->setEnabled(false);
-        scalesAndStep[idx][1]->setText("");
-        scalesAndStep[idx][1]->setEnabled(false);
-        scalesAndStep[idx][2]->setText("1");
-        scalesAndStep[idx][2]->setEnabled(false);
-    }else{
-        customScales[idx]->setText("");
-        customScales[idx]->setEnabled(false);
+    if(stringBox.at(idx)->isChecked())
+    {
+        customScales.at(idx)->setEnabled(true);
+        rangeBox.at(idx)->setChecked(false);
+        scalesAndStep.at(idx).at(0)->setText("");
+        scalesAndStep.at(idx).at(0)->setEnabled(false);
+        scalesAndStep.at(idx).at(1)->setText("");
+        scalesAndStep.at(idx).at(1)->setEnabled(false);
+        scalesAndStep.at(idx).at(2)->setText("1");
+        scalesAndStep.at(idx).at(2)->setEnabled(false);
+    }
+    else
+    {
+        customScales.at(idx)->setText("");
+        customScales.at(idx)->setEnabled(false);
     }
 }
 
@@ -93,74 +88,75 @@ bool InputsHT::checkInputs()
 {
     int L = fileNames.size();
 
-    for(int i = 0; i < L; i++){
-        if(!checkFileExistence(fileNames[i].toStdString())){
-            QMessageBox messageBox;
-            QString errToShow = "File "+fileNames[i].split("/").last()+"not found!";
-            messageBox.critical(nullptr, "Error", errToShow);
-            messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
-            return false;
-        }
+    for(int i = 0; i < L; i++)
+    {
+        ns.push_back(0);
+        ms.push_back(0);
+        ss.push_back(0);
+        cs.append("");
     }
 
-    ns = new int [L];
-    ms = new int [L];
-    ss = new int [L];
-    cs = new QString [L];
-    for(int i = 0; i < L; i++){
-        ns[i] = 0;
-        ms[i] = 0;
-        ss[i] = 0;
-        cs[i] = "";
-    }
-    mmw = new int [L];
-    mMw = new int [L];
-    mws = new int [L];
     QStringList inptErrs;
-    for(int i = 0; i < L; i++){
+    for(int i = 0; i < L; i++)
+    {
         bool err = false;
-        if(rangeBox[i]->isChecked()){
-            QString nsStr = scalesAndStep[i][0]->text().trimmed();
-            QString msStr = scalesAndStep[i][1]->text().trimmed();
-            QString ssStr = scalesAndStep[i][2]->text().trimmed();
-            if(!msStr.isEmpty()){
+        if(rangeBox.at(i)->isChecked()){
+            QString nsStr = scalesAndStep.at(i).at(0)->text().trimmed();
+            QString msStr = scalesAndStep.at(i).at(1)->text().trimmed();
+            QString ssStr = scalesAndStep.at(i).at(2)->text().trimmed();
+            if(!msStr.isEmpty())
+            {
                 if(isCorrectFormat(nsStr) &&
                     isCorrectFormat(msStr) &&
-                    isCorrectFormat(ssStr)){
-                    ns[i] = nsStr.toInt();
-                    ms[i] = msStr.toInt();
-                    ss[i] = ssStr.toInt();
-                }else{
+                    isCorrectFormat(ssStr))
+                {
+                    ns.at(i) = nsStr.toInt();
+                    ms.at(i) = msStr.toInt();
+                    ss.at(i) = ssStr.toInt();
+                }
+                else
+                {
                     err = true;
                 }
             }
-        }else if(stringBox[i]->isChecked()){
-            cs[i] = customScales[i]->text().trimmed();
-            if(!cs[i].isEmpty()){
-                for(QString s : cs[i].split(QString::fromStdString(strSep))){
-                    if(!isCorrectFormat(s.trimmed())){
+        }
+        else if(stringBox.at(i)->isChecked())
+        {
+            cs.replace(i, customScales.at(i)->text().trimmed());
+            if(!cs.at(i).isEmpty())
+            {
+                for(QString s : cs.at(i).split(QString::fromStdString(strSep)))
+                {
+                    if(!isCorrectFormat(s.trimmed()))
+                    {
                         err = true;
                         break;
                     }
                 }
-            }else{
+            }
+            else
+            {
                 err = true;
             }
         }
-        QString mmwStr = winsAndStep[i][0]->text().trimmed();
-        QString mMwStr = winsAndStep[i][1]->text().trimmed();
-        QString mwsStr = winsAndStep[i][2]->text().trimmed();
+        QString mmwStr = winsAndStep.at(i).at(0)->text().trimmed();
+        QString mMwStr = winsAndStep.at(i).at(1)->text().trimmed();
+        QString mwsStr = winsAndStep.at(i).at(2)->text().trimmed();
         if(isCorrectFormat(mmwStr) &&
             isCorrectFormat(mMwStr) &&
-            isCorrectFormat(mwsStr)){
-            mmw[i] = mmwStr.toInt();
-            mMw[i] = mMwStr.toInt();
-            mws[i] = mwsStr.toInt();
-        }else{
+            isCorrectFormat(mwsStr))
+        {
+            mmw.push_back(mmwStr.toInt());
+            mMw.push_back(mMwStr.toInt());
+            mws.push_back(mwsStr.toInt());
+        }
+        else
+        {
             err = true;
         }
 
-        if(err){
+        if(err)
+        {
             QMessageBox messageBox;
             QString errToShow = "Inputs must be numeric and not null!";
             messageBox.critical(nullptr, "Error", errToShow);
@@ -168,82 +164,134 @@ bool InputsHT::checkInputs()
             return false;
         }
 
-        if(rangeBox[i]->isChecked()){
+        if(rangeBox.at(i)->isChecked())
+        {
             //minimum scale size
-            if(ms[i] < 3)
+            if(ms.at(i) < 3)
                 inptErrs.append("- scale must be greater than 2\n");
             //number of scales
-            if(ns[i] < 1)
+            if(ns.at(i) < 1)
                 inptErrs.append("- number of scales must be at least 1\n");
             //step for scales
-            if(ss[i] < 1)
+            if(ss.at(i) < 1)
                 inptErrs.append("- step must be strictly positive and such that scales are smaller than the time series length\n");
-        }else if(stringBox[i]->isChecked()){
-            for(QString s : cs[i].split(QString::fromStdString(strSep))){
-                int sInt = s.toInt();
-                if(sInt < 3)
-                inptErrs.append("- scale must be greater than 2\n");
+        }
+        else if(stringBox.at(i)->isChecked())
+        {
+            for(QString s : cs.at(i).split(QString::fromStdString(strSep)))
+            {
+                if(s.toInt() < 3)
+                    inptErrs.append("- scale must be greater than 2\n");
             }
         }
         //windows size
-        if(mMw[i] < mmw[i])
+        if(mMw.at(i) < mmw.at(i))
             inptErrs.append("- MFDFA biggest scale must be greater than smallest scale\n");
-        else if(mmw[i] < 3)
+        else if(mmw.at(i) < 3)
             inptErrs.append("- MFDFA smallest scale must be greater than 3\n");
         //windows step
-        if(mws[i] < 1)
+        if(mws.at(i) < 1)
             inptErrs.append("- MFDFA step must be greater than 0\n");
     }
     
-    if(inptErrs.size() > 0){
+    if(inptErrs.size() > 0)
+    {
         QMessageBox messageBox;
         QString errToShow = "The following errors occurred:\n\n";
         inptErrs.removeDuplicates();
         for(int i = 0; i < inptErrs.size(); i++)
-            errToShow.append(inptErrs[i]);
+            errToShow.append(inptErrs.at(i));
         messageBox.critical(nullptr, "Error", errToShow);
         messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
         return false;
-    }else{
+    }
+    else
+    {
         return true;
     }
 }
 
-void InputsHT::setAnalysisObj()
+void InputsHT::onOkClick()
 {
-    ht = new HT* [fileNames.size()];
-    for(int i = 0; i < fileNames.size(); i++){
-        FileOps fo;
-        std::string fn = fileNames[i].toStdString();
-        int N = fo.rowsNumber(fn);
-        FILE *f;
-        std::vector<double> vec(N);
-        f = fo.openFile(fn, "r");
-        for(int j = 0; j < N; j++){
-            double tmpVal;
-            fscanf(f, "%lf", &tmpVal);
-            vec.at(j) = tmpVal;
+    if(checkInputs())
+    {
+        FilesData *fd = new FilesData();
+        std::map<QString, DataFile*> map = fd->getDataMap();
+        for(int i = 0; i < fileNames.size(); i++)
+        {
+            std::vector<double> vec = map.at(fileNames.at(i))->getDataOfColumn(columns.at(i).toInt());
+
+            /*FileOps fo;
+            std::string fn = fileNames[i].toStdString();
+            int N = fo.rowsNumber(fn);
+            FILE *f;
+            std::vector<double> vec(N);
+            f = fo.openFile(fn, "r");
+            for(int j = 0; j < N; j++){
+                double tmpVal;
+                fscanf(f, "%lf", &tmpVal);
+                vec.at(j) = tmpVal;
+            }
+            fclose(f);*/
+            if(ms.at(i) != 0)
+            {
+                if(ms.at(i) > int(vec.size()))
+                    ms.at(i) = 3;
+                if(ns.at(i) > int(vec.size()))
+                    ns.at(i) = vec.size() - ms.at(i) + 1;
+                if((ms.at(i) + (ns.at(i) - 1) * ss.at(i)) > int(vec.size()))
+                    ns.at(i) = (vec.size() - ms.at(i)) / ss.at(i) + 1;
+                FA *fa = new HT(fileNames.at(i).toStdString(), vec, vec.size(),
+                                ms.at(i), ns.at(i), ss.at(i), mmw.at(i),
+                                mMw.at(i), mws.at(i));
+                ht.push_back(fa);
+            }
+            else
+            {
+                FA *fa = new HT(fileNames.at(i).toStdString(), vec, vec.size(),
+                                cs.at(i).toStdString(), mmw.at(i), mMw.at(i), mws.at(i));
+                ht.push_back(fa);
+            }
         }
-        fclose(f);
-        if(ms[i] != 0){
-            if(ms[i] > N)
-                ms[i] = 3;
-            if(ns[i] > N)
-                ns[i] = N - ms[i] + 1;
-            if((ms[i]+(ns[i]-1)*ss[i]) > N)
-                ns[i] = (N - ms[i]) / ss[i] + 1;
-            ht[i] = new HT(fn, vec, N, ms[i], ns[i], ss[i], mmw[i], mMw[i], mws[i]);
-        }else{
-            ht[i] = new HT(fn, vec, N, cs[i].toStdString(), mmw[i], mMw[i], mws[i]);
-        }
+
+        emit inputsInserted(ht);
+        this->close();
     }
 }
 
-void InputsHT::onOKClick()
+void InputsHT::onThirdButtonClick()
 {
-    if(checkInputs()){
-        setAnalysisObj();
-        emit htInputsInserted(ht);
-        close();
+    if(fileNames.size() > 0)
+    {
+        QString w1 = winsAndStep.at(0).at(0)->text();
+        QString w2 = winsAndStep.at(0).at(1)->text();
+        QString w3 = winsAndStep.at(0).at(2)->text();
+        QString s1 = scalesAndStep.at(0).at(0)->text();
+        bool e1 = scalesAndStep.at(0).at(0)->isEnabled();
+        QString s2 = scalesAndStep.at(0).at(1)->text();
+        bool e2 = scalesAndStep.at(0).at(1)->isEnabled();
+        QString s3 = scalesAndStep.at(0).at(2)->text();
+        bool e3 = scalesAndStep.at(0).at(2)->isEnabled();
+        QString c = customScales.at(0)->text();
+        bool e4 = customScales.at(0)->isEnabled();
+        bool r = rangeBox.at(0)->isChecked();
+        bool s = stringBox.at(0)->isChecked();
+
+        for(int i = 1; i < int(fileNames.size()); i++)
+        {
+            winsAndStep.at(i).at(0)->setText(w1);
+            winsAndStep.at(i).at(1)->setText(w2);
+            winsAndStep.at(i).at(2)->setText(w3);
+            scalesAndStep.at(i).at(0)->setText(s1);
+            scalesAndStep.at(i).at(0)->setEnabled(e1);
+            scalesAndStep.at(i).at(1)->setText(s2);
+            scalesAndStep.at(i).at(1)->setEnabled(e2);
+            scalesAndStep.at(i).at(2)->setText(s3);
+            scalesAndStep.at(i).at(2)->setEnabled(e3);
+            customScales.at(i)->setText(c);
+            customScales.at(i)->setEnabled(e4);
+            rangeBox.at(i)->setChecked(r);
+            stringBox.at(i)->setChecked(s);
+        }
     }
 }

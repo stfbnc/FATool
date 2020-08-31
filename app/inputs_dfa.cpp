@@ -1,74 +1,56 @@
 #include "inputs_dfa.h"
 
-InputsDFA::InputsDFA(QStringList fileNames_, QWidget *parent) : InputsWindow(parent)
+InputsDFA::InputsDFA(QStringList fileNames, QStringList columns, QWidget *parent) :
+    AbstractInputsWindow(strDFA + " inputs", parent)
 {
-    fileNames = fileNames_;
-    numComp = 4;
-    //set title
-    setWindowTitle(strDFA);
-    //set window size
-    setFixedSize(xDim, (fileNames.size()*numComp+1)*(yHeight+padY)+2*padY);
-    //set graphic components
-    setInputsComponents();
+    this->fileNames = fileNames;
+    this->columns = columns;
+
+    addWidgets();
 }
 
 InputsDFA::~InputsDFA(){}
 
-void InputsDFA::setInputsComponents()
+void InputsDFA::addWidgets()
 {
-    QStringList labels;
-    labels.append({"Windows size from", "to", "every"});
-    winsAndStep = new QLineEdit** [fileNames.size()];
-    polOrd = new QLineEdit* [fileNames.size()];
-    revSeg = new QCheckBox* [fileNames.size()];
+    for(int i = 0; i < fileNames.size(); i++)
+    {
+        addLabel(fileNames.at(i).split("/").last(), true);
 
-    for(int i = 0; i < fileNames.size(); i++){
-        addLabel(fileNames[i].split("/").last(), i*numComp);
+        winsAndStep.append(addLabeledLineEdits({"Windows size from", "to", "every"}));
+        winsAndStep.at(i).at(2)->setText("1");
 
-        winsAndStep[i] = new QLineEdit* [labels.size()];
-        addLabeledEditBoxArray(labels, winsAndStep[i], i*numComp+1);
-        winsAndStep[i][2]->setText("1");
+        polOrd.append(addLabeledLineEdit({"Polynomial order"}));
+        polOrd.at(i)->setText("1");
 
-        polOrd[i] = addLabeledEditBox("Polynomial order", i*numComp+2);
-        polOrd[i]->setText("1");
-
-        revSeg[i] = addLabeledCheckBox("Backward computation", i*numComp+3);
+        revSeg.append(addCheckbox("Backward computation"));
     }
-    addButtons(fileNames.size()*numComp);
+
+    if(fileNames.size() > 0)
+        addThirdButton("Copy to all");
 }
 
 bool InputsDFA::checkInputs()
 {
-    for(int i = 0; i < fileNames.size(); i++){
-        if(!checkFileExistence(fileNames[i].toStdString())){
-            QMessageBox messageBox;
-            QString errToShow = "File "+fileNames[i].split("/").last()+"not found!";
-            messageBox.critical(nullptr, "Error", errToShow);
-            messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
-            return false;
-        }
-    }
-
-    mw = new int [fileNames.size()];
-    Mw = new int [fileNames.size()];
-    ws = new int [fileNames.size()];
-    po = new int [fileNames.size()];
-    rs = new int [fileNames.size()];
-    for(int i = 0; i < fileNames.size(); i++){
-        QString mwStr = winsAndStep[i][0]->text().trimmed();
-        QString MwStr = winsAndStep[i][1]->text().trimmed();
-        QString wsStr = winsAndStep[i][2]->text().trimmed();
-        QString poStr = polOrd[i]->text().trimmed();
+    for(int i = 0; i < fileNames.size(); i++)
+    {
+        QString mwStr = winsAndStep.at(i).at(0)->text().trimmed();
+        QString MwStr = winsAndStep.at(i).at(1)->text().trimmed();
+        QString wsStr = winsAndStep.at(i).at(2)->text().trimmed();
+        QString poStr = polOrd.at(i)->text().trimmed();
         if(isCorrectFormat(mwStr) &&
             isCorrectFormat(MwStr) &&
             isCorrectFormat(wsStr) &&
-            isCorrectFormat(poStr)){
-            mw[i] = mwStr.toInt();
-            Mw[i] = MwStr.toInt();
-            ws[i] = wsStr.toInt();
-            po[i] = poStr.toInt();
-            revSeg[i]->isChecked() ? rs[i] = 1 : rs[i] == 0;
-        }else{
+            isCorrectFormat(poStr))
+        {
+            mw.push_back(mwStr.toInt());
+            Mw.push_back(MwStr.toInt());
+            ws.push_back(wsStr.toInt());
+            po.push_back(poStr.toInt());
+            revSeg.at(i)->isChecked() ? rs.push_back(1) : rs.push_back(0);
+        }
+        else
+        {
             QMessageBox messageBox;
             QString errToShow = "Inputs must be numeric and not null!";
             messageBox.critical(nullptr, "Error", errToShow);
@@ -78,63 +60,90 @@ bool InputsDFA::checkInputs()
     }
 
     QStringList inptErrs;
-    for(int i = 0; i < fileNames.size(); i++){
+    for(int i = 0; i < fileNames.size(); i++)
+    {
         //windows size
-        if(Mw[i] < mw[i])
+        if(Mw.at(i) < mw.at(i))
             inptErrs.append("- biggest scale must be greater than smallest scale\n");
-        else if(mw[i] < po[i]+2)
+        else if(mw.at(i) < (po.at(i) + 2))
             inptErrs.append("- smallest scale must be greater than "+QString::number(po[i]+1)+"\n");
         //windows step
-        if(ws[i] < 1)
+        if(ws.at(i) < 1)
             inptErrs.append("- step must be greater than 0\n");
         //polynomial order
-        if(po[i] < 1)
+        if(po.at(i) < 1)
             inptErrs.append("- polynomial order must be greater than 0\n");
     }
 
-    if(inptErrs.size() > 0){
+    if(inptErrs.size() > 0)
+    {
         QMessageBox messageBox;
         QString errToShow = "The following errors occurred:\n\n";
         inptErrs.removeDuplicates();
         for(int i = 0; i < inptErrs.size(); i++)
-            errToShow.append(inptErrs[i]);
+            errToShow.append(inptErrs.at(i));
         messageBox.critical(nullptr, "Error", errToShow);
         messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
         return false;
-    }else{
+    }
+    else
+    {
         return true;
     }
 }
 
-void InputsDFA::setAnalysisObj()
+void InputsDFA::onOkClick()
 {
-    dfa = new DFA* [fileNames.size()];
-    for(int i = 0; i < fileNames.size(); i++){
-        FileOps fo;
-        std::string fn = fileNames[i].toStdString();
-        int N = fo.rowsNumber(fn);
-        FILE *f;
-        std::vector<double> vec(N);
-        f = fo.openFile(fn, "r");
-        for(int j = 0; j < N; j++){
-            double tmpVal;
-            fscanf(f, "%lf", &tmpVal);
-            vec.at(j) = tmpVal;
+    if(checkInputs())
+    {
+        FilesData *fd = new FilesData();
+        std::map<QString, DataFile*> map = fd->getDataMap();
+        for(int i = 0; i < fileNames.size(); i++)
+        {
+            std::vector<double> vec = map.at(fileNames.at(i))->getDataOfColumn(columns.at(i).toInt());
+            /*FileOps fo;
+            std::string fn = fileNames[i].toStdString();
+            int N = fo.rowsNumber(fn);
+            FILE *f;
+            std::vector<double> vec(N);
+            f = fo.openFile(fn, "r");
+            for(int j = 0; j < N; j++)
+            {
+                double tmpVal;
+                fscanf(f, "%lf", &tmpVal);
+                vec.at(j) = tmpVal;
+            }
+            fclose(f);*/
+            if(mw.at(i) > int(vec.size()))
+                mw.at(i) = po.at(i) + 2;
+            if(Mw.at(i) > int(vec.size()))
+                Mw.at(i) = vec.size();
+            FA *fa = new DFA(fileNames.at(i).toStdString(), vec, vec.size(), mw.at(i), Mw.at(i), po.at(i), ws.at(i), rs.at(i));
+            dfa.push_back(fa);
         }
-        fclose(f);
-        if(mw[i] > N)
-            mw[i] = po[i] + 2;
-        if(Mw[i] > N)
-            Mw[i] = N;
-        dfa[i] = new DFA(fn, vec, N, mw[i], Mw[i], po[i], ws[i], rs[i]);
+
+        emit inputsInserted(dfa);
+        this->close();
     }
 }
 
-void InputsDFA::onOKClick()
+void InputsDFA::onThirdButtonClick()
 {
-    if(checkInputs()){
-        setAnalysisObj();
-        emit dfaInputsInserted(dfa);
-        close();
+    if(fileNames.size() > 0)
+    {
+        QString w1 = winsAndStep.at(0).at(0)->text();
+        QString w2 = winsAndStep.at(0).at(1)->text();
+        QString w3 = winsAndStep.at(0).at(2)->text();
+        QString p = polOrd.at(0)->text();
+        bool r = revSeg.at(0)->isChecked();
+
+        for(int i = 1; i < int(fileNames.size()); i++)
+        {
+            winsAndStep.at(i).at(0)->setText(w1);
+            winsAndStep.at(i).at(1)->setText(w2);
+            winsAndStep.at(i).at(2)->setText(w3);
+            polOrd.at(i)->setText(p);
+            revSeg.at(i)->setChecked(r);
+        }
     }
 }

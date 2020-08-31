@@ -2,7 +2,6 @@
 
 FilesData::FilesData()
 {
-    dataMap = std::map<QString, DataFile*>();
     dataMutex = new std::mutex();
 }
 

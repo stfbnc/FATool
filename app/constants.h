@@ -14,8 +14,8 @@
 //app version
 const QString VERSION = "1.4";
 //dcca fluctuation vector
-const std::string defaultDCCA = "abs";
-const std::string corrDCCA = "sign";
+const QString defaultDCCA = "abs";
+const QString corrDCCA = "sign";
 //dimensions
 const int xPG = 300;
 const int yPG = 120;

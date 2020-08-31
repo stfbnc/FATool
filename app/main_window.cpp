@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    setWindowTitle("FATool (v "+ VERSION +")");
+    setWindowTitle("FATool (v " + VERSION + ")");
     setFixedSize(this->width(), this->height());
 
     connect(ui->loadButton, SIGNAL(clicked()), this, SLOT(onLoadClick()));
@@ -14,22 +14,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->clearButton, SIGNAL(clicked()), this, SLOT(onClearClick()));
     connect(ui->quitButton, SIGNAL(clicked()), QApplication::instance(), SLOT(quit()));
 
-    fillList();
-
     ui->tableWidget->setColumnCount(3);
     ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableWidget->setHorizontalHeaderLabels({"File name", "Vector name", "Vector type"});
     ui->tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->tableWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(openContextMenu(const QPoint&)));
+    connect(ui->tableWidget, SIGNAL(itemSelectionChanged()), this, SLOT(fillList()));
 
     connect(this, SIGNAL(allFilesLoaded()), this, SLOT(afterAllFilesLoaded()));
 
     instrWindow();
 
     dataMap = new FilesData();
-
-    LogWindow *w = new LogWindow("a", "b", "c");
-    w->show();
 }
 
 MainWindow::~MainWindow()
@@ -55,16 +51,6 @@ void MainWindow::instrWindow()
     }
     if(str == showStartWin)
         startWin = new StartingWindow();
-}
-
-void MainWindow::fillList()
-{
-    ui->ddList->addItem("-");
-    ui->ddList->addItem(strDFA);
-    ui->ddList->addItem(strMFDFA);
-    ui->ddList->addItem(strDCCA);
-    ui->ddList->addItem(strHT);
-    ui->ddList->addItem(strRHODCCA);
 }
 
 void MainWindow::onLoadClick()
@@ -317,141 +303,158 @@ void MainWindow::onTableModified(QStringList f, QStringList c, QStringList n)
     updateFilesTable();
 }
 
-void MainWindow::disableButtons()
+void MainWindow::fillList()
 {
-    ui->loadButton->setEnabled(false);
-    ui->goButton->setEnabled(false);
-    ui->ddList->setEnabled(false);
-    ui->clearButton->setEnabled(false);
-}
+    QModelIndexList rows = ui->tableWidget->selectionModel()->selectedRows(0);
+    ui->ddList->clear();
+    ui->ddList->addItem("-");
+    if(rows.size() > 0)
+    {
+        ui->ddList->addItem(strDFA);
+        ui->ddList->addItem(strMFDFA);
+        ui->ddList->addItem(strHT);
+        if(rows.size() > 1)
+        {
+            ui->ddList->addItem(strDCCA);
+            ui->ddList->addItem(strRHODCCA);
+        }
 
-void MainWindow::enableButtons()
-{
-    ui->loadButton->setEnabled(true);
-    ui->goButton->setEnabled(true);
-    ui->ddList->setEnabled(true);
-    ui->clearButton->setEnabled(true);
+        ui->goButton->setEnabled(true);
+    }
+    else
+    {
+        ui->goButton->setEnabled(false);
+    }
 }
 
 void MainWindow::onGoClick()
 {
     QString analysisType = ui->ddList->currentText();
-    if(analysisType != "-"){
-        if((analysisType == strDCCA || analysisType == strRHODCCA) && fileNames.size() < 2){
-            QMessageBox messageBox;
-            QString errToShow = "This type of analysis requires\nat least two data files";
-            messageBox.critical(nullptr, "Error", errToShow);
-            messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
-        }else{
-            disableButtons();
-            if(analysisType == strDFA){
-                AbstractInputsWindow *abWin = new AbstractInputsWindow("Inputs");
-                abWin->show();
-                /*dfaInptWin = new InputsDFA(fileNames);
-                dfaInptWin->setAttribute(Qt::WA_DeleteOnClose);
-                dfaInptWin->setWindowModality(Qt::ApplicationModal);
-                dfaInptWin->show();
-                connect(dfaInptWin, SIGNAL(dfaInputsInserted(DFA**)), this, SLOT(onCloseDFAInputWin(DFA**)), Qt::QueuedConnection);
-                connect(dfaInptWin, SIGNAL(destroyed()), this, SLOT(enableButtons()));*/
-            }else if(analysisType == strDCCA){
-                dccaInptWin = new InputsDCCA(fileNames);
-                dccaInptWin->setAttribute(Qt::WA_DeleteOnClose);
-                dccaInptWin->setWindowModality(Qt::ApplicationModal);
-                dccaInptWin->show();
-                connect(dccaInptWin, SIGNAL(dccaInputsInserted(DCCA**)), this, SLOT(onCloseDCCAInputWin(DCCA**)), Qt::QueuedConnection);
-                connect(dccaInptWin, SIGNAL(destroyed()), this, SLOT(enableButtons()));
-            }else if(analysisType == strMFDFA){
-                mfdfaInptWin = new InputsMFDFA(fileNames);
-                mfdfaInptWin->setAttribute(Qt::WA_DeleteOnClose);
-                mfdfaInptWin->setWindowModality(Qt::ApplicationModal);
-                mfdfaInptWin->show();
-                connect(mfdfaInptWin, SIGNAL(mfdfaInputsInserted(MFDFA**)), this, SLOT(onCloseMFDFAInputWin(MFDFA**)), Qt::QueuedConnection);
-                connect(mfdfaInptWin, SIGNAL(destroyed()), this, SLOT(enableButtons()));
-            }else if(analysisType == strRHODCCA){
-                rhodccaInptWin = new InputsrhoDCCA(fileNames);
-                rhodccaInptWin->setAttribute(Qt::WA_DeleteOnClose);
-                rhodccaInptWin->setWindowModality(Qt::ApplicationModal);
-                rhodccaInptWin->show();
-                connect(rhodccaInptWin, SIGNAL(rhodccaInputsInserted(rhoDCCA**)), this, SLOT(onCloseRHODCCAInputWin(rhoDCCA**)), Qt::QueuedConnection);
-                connect(rhodccaInptWin, SIGNAL(destroyed()), this, SLOT(enableButtons()));
-            }else if(analysisType == strHT){
-                htInptWin = new InputsHT(fileNames);
-                htInptWin->setAttribute(Qt::WA_DeleteOnClose);
-                htInptWin->setWindowModality(Qt::ApplicationModal);
-                htInptWin->show();
-                connect(htInptWin, SIGNAL(htInputsInserted(HT**)), this, SLOT(onCloseHTInputWin(HT**)), Qt::QueuedConnection);
-                connect(htInptWin, SIGNAL(destroyed()), this, SLOT(enableButtons()));
-            }
+    if(analysisType != "-")
+    {
+        QModelIndexList idxs = ui->tableWidget->selectionModel()->selectedRows(0);
+        QStringList files, cols, names;
+        for(int i = 0; i < int(idxs.size()); i++)
+        {
+            QModelIndex idx = idxs.at(i);
+            files.append(ui->tableWidget->item(idx.row(), 0)->text());
+            cols.append(QString::number(ui->tableWidget->item(idx.row(), 1)->text().split("\n").last().split(" ").last().front().digitValue()));
+        }
+
+        if(analysisType == strDFA)
+        {
+            dfaInptWin = new InputsDFA(files, cols);
+            dfaInptWin->show();
+            connect(dfaInptWin, SIGNAL(inputsInserted(std::vector<FA*>)), this, SLOT(onCloseDFAInputWin(std::vector<FA*>)), Qt::QueuedConnection);
+        }
+        else if(analysisType == strDCCA)
+        {
+            dccaInptWin = new InputsDCCA(files, cols);
+            dccaInptWin->show();
+            connect(dccaInptWin, SIGNAL(inputsInserted(std::vector<FA*>)), this, SLOT(onCloseDCCAInputWin(std::vector<FA*>)), Qt::QueuedConnection);
+        }
+        else if(analysisType == strMFDFA)
+        {
+            mfdfaInptWin = new InputsMFDFA(files, cols);
+            mfdfaInptWin->show();
+            connect(mfdfaInptWin, SIGNAL(inputsInserted(std::vector<FA*>)), this, SLOT(onCloseMFDFAInputWin(std::vector<FA*>)), Qt::QueuedConnection);
+        }
+        else if(analysisType == strRHODCCA)
+        {
+            rhodccaInptWin = new InputsrhoDCCA(files, cols);
+            rhodccaInptWin->show();
+            connect(rhodccaInptWin, SIGNAL(inputsInserted(std::vector<FA*>)), this, SLOT(onCloseRHODCCAInputWin(std::vector<FA*>)), Qt::QueuedConnection);
+        }
+        else if(analysisType == strHT)
+        {
+            htInptWin = new InputsHT(files, cols);
+            htInptWin->show();
+            connect(htInptWin, SIGNAL(inputsInserted(std::vector<FA*>)), this, SLOT(onCloseHTInputWin(std::vector<FA*>)), Qt::QueuedConnection);
         }
     }
 }
 
-void MainWindow::onCloseDFAInputWin(DFA **dfa)
+void MainWindow::onCloseDFAInputWin(std::vector<FA*> dfa)
 {
-    for(int i = 0;  i < fileNames.size(); i++){
-        dfa[i]->setFlucVectors();
-        bool execStop = dfa[i]->computeFlucVec();
-        if(!execStop){
-            dfa[i]->fitFlucVec(dfa[i]->getMinWin(), dfa[i]->getMaxWin());
-            DFAWindow *plotWin = new DFAWindow(dfa[i]);
+    for(int i = 0;  i < fileNames.size(); i++)
+    {
+        DFA *obj = (DFA *)dfa[i];
+        obj->setFlucVectors();
+        bool execStop = obj->computeFlucVec();
+        if(!execStop)
+        {
+            obj->fitFlucVec(obj->getMinWin(), obj->getMaxWin());
+            DFAWindow *plotWin = new DFAWindow(obj);
             plotWin->setAttribute(Qt::WA_DeleteOnClose);
             plotWin->show();
         }
     }
 }
 
-void MainWindow::onCloseDCCAInputWin(DCCA **dcca)
+void MainWindow::onCloseDCCAInputWin(std::vector<FA*> dcca)
 {
     MathOps mo;
     long long int combs = mo.binCoeff(fileNames.size(), 2);
-    for(int i = 0;  i < combs; i++){
-        dcca[i]->setFlucVectors();
-        bool execStop = dcca[i]->computeFlucVec();
-        if(!execStop){
-            dcca[i]->fitFlucVec(dcca[i]->getMinWin(), dcca[i]->getMaxWin());
-            DCCAWindow *plotWin = new DCCAWindow(dcca[i]);
+    for(int i = 0;  i < combs; i++)
+    {
+        DCCA *obj = (DCCA *)dcca[i];
+        obj->setFlucVectors();
+        bool execStop = obj->computeFlucVec();
+        if(!execStop)
+        {
+            obj->fitFlucVec(obj->getMinWin(), obj->getMaxWin());
+            DCCAWindow *plotWin = new DCCAWindow(obj);
             plotWin->setAttribute(Qt::WA_DeleteOnClose);
             plotWin->show();
         }
     }
 }
 
-void MainWindow::onCloseMFDFAInputWin(MFDFA **mfdfa)
+void MainWindow::onCloseMFDFAInputWin(std::vector<FA*> mfdfa)
 {
-    for(int i = 0;  i < fileNames.size(); i++){
-        mfdfa[i]->setFlucVectors();
-        bool execStop = mfdfa[i]->computeFlucVec();
-        if(!execStop){
-            MFDFAWindow *plotWin = new MFDFAWindow(mfdfa[i]);
+    for(int i = 0;  i < fileNames.size(); i++)
+    {
+        MFDFA *obj = (MFDFA *)mfdfa[i];
+        obj->setFlucVectors();
+        bool execStop = obj->computeFlucVec();
+        if(!execStop)
+        {
+            MFDFAWindow *plotWin = new MFDFAWindow(obj);
             plotWin->setAttribute(Qt::WA_DeleteOnClose);
             plotWin->show();
         }
     }
 }
 
-void MainWindow::onCloseRHODCCAInputWin(rhoDCCA **rhodcca)
+void MainWindow::onCloseRHODCCAInputWin(std::vector<FA*> rhodcca)
 {
     MathOps mo;
     long long int combs = mo.binCoeff(fileNames.size(), 2);
-    for(int i = 0;  i < combs; i++){
-        bool execStop = rhodcca[i]->computeRho();
-        if(!execStop){
-            if(rhodcca[i]->threshCompute())
-                rhodcca[i]->computeThresholds();
-            rhoDCCAWindow *plotWin = new rhoDCCAWindow(rhodcca[i]);
+    for(int i = 0;  i < combs; i++)
+    {
+        rhoDCCA *obj = (rhoDCCA *)rhodcca[i];
+        bool execStop = obj->computeRho();
+        if(!execStop)
+        {
+            if(obj->threshCompute())
+                obj->computeThresholds();
+            rhoDCCAWindow *plotWin = new rhoDCCAWindow(obj);
             plotWin->setAttribute(Qt::WA_DeleteOnClose);
             plotWin->show();
         }
     }
 }
 
-void MainWindow::onCloseHTInputWin(HT **ht)
+void MainWindow::onCloseHTInputWin(std::vector<FA*> ht)
 {
-    for(int i = 0;  i < fileNames.size(); i++){
-        ht[i]->setFlucVectors();
-        bool execStop = ht[i]->computeFlucVec();
-        if(!execStop){
-            HTWindow *plotWin = new HTWindow(ht[i]);
+    for(int i = 0;  i < fileNames.size(); i++)
+    {
+        HT *obj = (HT *)ht[i];
+        obj->setFlucVectors();
+        bool execStop = obj->computeFlucVec();
+        if(!execStop)
+        {
+            HTWindow *plotWin = new HTWindow(obj);
             plotWin->setAttribute(Qt::WA_DeleteOnClose);
             plotWin->show();
         }

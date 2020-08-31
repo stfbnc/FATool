@@ -22,7 +22,10 @@ LogWindow::LogWindow(QString logs, QString fileName, QString fileName2, QWidget 
     ui->txtArea->setText(logs);
 }
 
-LogWindow::~LogWindow(){}
+LogWindow::~LogWindow()
+{
+    delete ui;
+}
 
 void LogWindow::onSave()
 {

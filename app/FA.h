@@ -37,7 +37,7 @@ public:
         return (end - start) / step + 1;
     }
     
-    virtual void allocateMemory() = 0;
+    virtual void allocateMemory(){}
 
 	void setFlucVectors(){
 	    MathOps mo = MathOps();
@@ -56,11 +56,21 @@ public:
 	    mo.cumsum(pnNomean, y, N);
 	}
 
-    virtual bool computeFlucVec() = 0;
-    virtual void fitFlucVec(int start, int end) = 0;
-    virtual std::string outFileStr() = 0;
-    virtual void saveFile(std::string pathTot) = 0;
-    virtual void plot(BasePlot *plt) = 0;
+    virtual bool computeFlucVec()
+    {
+        return false;
+    }
+
+    virtual void fitFlucVec(int start, int end){}
+
+    virtual std::string outFileStr()
+    {
+        return "";
+    }
+
+    virtual void saveFile(std::string pathTot){}
+
+    virtual void plot(BasePlot *plt){}
 protected:
     std::string fileName;
     std::vector<double> ts;

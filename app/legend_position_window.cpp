@@ -21,7 +21,10 @@ MoveLegendWindow::MoveLegendWindow(QCustomPlot *plt, QWidget *parent) :
     ui->coordTxt->setEnabled(false);
 }
 
-MoveLegendWindow::~MoveLegendWindow(){}
+MoveLegendWindow::~MoveLegendWindow()
+{
+    delete ui;
+}
 
 void MoveLegendWindow::onTopLeftCheckboxClick()
 {

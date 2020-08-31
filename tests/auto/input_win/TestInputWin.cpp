@@ -27,7 +27,7 @@ void TestInputWin::initTestCase()
 {
     QStringList fn;
     fn.append("/Users/stefano/Desktop/Be-7_UMEA.txt");
-    inputsDFA = new InputsDFA(fn);
+    //inputsDFA = new InputsDFA(fn);
 }
 
 void TestInputWin::testSimple()

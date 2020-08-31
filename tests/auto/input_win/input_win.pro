@@ -30,7 +30,6 @@ SOURCES +=  \
     $$APPDIR/file_ops.cpp \
     $$APPDIR/save_window.cpp \
     $$APPDIR/base_plot.cpp \
-    $$APPDIR/inputs_window.cpp \
     $$APPDIR/inputs_dfa.cpp \
     $$APPDIR/inputs_dcca.cpp \
     $$APPDIR/inputs_ht.cpp \
@@ -73,7 +72,6 @@ HEADERS += \
     $$APPDIR/file_ops.h \
     $$APPDIR/save_window.h \
     $$APPDIR/base_plot.h \
-    $$APPDIR/inputs_window.h \
     $$APPDIR/inputs_dfa.h \
     $$APPDIR/inputs_dcca.h \
     $$APPDIR/inputs_ht.h \

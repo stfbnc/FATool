@@ -103,7 +103,7 @@ bool DCCA::computeFlucVec(){
             ao.sliceVec(y2, yFit2, startLim, endLim);
             mo.polyFit(currWinSize+1, ord+1, tFit, yFit1, coeffs1);
             mo.polyFit(currWinSize+1, ord+1, tFit, yFit2, coeffs2);
-            if(isAbs.compare(corrDCCA) == 0){
+            if(isAbs.compare(corrDCCA.toStdString()) == 0){
                 for(int j = 0; j <= currWinSize; j++){
                     double polySum1 = 0, polySum2 = 0;
                     for(int k = 0; k < ord+1; k++){
@@ -112,7 +112,7 @@ bool DCCA::computeFlucVec(){
                     }
                     diffVec.push_back((yFit1.at(j) - polySum1) * (yFit2.at(j) - polySum2));
                 }
-            }else if(isAbs.compare(defaultDCCA) == 0){
+            }else if(isAbs.compare(defaultDCCA.toStdString()) == 0){
                 for(int j = 0; j <= currWinSize; j++){
                     double polySum1 = 0, polySum2 = 0;
                     for(int k = 0; k < ord+1; k++){
@@ -124,9 +124,9 @@ bool DCCA::computeFlucVec(){
             }
             Fnu.at(v) = mo.customMean(diffVec, currWinSize+1, currWinSize-1);
         }
-        if(isAbs.compare(corrDCCA) == 0){
+        if(isAbs.compare(corrDCCA.toStdString()) == 0){
             F.push_back(mo.mean(Fnu, Ns));
-        }else if(isAbs.compare(defaultDCCA) == 0){
+        }else if(isAbs.compare(defaultDCCA.toStdString()) == 0){
             F.push_back(sqrt(mo.mean(Fnu, Ns)));
         }
     }

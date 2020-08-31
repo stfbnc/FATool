@@ -24,7 +24,6 @@
 #include "data_plot_window.h"
 #include "files_data.h"
 #include "update_table_widget.h"
-#include "log_window.h"
 
 namespace Ui{
     class MainWindow;
@@ -53,21 +52,24 @@ private slots:
     void deleteRows();
     void updateRows();
     void onTableModified(QStringList, QStringList, QStringList);
+    void fillList();
     void onGoClick();
-    void onCloseDFAInputWin(DFA **dfa);
-    void onCloseDCCAInputWin(DCCA **dcca);
-    void onCloseMFDFAInputWin(MFDFA **mfdfa);
-    void onCloseRHODCCAInputWin(rhoDCCA **rhodcca);
-    void onCloseHTInputWin(HT **ht);
-    void enableButtons();
+    //void onCloseDFAInputWin(DFA **dfa);
+    //void onCloseDCCAInputWin(DCCA **dcca);
+    //void onCloseMFDFAInputWin(MFDFA **mfdfa);
+    //void onCloseRHODCCAInputWin(rhoDCCA **rhodcca);
+    //void onCloseHTInputWin(HT **ht);
+    void onCloseDFAInputWin(std::vector<FA*> dfa);
+    void onCloseDCCAInputWin(std::vector<FA*> dcca);
+    void onCloseMFDFAInputWin(std::vector<FA*> mfdfa);
+    void onCloseRHODCCAInputWin(std::vector<FA*> rhodcca);
+    void onCloseHTInputWin(std::vector<FA*> ht);
     void onClearClick();
 signals:
     void allFilesLoaded();
 private:
     void closeEvent(QCloseEvent *event);
     void instrWindow();
-    void fillList();
-    void disableButtons();
     void clearFilesTable();
 
     QStringList fileNames;

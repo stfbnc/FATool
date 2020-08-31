@@ -3,37 +3,39 @@
 
 #include "constants.h"
 #include "DCCA.h"
-#include "inputs_window.h"
+#include "abstract_inputs_window.h"
+#include "files_data.h"
 
-class InputsDCCA : public InputsWindow
+class InputsDCCA : public AbstractInputsWindow
 {
 Q_OBJECT
 public:
-    explicit InputsDCCA(QStringList fileNames_, QWidget *parent=nullptr);
+    explicit InputsDCCA(QStringList fileNames, QStringList columns, QWidget *parent=nullptr);
     virtual ~InputsDCCA();
 signals:
-    void dccaInputsInserted(DCCA **dcca);
+    void inputsInserted(std::vector<FA*>);
 private slots:
-    void onOKClick() override;
+    void onOkClick() override;
+    void onThirdButtonClick() override;
 private:
     bool checkInputs() override;
-    void setInputsComponents() override;
-    void setAnalysisObj() override;
+    void addWidgets() override;
 
-    QLineEdit ***winsAndStep;
-    QLineEdit **polOrd;
-    QComboBox **absList;
-    QStringList *fileCouples;
+    QList<QList<QLineEdit*>> winsAndStep;
+    QList<QLineEdit*> polOrd;
+    QList<QComboBox*> absList;
+    QList<QStringList> fileCouples;
+    QList<QStringList> colsCouples;
 
-    DCCA **dcca;
+    std::vector<FA*> dcca = std::vector<FA*>();
 
     QStringList fileNames;
-    int *mw;
-    int *Mw;
-    int *ws;
-    int *po;
-    std::string *al;
-    int numComp;
+    QStringList columns;
+    std::vector<int> mw = std::vector<int>();
+    std::vector<int> Mw = std::vector<int>();
+    std::vector<int> ws = std::vector<int>();
+    std::vector<int> po = std::vector<int>();
+    QStringList al;
     long long int combs;
 };
 

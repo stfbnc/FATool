@@ -50,6 +50,20 @@ void AbstractInputsWindow::onThirdButtonClick(){}
 
 void AbstractInputsWindow::addWidgets(){}
 
+bool AbstractInputsWindow::isCorrectFormat(QString txt)
+{
+    QRegExp rgx("^[-]?[0-9]+[.]?[0-9]*$");
+    if(!txt.isEmpty() && txt.contains(rgx))
+        return true;
+    else
+        return false;
+}
+
+bool AbstractInputsWindow::checkInputs()
+{
+    return false;
+}
+
 QPushButton* AbstractInputsWindow::getOkButton()
 {
     return ui->okButton;
@@ -88,7 +102,7 @@ void AbstractInputsWindow::addLabel(QString text, bool isBold)
     vLayout->addWidget(label);
 }
 
-QList<QLineEdit *> AbstractInputsWindow::addLabeledLineEdits(QStringList text, bool isSmall, bool isBold)
+QList<QLineEdit *> AbstractInputsWindow::addLabeledLineEdits(QStringList text, bool isBold)
 {
     QWidget *widget = new QWidget();
     widget->setContentsMargins(0, 0, 0, 0);
@@ -99,19 +113,13 @@ QList<QLineEdit *> AbstractInputsWindow::addLabeledLineEdits(QStringList text, b
     QList<QLineEdit *> lineEdits;
     for(QString str : text){
         QLabel *label = new QLabel(str);
-        //int w = label->fontMetrics().boundingRect(label->text()).width() + 10;
         if(isBold)
             label->setStyleSheet("font-weight: bold");
-        //label->setFixedSize(w, widgetHeight);
         label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
         label->setContentsMargins(0, 0, 0, 0);
         hl->addWidget(label);
 
         QLineEdit *lineEdit = new QLineEdit();
-        //if(isSmall)
-        //    lineEdit->setFixedSize(2*widgetHeight, widgetHeight);
-        //else
-        //    lineEdit->setFixedSize(6*widgetHeight, widgetHeight);
         lineEdit->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
         lineEdit->setContentsMargins(0, 0, 0, 0);
         lineEdits.append(lineEdit);

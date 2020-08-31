@@ -10,7 +10,7 @@ namespace Ui{
 
 class AbstractInputsWindow : public QWidget
 {
-    Q_OBJECT
+Q_OBJECT
 public:
     explicit AbstractInputsWindow(QString title="", QWidget *parent=nullptr);
     virtual ~AbstractInputsWindow();
@@ -20,14 +20,15 @@ protected slots:
     virtual void onThirdButtonClick();
     virtual void onBottomCheck();
 protected:
-    virtual void addWidgets();
-    void setDimension();
+    virtual void addWidgets() = 0;
+    bool isCorrectFormat(QString txt);
+    virtual bool checkInputs();
     QPushButton* getOkButton();
     QPushButton* getCancelButton();
     QPushButton* addThirdButton(QString text);
     QCheckBox* addBottomCheckbox(QString text, bool isBold=false);
     void addLabel(QString text, bool isBold=false);
-    QList<QLineEdit *> addLabeledLineEdits(QStringList text, bool isSmall=true, bool isBold=false);
+    QList<QLineEdit*> addLabeledLineEdits(QStringList text, bool isBold=false);
     QLineEdit* addLabeledLineEdit(QString text, bool isBold=false);
     QCheckBox* addCheckbox(QString text="", bool isBold=false);
     QComboBox* addComboBox(QStringList list, QString text="", bool isBold=false);
@@ -36,8 +37,6 @@ protected:
 private:
     QWidget *mainWidget = nullptr;
     QVBoxLayout *vLayout = nullptr;
-
-    //const int widgetHeight = 20;
 };
 
 #endif // ABSTRACT_INPUTS_WINDOW_H

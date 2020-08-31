@@ -1,6 +1,8 @@
 #include "rhoDCCA.h"
 
-rhoDCCA::rhoDCCA(std::string fileName, std::vector<double> ts, int tsLen, std::string fileName2, std::vector<double> ts2, int tsLen2, int minWin, int maxWin, int ord, int winStep, bool thresh){
+rhoDCCA::rhoDCCA(std::string fileName, std::vector<double> ts, int tsLen, std::string fileName2, std::vector<double> ts2, int tsLen2, int minWin, int maxWin, int ord, int winStep, bool thresh) :
+    FA(ts, tsLen)
+{
     this->fileName = fileName;
     this->tsLen = tsLen;
     this->ts.reserve(tsLen);
@@ -23,17 +25,17 @@ rhoDCCA::~rhoDCCA() {}
 
 bool rhoDCCA::computeRho(){
     bool execStop = false;
-    DCCA dccaXX = DCCA(fileName, ts, tsLen, fileName, ts, tsLen, minWin, maxWin, ord, defaultDCCA, winStep);
+    DCCA dccaXX = DCCA(fileName, ts, tsLen, fileName, ts, tsLen, minWin, maxWin, ord, defaultDCCA.toStdString(), winStep);
     dccaXX.setFlucVectors();
     execStop = dccaXX.computeFlucVec();
     if(!execStop){
         std::vector<double> Fxx = dccaXX.getF();
-        DCCA dccaYY = DCCA(fileName2, ts2, tsLen2, fileName2, ts2, tsLen2, minWin, maxWin, ord, defaultDCCA, winStep);
+        DCCA dccaYY = DCCA(fileName2, ts2, tsLen2, fileName2, ts2, tsLen2, minWin, maxWin, ord, defaultDCCA.toStdString(), winStep);
         dccaYY.setFlucVectors();
         execStop = dccaYY.computeFlucVec();
         if(!execStop){
             std::vector<double> Fyy = dccaYY.getF();
-            DCCA dccaXY = DCCA(fileName, ts, tsLen, fileName2, ts2, tsLen2, minWin, maxWin, ord, corrDCCA, winStep);
+            DCCA dccaXY = DCCA(fileName, ts, tsLen, fileName2, ts2, tsLen2, minWin, maxWin, ord, corrDCCA.toStdString(), winStep);
             dccaXY.setFlucVectors();
             execStop = dccaXY.computeFlucVec();
             if(!execStop){
@@ -84,17 +86,17 @@ void rhoDCCA::computeThresholds(){
         for(int j = 0; j < N; j++){
             std::cout << grand1.at(j) << "!!!" << grand2.at(j) << std::endl;
         }
-        DCCA dcca11 = DCCA("", grand1, N, "", grand1, N, minWin, maxWin, ord, defaultDCCA, winStep, false);
+        DCCA dcca11 = DCCA("", grand1, N, "", grand1, N, minWin, maxWin, ord, defaultDCCA.toStdString(), winStep, false);
         dcca11.setFlucVectors();
         dcca11.computeFlucVec();
         std::vector<double> F11 = dcca11.getF();
         progress.setValue(i*3+1);
-        DCCA dcca22 = DCCA("", grand2, N, "", grand2, N, minWin, maxWin, ord, defaultDCCA, winStep, false);
+        DCCA dcca22 = DCCA("", grand2, N, "", grand2, N, minWin, maxWin, ord, defaultDCCA.toStdString(), winStep, false);
         dcca22.setFlucVectors();
         dcca22.computeFlucVec();
         std::vector<double> F22 = dcca22.getF();
         progress.setValue(i*3+2);
-        DCCA dcca12 = DCCA("", grand1, N, "", grand2, N, minWin, maxWin, ord, corrDCCA, winStep, false);
+        DCCA dcca12 = DCCA("", grand1, N, "", grand2, N, minWin, maxWin, ord, corrDCCA.toStdString(), winStep, false);
         dcca12.setFlucVectors();
         dcca12.computeFlucVec();
         std::vector<double> F12 = dcca12.getF();

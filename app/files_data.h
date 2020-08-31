@@ -21,7 +21,7 @@ public:
     QStringList getKeys();
 private:
     std::mutex *dataMutex;
-    std::map<QString, DataFile*> dataMap;
+    std::map<QString, DataFile*> dataMap = std::map<QString, DataFile*>();
 };
 
 #endif // FILES_DATA_H

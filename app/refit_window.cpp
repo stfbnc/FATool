@@ -16,7 +16,10 @@ RefitWindow::RefitWindow(QWidget *parent) :
     connect(ui->clearFits, SIGNAL(clicked()), this, SLOT(onClearFitsClick()));
 }
 
-RefitWindow::~RefitWindow(){}
+RefitWindow::~RefitWindow()
+{
+    delete ui;
+}
 
 void RefitWindow::onOKClick()
 {

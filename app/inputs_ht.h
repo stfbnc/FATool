@@ -3,42 +3,43 @@
 
 #include "constants.h"
 #include "HT.h"
-#include "inputs_window.h"
+#include "abstract_inputs_window.h"
+#include "files_data.h"
 
-class InputsHT : public InputsWindow
+class InputsHT : public AbstractInputsWindow
 {
 Q_OBJECT
 public:
-    explicit InputsHT(QStringList fileNames_, QWidget *parent=nullptr);
+    explicit InputsHT(QStringList fileNames, QStringList columns, QWidget *parent=nullptr);
     virtual ~InputsHT();
 signals:
-    void htInputsInserted(HT **ht);
+    void inputsInserted(std::vector<FA*>);
 private slots:
-    void onOKClick() override;
+    void onOkClick() override;
+    void onThirdButtonClick() override;
 private:
     void onRangeChkBoxClick(int idx);
     void onStringChkBoxClick(int idx);
     bool checkInputs() override;
-    void setInputsComponents() override;
-    void setAnalysisObj() override;
+    void addWidgets() override;
 
-    QLineEdit ***scalesAndStep;
-    QLineEdit **customScales;
-    QCheckBox **rangeBox;
-    QCheckBox **stringBox;
-    QLineEdit ***winsAndStep;
+    QList<QList<QLineEdit*>> scalesAndStep;
+    QList<QLineEdit*> customScales;
+    QList<QCheckBox*> rangeBox;
+    QList<QCheckBox*> stringBox;
+    QList<QList<QLineEdit*>> winsAndStep;
 
-    HT **ht;
+    std::vector<FA*> ht = std::vector<FA*>();
 
     QStringList fileNames;
-    int *ns;
-    int *ms;
-    int *ss;
-    QString *cs;
-    int *mmw;
-    int *mMw;
-    int *mws;
-    int numComp;
+    QStringList columns;
+    std::vector<int> ns = std::vector<int>();
+    std::vector<int> ms = std::vector<int>();
+    std::vector<int> ss = std::vector<int>();
+    QStringList cs;
+    std::vector<int> mmw = std::vector<int>();
+    std::vector<int> mMw = std::vector<int>();
+    std::vector<int> mws = std::vector<int>();
 };
 
 #endif // INPUTS_HT_H

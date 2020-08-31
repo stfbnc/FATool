@@ -1,87 +1,67 @@
 #include "inputs_dcca.h"
 
-InputsDCCA::InputsDCCA(QStringList fileNames_, QWidget *parent) : InputsWindow(parent)
+InputsDCCA::InputsDCCA(QStringList fileNames, QStringList columns, QWidget *parent) :
+    AbstractInputsWindow(strDCCA + " inputs", parent)
 {
-    fileNames = fileNames_;
-    numComp = 4;
+    this->fileNames = fileNames;
+    this->columns = columns;
     MathOps mo;
     combs = mo.binCoeff(fileNames.size(), 2);
-    //set title
-    setWindowTitle(strDCCA);
-    //set window size
-    setFixedSize(xDim, (combs*numComp+1)*(yHeight+padY)+2*padY);
-    //set graphic components
-    setInputsComponents();
+
+    addWidgets();
 }
 
 InputsDCCA::~InputsDCCA(){}
 
-void InputsDCCA::setInputsComponents()
+void InputsDCCA::addWidgets()
 {
-    QStringList labels;
-    labels.append({"Windows size from", "to", "every"});
-    QStringList entries;
-    entries.append({"absolute", "signed"});
-    fileCouples = new QStringList [combs];
-    int couple = 0;
-    for(int i = 0; i < fileNames.size()-1; i++){
-        for(int j = i+1; j < fileNames.size(); j++){
-            fileCouples[couple].append(fileNames[i]);
-            fileCouples[couple].append(fileNames[j]);
-            couple++;
+    for(int i = 0; i < fileNames.size()-1; i++)
+    {
+        for(int j = i+1; j < fileNames.size(); j++)
+        {
+            fileCouples.append({fileNames.at(i), fileNames.at(j)});
+            colsCouples.append({columns.at(i), columns.at(j)});
         }
     }
-    winsAndStep = new QLineEdit** [combs];
-    polOrd = new QLineEdit* [combs];
-    absList = new QComboBox* [combs];
 
-    for(int i = 0; i < combs; i++){
-        addLabel(fileCouples[i][0].split("/").last()+" - "+fileCouples[i][1].split("/").last(), i*numComp);
+    for(int i = 0; i < combs; i++)
+    {
+        addLabel(fileCouples.at(i).at(0).split("/").last() + " - " + fileCouples.at(i).at(1).split("/").last(), true);
 
-        winsAndStep[i] = new QLineEdit* [labels.size()];
-        addLabeledEditBoxArray(labels, winsAndStep[i], i*numComp+1);
-        winsAndStep[i][2]->setText("1");
+        winsAndStep.append(addLabeledLineEdits({"Windows size from", "to", "every"}));
+        winsAndStep.at(i).at(2)->setText("1");
 
-        polOrd[i] = addLabeledEditBox("Polynomial order", i*numComp+2);
-        polOrd[i]->setText("1");
+        polOrd.append(addLabeledLineEdit({"Polynomial order"}));
+        polOrd.at(i)->setText("1");
 
-        absList[i] = addLabeledComboBox("Computation type", entries, i*numComp+3);
+        absList.append(addComboBox({"absolute", "signed"}, "Computation type"));
     }
-    addButtons(combs*numComp);
+
+    if(combs > 0)
+        addThirdButton("Copy to all");
 }
 
 bool InputsDCCA::checkInputs()
 {
-    for(int i = 0; i < fileNames.size(); i++){
-        if(!checkFileExistence(fileNames[i].toStdString())){
-            QMessageBox messageBox;
-            QString errToShow = "File "+fileNames[i].split("/").last()+"not found!";
-            messageBox.critical(nullptr, "Error", errToShow);
-            messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
-            return false;
-        }
-    }
-
-    mw = new int [combs];
-    Mw = new int [combs];
-    ws = new int [combs];
-    po = new int [combs];
-    al = new std::string [combs];
-    for(int i = 0; i < combs; i++){
-        QString mwStr = winsAndStep[i][0]->text().trimmed();
-        QString MwStr = winsAndStep[i][1]->text().trimmed();
-        QString wsStr = winsAndStep[i][2]->text().trimmed();
-        QString poStr = polOrd[i]->text().trimmed();
+    for(int i = 0; i < combs; i++)
+    {
+        QString mwStr = winsAndStep.at(i).at(0)->text().trimmed();
+        QString MwStr = winsAndStep.at(i).at(1)->text().trimmed();
+        QString wsStr = winsAndStep.at(i).at(2)->text().trimmed();
+        QString poStr = polOrd.at(i)->text().trimmed();
         if(isCorrectFormat(mwStr) &&
             isCorrectFormat(MwStr) &&
             isCorrectFormat(wsStr) &&
-            isCorrectFormat(poStr)){
-            mw[i] = mwStr.toInt();
-            Mw[i] = MwStr.toInt();
-            ws[i] = wsStr.toInt();
-            po[i] = poStr.toInt();
-            absList[i]->currentText()=="absolute" ? al[i] = defaultDCCA : al[i] = corrDCCA;
-        }else{
+            isCorrectFormat(poStr))
+        {
+            mw.push_back(mwStr.toInt());
+            Mw.push_back(MwStr.toInt());
+            ws.push_back(wsStr.toInt());
+            po.push_back(poStr.toInt());
+            absList.at(i)->currentText()=="absolute" ? al.append(defaultDCCA) : al.append(corrDCCA);
+        }
+        else
+        {
             QMessageBox messageBox;
             QString errToShow = "Inputs must be numeric and not null!";
             messageBox.critical(nullptr, "Error", errToShow);
@@ -91,74 +71,104 @@ bool InputsDCCA::checkInputs()
     }
 
     QStringList inptErrs;
-    for(int i = 0; i < combs; i++){
+    for(int i = 0; i < combs; i++)
+    {
         //windows size
-        if(Mw[i] < mw[i])
+        if(Mw.at(i) < mw.at(i))
             inptErrs.append("- biggest scale must be greater than smallest scale\n");
-        else if(mw[i] < po[i]+2)
+        else if(mw.at(i) < (po.at(i) + 2))
             inptErrs.append("- smallest scale must be greater than "+QString::number(po[i]+1)+"\n");
         //windows step
-        if(ws[i] < 1)
+        if(ws.at(i) < 1)
             inptErrs.append("- step must be greater than 0\n");
         //polynomial order
-        if(po[i] < 1)
+        if(po.at(i) < 1)
             inptErrs.append("- polynomial order must be greater than 0\n");
     }
     
-    if(inptErrs.size() > 0){
+    if(inptErrs.size() > 0)
+    {
         QMessageBox messageBox;
         QString errToShow = "The following errors occurred:\n\n";
         inptErrs.removeDuplicates();
         for(int i = 0; i < inptErrs.size(); i++)
-            errToShow.append(inptErrs[i]);
+            errToShow.append(inptErrs.at(i));
         messageBox.critical(nullptr, "Error", errToShow);
         messageBox.setFixedSize(ERROR_BOX_SIZE, ERROR_BOX_SIZE);
         return false;
-    }else{
+    }
+    else
+    {
         return true;
     }
 }
 
-void InputsDCCA::setAnalysisObj()
+void InputsDCCA::onOkClick()
 {
-    dcca = new DCCA* [combs];
-    for(int i = 0; i < combs; i++){
-        FileOps fo;
-        std::string fn = fileCouples[i][0].toStdString();
-        int N = fo.rowsNumber(fn);
-        std::string fn2 = fileCouples[i][1].toStdString();
-        int N2 = fo.rowsNumber(fn2);
-        FILE *f;
-        std::vector<double> vec(N), vec2(N);
-        f = fo.openFile(fn, "r");
-        for(int j = 0; j < N; j++){
-            double tmpVal;
-            fscanf(f, "%lf", &tmpVal);
-            vec.at(j) = tmpVal;
+    if(checkInputs())
+    {
+        FilesData *fd = new FilesData();
+        std::map<QString, DataFile*> map = fd->getDataMap();
+        for(int i = 0; i < combs; i++)
+        {
+            std::vector<double> vec = map.at(fileCouples.at(i).at(0))->getDataOfColumn(colsCouples.at(i).at(0).toInt());
+            std::vector<double> vec2 = map.at(fileCouples.at(i).at(1))->getDataOfColumn(colsCouples.at(i).at(1).toInt());
+
+            /*FileOps fo;
+            std::string fn = fileCouples[i][0].toStdString();
+            int N = fo.rowsNumber(fn);
+            std::string fn2 = fileCouples[i][1].toStdString();
+            int N2 = fo.rowsNumber(fn2);
+            FILE *f;
+            std::vector<double> vec(N), vec2(N);
+            f = fo.openFile(fn, "r");
+            for(int j = 0; j < N; j++){
+                double tmpVal;
+                fscanf(f, "%lf", &tmpVal);
+                vec.at(j) = tmpVal;
+            }
+            fclose(f);
+            f = fo.openFile(fn2, "r");
+            for(int j = 0; j < N2; j++){
+                double tmpVal;
+                fscanf(f, "%lf", &tmpVal);
+                vec2.at(j) = tmpVal;
+            }
+            fclose(f);*/
+            MathOps mo;
+            int val = mo.minVal(vec.size(), vec2.size());
+            if(mw.at(i) > val)
+                mw.at(i) = po.at(i) + 2;
+            if(Mw.at(i) > val)
+                Mw.at(i) = val;
+            FA *fa = new DCCA(fileCouples.at(i).at(0).toStdString(), vec, vec.size(),
+                              fileCouples.at(i).at(1).toStdString(), vec2, vec2.size(),
+                              mw.at(i), Mw.at(i), po.at(i), al.at(i).toStdString(), ws.at(i));
+            dcca.push_back(fa);
         }
-        fclose(f);
-        f = fo.openFile(fn2, "r");
-        for(int j = 0; j < N2; j++){
-            double tmpVal;
-            fscanf(f, "%lf", &tmpVal);
-            vec2.at(j) = tmpVal;
-        }
-        fclose(f);
-        MathOps mo;
-        int val = mo.minVal(N, N2);
-        if(mw[i] > N)
-            mw[i] = po[i] + 2;
-        if(Mw[i] > val)
-            Mw[i] = val;
-        dcca[i] = new DCCA(fn, vec, N, fn2, vec2, N2, mw[i], Mw[i], po[i], al[i], ws[i]);
+
+        emit inputsInserted(dcca);
+        this->close();
     }
 }
 
-void InputsDCCA::onOKClick()
+void InputsDCCA::onThirdButtonClick()
 {
-    if(checkInputs()){
-        setAnalysisObj();
-        emit dccaInputsInserted(dcca);
-        close();
+    if(combs > 0)
+    {
+        QString w1 = winsAndStep.at(0).at(0)->text();
+        QString w2 = winsAndStep.at(0).at(1)->text();
+        QString w3 = winsAndStep.at(0).at(2)->text();
+        QString p = polOrd.at(0)->text();
+        QString a = absList.at(0)->currentText();
+
+        for(int i = 1; i < combs; i++)
+        {
+            winsAndStep.at(i).at(0)->setText(w1);
+            winsAndStep.at(i).at(1)->setText(w2);
+            winsAndStep.at(i).at(2)->setText(w3);
+            polOrd.at(i)->setText(p);
+            absList.at(i)->setCurrentText(a);
+        }
     }
 }

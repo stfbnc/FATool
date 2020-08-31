@@ -3,40 +3,41 @@
 
 #include "constants.h"
 #include "MFDFA.h"
-#include "inputs_window.h"
+#include "abstract_inputs_window.h"
+#include "files_data.h"
 
-class InputsMFDFA : public InputsWindow
+class InputsMFDFA : public AbstractInputsWindow
 {
 Q_OBJECT
 public:
-    explicit InputsMFDFA(QStringList fileNames_, QWidget *parent=nullptr);
+    explicit InputsMFDFA(QStringList fileNames, QStringList columns, QWidget *parent=nullptr);
     virtual ~InputsMFDFA();
 signals:
-    void mfdfaInputsInserted(MFDFA **mfdfa);
+    void inputsInserted(std::vector<FA*>);
 private slots:
-    void onOKClick() override;
+    void onOkClick() override;
+    void onThirdButtonClick() override;
 private:
     bool checkInputs() override;
-    void setInputsComponents() override;
-    void setAnalysisObj() override;
+    void addWidgets() override;
 
-    QLineEdit ***winsAndStep;
-    QLineEdit **polOrd;
-    QCheckBox **revSeg;
-    QLineEdit ***qsAndStep;
+    QList<QList<QLineEdit*>> winsAndStep;
+    QList<QLineEdit*> polOrd;
+    QList<QCheckBox*> revSeg;
+    QList<QList<QLineEdit*>> qsAndStep;
 
-    MFDFA **mfdfa;
+    std::vector<FA*> mfdfa = std::vector<FA*>();
 
     QStringList fileNames;
-    int *mw;
-    int *Mw;
-    int *ws;
-    int *po;
-    int *rs;
-    int *nq;
-    double *qi;
-    double *qs;
-    int numComp;
+    QStringList columns;
+    std::vector<int> mw = std::vector<int>();
+    std::vector<int> Mw = std::vector<int>();
+    std::vector<int> ws = std::vector<int>();
+    std::vector<int> po = std::vector<int>();
+    std::vector<int> rs = std::vector<int>();
+    std::vector<int> nq = std::vector<int>();
+    std::vector<double> qi = std::vector<double>();
+    std::vector<double> qs = std::vector<double>();
 };
 
 #endif // INPUTS_MFDFA_H
