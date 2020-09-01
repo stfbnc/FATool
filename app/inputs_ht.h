@@ -10,7 +10,7 @@ class InputsHT : public AbstractInputsWindow
 {
 Q_OBJECT
 public:
-    explicit InputsHT(QStringList fileNames, QStringList columns, QWidget *parent=nullptr);
+    explicit InputsHT(QStringList fileNames, QStringList columns, FilesData *dataMap, QWidget *parent=nullptr);
     virtual ~InputsHT();
 signals:
     void inputsInserted(std::vector<FA*>);
@@ -33,6 +33,7 @@ private:
 
     QStringList fileNames;
     QStringList columns;
+    FilesData *dataMap;
     std::vector<int> ns = std::vector<int>();
     std::vector<int> ms = std::vector<int>();
     std::vector<int> ss = std::vector<int>();

@@ -1,10 +1,11 @@
 #include "inputs_mfdfa.h"
 
-InputsMFDFA::InputsMFDFA(QStringList fileNames, QStringList columns, QWidget *parent) :
+InputsMFDFA::InputsMFDFA(QStringList fileNames, QStringList columns, FilesData *dataMap, QWidget *parent) :
     AbstractInputsWindow(strMFDFA + " inputs", parent)
 {
     this->fileNames = fileNames;
     this->columns = columns;
+    this->dataMap = dataMap;
 
     addWidgets();
 }
@@ -114,8 +115,7 @@ void InputsMFDFA::onOkClick()
 {
     if(checkInputs())
     {
-        FilesData *fd = new FilesData();
-        std::map<QString, DataFile*> map = fd->getDataMap();
+        std::map<QString, DataFile*> map = dataMap->getDataMap();
         for(int i = 0; i < fileNames.size(); i++)
         {
             std::vector<double> vec = map.at(fileNames.at(i))->getDataOfColumn(columns.at(i).toInt());
@@ -136,7 +136,7 @@ void InputsMFDFA::onOkClick()
                 mw.at(i) = po.at(i) + 2;
             if(Mw.at(i) > int(vec.size()))
                 Mw.at(i) = vec.size();
-            FA *fa = new MFDFA(fileNames.at(i).toStdString(), vec, vec.size(),
+            MFDFA *fa = new MFDFA(fileNames.at(i).toStdString(), vec, vec.size(),
                                mw.at(i), Mw.at(i), po.at(i), qi.at(i), nq.at(i),
                                ws.at(i), qs.at(i), rs.at(i));
             mfdfa.push_back(fa);

@@ -1,10 +1,11 @@
 #include "inputs_ht.h"
 
-InputsHT::InputsHT(QStringList fileNames, QStringList columns, QWidget *parent) :
+InputsHT::InputsHT(QStringList fileNames, QStringList columns, FilesData *dataMap, QWidget *parent) :
     AbstractInputsWindow(strHT + " inputs", parent)
 {
     this->fileNames = fileNames;
     this->columns = columns;
+    this->dataMap = dataMap;
 
     addWidgets();
 }
@@ -215,8 +216,7 @@ void InputsHT::onOkClick()
 {
     if(checkInputs())
     {
-        FilesData *fd = new FilesData();
-        std::map<QString, DataFile*> map = fd->getDataMap();
+        std::map<QString, DataFile*> map = dataMap->getDataMap();
         for(int i = 0; i < fileNames.size(); i++)
         {
             std::vector<double> vec = map.at(fileNames.at(i))->getDataOfColumn(columns.at(i).toInt());
@@ -248,7 +248,7 @@ void InputsHT::onOkClick()
             }
             else
             {
-                FA *fa = new HT(fileNames.at(i).toStdString(), vec, vec.size(),
+                HT *fa = new HT(fileNames.at(i).toStdString(), vec, vec.size(),
                                 cs.at(i).toStdString(), mmw.at(i), mMw.at(i), mws.at(i));
                 ht.push_back(fa);
             }

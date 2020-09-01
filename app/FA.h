@@ -10,75 +10,111 @@
 class FA
 {
 public:
-    explicit FA(std::vector<double> ts, int tsLen){
+    explicit FA(std::vector<double> ts, int tsLen)
+    {
         this->tsLen = tsLen;
-        this->ts.reserve(tsLen);
-        for(int i = 0; i < tsLen; i++)
-            this->ts.push_back(ts.at(i));
-		N = 0;
+        this->ts = ts;
 	}
 
     virtual ~FA(){}
 
-    int getNansNumber(std::vector<double> vec, int len){
+    int getNansNumber(std::vector<double> vec, int len)
+    {
         int nans = 0;
-        for(int i = 0; i < len; i++){
+        for(int i = 0; i < len; i++)
+        {
             if(std::isnan(vec.at(i)))
                 nans++;
         }
         return nans;
     }
 
-    int setTsLength(std::vector<double> vec, int len){
+    int setTsLength(std::vector<double> vec, int len)
+    {
         return len - getNansNumber(vec, len);
     }
+
+    virtual int getTsLength()
+    {
+        return N;
+    }
     
-    int getRangeLength(int start, int end, int step=1){
+    int getRangeLength(int start, int end, int step=1)
+    {
         return (end - start) / step + 1;
+    }
+
+    virtual int getMinWin()
+    {
+        return minWin;
+    }
+
+    virtual int getMaxWin()
+    {
+        return maxWin;
     }
     
     virtual void allocateMemory(){}
 
-	void setFlucVectors(){
+    virtual QString getAlgorithmStr()
+    {
+        return "";
+    }
+
+    virtual void setVectors()
+    {
 	    MathOps mo = MathOps();
 	    ArrayOps ao = ArrayOps();
-        std::vector<double> pn, pnNomean, pnNoNan;
-        pn.reserve(N);
-        pnNomean.reserve(N);
-        pnNoNan.reserve(setTsLength(ts, tsLen));
+        std::vector<double> pn = std::vector<double>();
+        std::vector<double> pnNomean = std::vector<double>();
+        std::vector<double> pnNoNan = std::vector<double>();
         ao.noNan(ts, tsLen, pnNoNan);
-        ao.sliceVec(pnNoNan, pn, 0, N-1);
-		//time vector
+        ao.sliceVec(pnNoNan, pn, 0, N - 1);
         ao.doubleRange(t, N, 1.0);
-	    //time series minus its mean
         mo.subtractMean(pn, N, pnNomean);
-	    //cumulative sum
 	    mo.cumsum(pnNomean, y, N);
 	}
 
-    virtual bool computeFlucVec()
+    virtual bool executeAlgorithm()
     {
         return false;
     }
 
-    virtual void fitFlucVec(int start, int end){}
+    virtual void executeFit(int start, int end)
+    {
+        start = 0;
+        end = 0;
+    }
+
+    virtual bool isFittable()
+    {
+        return false;
+    }
 
     virtual std::string outFileStr()
     {
         return "";
     }
 
-    virtual void saveFile(std::string pathTot){}
+    virtual void saveFile(std::string pathTot)
+    {
+        pathTot = "";
+    }
 
-    virtual void plot(BasePlot *plt){}
+    virtual void plot(BasePlot *plt)
+    {
+        plt = nullptr;
+    }
 protected:
     std::string fileName;
     std::vector<double> ts;
     int tsLen;
     int N;
-    std::vector<double> t;
-    std::vector<double> y;
-    std::vector<double> F;
+    std::vector<double> t = std::vector<double>();
+    std::vector<double> y = std::vector<double>();
+    std::vector<double> F = std::vector<double>();
+    int minWin = 0;
+    int maxWin = 0;
 };
 
 #endif

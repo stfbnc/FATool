@@ -30,7 +30,7 @@ void DFAWindow::plotData()
 
 void DFAWindow::refitData(int start, int end, double *hSlope, double *hIntcpt)
 {
-    dfa->fitFlucVec(start, end);
+    dfa->executeFit(start, end);
     *hIntcpt = dfa->getHintercept();
     *hSlope = dfa->getH();
 }

@@ -59,11 +59,7 @@ private slots:
     //void onCloseMFDFAInputWin(MFDFA **mfdfa);
     //void onCloseRHODCCAInputWin(rhoDCCA **rhodcca);
     //void onCloseHTInputWin(HT **ht);
-    void onCloseDFAInputWin(std::vector<FA*> dfa);
-    void onCloseDCCAInputWin(std::vector<FA*> dcca);
-    void onCloseMFDFAInputWin(std::vector<FA*> mfdfa);
-    void onCloseRHODCCAInputWin(std::vector<FA*> rhodcca);
-    void onCloseHTInputWin(std::vector<FA*> ht);
+    void onCloseInputWin(std::vector<FA*> fa);
     void onClearClick();
 signals:
     void allFilesLoaded();
@@ -75,11 +71,6 @@ private:
     QStringList fileNames;
     FilesData *dataMap = nullptr;
 
-    InputsDFA *dfaInptWin = nullptr;
-    InputsDCCA *dccaInptWin = nullptr;
-    InputsMFDFA *mfdfaInptWin = nullptr;
-    InputsrhoDCCA *rhodccaInptWin = nullptr;
-    InputsHT *htInptWin = nullptr;
     StartingWindow *startWin = nullptr;
 
     Ui::MainWindow *ui;

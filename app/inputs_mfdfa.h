@@ -10,7 +10,7 @@ class InputsMFDFA : public AbstractInputsWindow
 {
 Q_OBJECT
 public:
-    explicit InputsMFDFA(QStringList fileNames, QStringList columns, QWidget *parent=nullptr);
+    explicit InputsMFDFA(QStringList fileNames, QStringList columns, FilesData *dataMap, QWidget *parent=nullptr);
     virtual ~InputsMFDFA();
 signals:
     void inputsInserted(std::vector<FA*>);
@@ -30,6 +30,7 @@ private:
 
     QStringList fileNames;
     QStringList columns;
+    FilesData *dataMap;
     std::vector<int> mw = std::vector<int>();
     std::vector<int> Mw = std::vector<int>();
     std::vector<int> ws = std::vector<int>();

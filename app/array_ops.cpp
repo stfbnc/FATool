@@ -6,7 +6,7 @@ ArrayOps::~ArrayOps() {}
 
 void ArrayOps::sliceVec(std::vector<double> allVec, std::vector<double> &slicedVec, int start, int end){
     for(int i = 0; i <= (end - start); i++)
-        slicedVec.push_back(allVec.at(start+i));
+        slicedVec.push_back(allVec.at(start + i));
 }
 
 void ArrayOps::concatenate(std::vector<double> &vecTo, std::vector<double> vecFrom1, std::vector<double> vecFrom2, int L){
@@ -38,7 +38,7 @@ void ArrayOps::intRange(std::vector<int> &vec, int L, int start, int step){
 
 void ArrayOps::extractColumn(std::vector<double> mtx, int l, int h, int col, std::vector<double> &vec){
     for(int i = 0; i < h; i++)
-        vec.push_back(mtx.at(col+i*l));
+        vec.push_back(mtx.at(col + i * l));
 }
 
 void ArrayOps::noNan(std::vector<double> vec, int L, std::vector<double> &vecNoNan){

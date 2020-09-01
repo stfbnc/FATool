@@ -5,136 +5,147 @@ MFDFA::MFDFA(std::string fileName, std::vector<double> ts, int tsLen, int minWin
 {
     this->Nq = Nq;
     this->stepq = stepq;
-    allocateQmemory();
 }
 
 MFDFA::~MFDFA(){}
 
-void MFDFA::allocateQmemory(){
-    qRange.reserve(Nq);
-    Hq.reserve(Nq);
-    Hinterceptq.reserve(Nq);
-    flucMtx.reserve(getRangeLength(minWin, maxWin, winStep));
-    for(int i = 0; i < getRangeLength(minWin, maxWin, winStep); i++){
-        std::vector<double> vec;
-        vec.reserve(Nq);
-        flucMtx.push_back(vec);
-    }
-}
-
-void MFDFA::setQrange(double start, int len, double step){
+void MFDFA::setQrange(double start, int len, double step)
+{
     ArrayOps ao = ArrayOps();
     ao.doubleRange(qRange, len, start, step);
 }
 
-bool MFDFA::computeFlucVec(){
+bool MFDFA::executeAlgorithm()
+{
     bool execStop = false;
 	setQrange(q, Nq, stepq);
 	int Lq = getRangeLength(minWin, maxWin, winStep);
+    for(int i = 0; i < Lq; i++)
+    {
+        std::vector<double> vec = std::vector<double>();
+        for(int j = 0; j < Nq; j++)
+            vec.push_back(0.0);
+        flucMtx.push_back(vec);
+    }
+
 	for(int i = 0; i < Nq; i++){
         q = qRange.at(i);
-        execStop = MFDFAsingleQ::computeFlucVec();
-        if(!execStop){
+        execStop = MFDFAsingleQ::executeAlgorithm();
+        if(!execStop)
+        {
             for(int j = 0; j < Lq; j++)
                 flucMtx.at(j).at(i) = F.at(j);
-            fitFlucVec(minWin, maxWin);
-            Hq.at(i) = getH();
-            Hinterceptq.at(i) = getHintercept();
-        }else{
+            executeFit(minWin, maxWin);
+            Hq.push_back(getH());
+            Hinterceptq.push_back(getHintercept());
+        }
+        else
+        {
             break;
         }
 	}
+
     return execStop;
 }
 
 void MFDFA::computeMassExponents()
 {
-    tau.reserve(Nq);
     for(int i = 0; i < Nq; i++)
-        tau.at(i) = Hq.at(i) * qRange.at(i) - 1.0;
+        tau.push_back(Hq.at(i) * qRange.at(i) - 1.0);
 }
 
 void MFDFA::computeSpectrum()
 {
     computeMassExponents();
-    alpha.reserve(Nq-1);
-    spectrum.reserve(Nq-1);
     for(int i = 0; i < Nq-1; i++)
-        alpha.at(i) = (tau.at(i+1) - tau.at(i)) / (qRange.at(1) - qRange.at(0));
+        alpha.push_back((tau.at(i+1) - tau.at(i)) / (qRange.at(1) - qRange.at(0)));
     for(int i = 0; i < Nq-1; i++)
-        spectrum.at(i) = qRange.at(i) * alpha.at(i) - tau.at(i);
+        spectrum.push_back(qRange.at(i) * alpha.at(i) - tau.at(i));
 }
 
 std::string MFDFA::outFileStr(){
-    return "/"+MFDFAfnStart+"_"+std::to_string(minWin)+"_"+std::to_string(maxWin)+"_q"+std::to_string(static_cast<int>(qRange.at(0)))+"_"+
-            std::to_string(static_cast<int>(qRange.at(Nq-1)))+"_"+fileName.substr(fileName.find_last_of("/")+1);
+    return "/" + MFDFAfnStart + "_" + std::to_string(minWin) +
+            "_" + std::to_string(maxWin) + "_q" +
+            std::to_string(static_cast<int>(qRange.at(0))) + "_" +
+            std::to_string(static_cast<int>(qRange.at(Nq-1))) +
+            "_" + fileName.substr(fileName.find_last_of("/") + 1);
 }
 
-void MFDFA::saveFile(std::string pathTot){
+void MFDFA::saveFile(std::string pathTot)
+{
 	FileOps fo = FileOps();
 	int Lq = getRangeLength(minWin, maxWin, winStep);
 	FILE *f;
     f = fo.openFile(pathTot+outFileStr(), "w");
 	fprintf(f, "#q ");
-	for(int i = 0; i < Nq; i++){
-        i == Nq-1 ? fprintf(f, "%lf\n", qRange.at(i)) : fprintf(f, "%lf ", qRange.at(i));
-	}
-    for(int i = 0; i < Lq; i++){
+    for(int i = 0; i < Nq; i++)
+        i == Nq - 1 ? fprintf(f, "%lf\n", qRange.at(i)) : fprintf(f, "%lf ", qRange.at(i));
+
+    for(int i = 0; i < Lq; i++)
+    {
         fprintf(f, "%d ", s.at(i));
         for(int j = 0; j < Nq; j++)
-            j == Nq-1 ? fprintf(f, "%lf\n", flucMtx.at(i).at(j)) : fprintf(f, "%lf ", flucMtx.at(i).at(j));
+            j == Nq - 1 ? fprintf(f, "%lf\n", flucMtx.at(i).at(j)) : fprintf(f, "%lf ", flucMtx.at(i).at(j));
 	}
     fclose(f);
 }
 
-std::string MFDFA::qoutFileStr(){
-    return "/"+MFDFAfnStart+"_q"+std::to_string(static_cast<int>(qRange.at(0)))+"_"+std::to_string(static_cast<int>(qRange.at(Nq-1)))+
-			"_"+fileName.substr(fileName.find_last_of("/")+1);
+std::string MFDFA::qoutFileStr()
+{
+    return "/" + MFDFAfnStart + "_q" + std::to_string(static_cast<int>(qRange.at(0))) +
+            "_" + std::to_string(static_cast<int>(qRange.at(Nq - 1))) +
+            "_" + fileName.substr(fileName.find_last_of("/") + 1);
 }
 
-void MFDFA::qsaveFile(std::string pathTot){
+void MFDFA::qsaveFile(std::string pathTot)
+{
 	FileOps fo = FileOps();
 	FILE *f;
     f = fo.openFile(pathTot+qoutFileStr(), "w");
-    for(int i = 0; i < Nq; i++){
+    for(int i = 0; i < Nq; i++)
         fprintf(f, "%lf %lf %lf\n", qRange.at(i), Hq.at(i), Hinterceptq.at(i));
-	}
     fclose(f);
 }
 
-std::string MFDFA::tauOutFileStr(){
-    return "/tau_q"+std::to_string(static_cast<int>(qRange.at(0)))+"_"+std::to_string(static_cast<int>(qRange.at(Nq-1)))+
-            "_"+fileName.substr(fileName.find_last_of("/")+1);
+std::string MFDFA::tauOutFileStr()
+{
+    return "/tau_q" + std::to_string(static_cast<int>(qRange.at(0))) +
+            "_" + std::to_string(static_cast<int>(qRange.at(Nq - 1))) +
+            "_" + fileName.substr(fileName.find_last_of("/") + 1);
 }
 
-void MFDFA::tauSaveFile(std::string pathTot){
+void MFDFA::tauSaveFile(std::string pathTot)
+{
     FileOps fo = FileOps();
     FILE *f;
     f = fo.openFile(pathTot+tauOutFileStr(), "w");
-    for(int i = 0; i < Nq; i++){
+    for(int i = 0; i < Nq; i++)
         fprintf(f, "%lf %lf\n", qRange.at(i), tau.at(i));
-    }
     fclose(f);
 }
 
-std::string MFDFA::spectrumOutFileStr(){
-    return "/spectrum_q"+std::to_string(static_cast<int>(qRange.at(0)))+"_"+std::to_string(static_cast<int>(qRange.at(Nq-1)))+
-            "_"+fileName.substr(fileName.find_last_of("/")+1);
+std::string MFDFA::spectrumOutFileStr()
+{
+    return "/spectrum_q" + std::to_string(static_cast<int>(qRange.at(0))) +
+            "_" + std::to_string(static_cast<int>(qRange.at(Nq - 1))) +
+            "_" + fileName.substr(fileName.find_last_of("/") + 1);
 }
 
-void MFDFA::spectrumSaveFile(std::string pathTot){
+void MFDFA::spectrumSaveFile(std::string pathTot)
+{
     FileOps fo = FileOps();
     FILE *f;
     f = fo.openFile(pathTot+spectrumOutFileStr(), "w");
-    for(int i = 0; i < Nq-1; i++){
+    for(int i = 0; i < Nq - 1; i++)
         fprintf(f, "%lf %lf\n", alpha.at(i), spectrum.at(i));
-    }
     fclose(f);
 }
 
-void MFDFA::plot(BasePlot *plt){
+void MFDFA::plot(BasePlot *plt)
+{
     QVector<double> yh(Nq), xq(Nq);
-    for(int i = 0; i < Nq; i++){
+    for(int i = 0; i < Nq; i++)
+    {
         xq[i] = qRange.at(i);
         yh[i] = Hq.at(i);
     }
@@ -159,7 +170,8 @@ void MFDFA::plot(BasePlot *plt){
 void MFDFA::plotMassExponents(BasePlot *plt)
 {
     QVector<double> yt(Nq), xq(Nq);
-    for(int i = 0; i < Nq; i++){
+    for(int i = 0; i < Nq; i++)
+    {
         xq[i] = qRange.at(i);
         yt[i] = tau.at(i);
     }
@@ -183,8 +195,9 @@ void MFDFA::plotMassExponents(BasePlot *plt)
 
 void MFDFA::plotSpectrum(BasePlot *plt)
 {
-    QVector<double> a(Nq-1), f(Nq-1);
-    for(int i = 0; i < Nq-1; i++){
+    QVector<double> a(Nq - 1), f(Nq - 1);
+    for(int i = 0; i < Nq - 1; i++)
+    {
         a[i] = alpha.at(i);
         f[i] = spectrum.at(i);
     }

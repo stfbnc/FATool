@@ -8,31 +8,31 @@ class rhoDCCA : public FA
 public:
     explicit rhoDCCA(std::string fileName, std::vector<double> ts, int tsLen, std::string fileName2, std::vector<double> ts2, int tsLen2, int minWin, int maxWin, int ord, int winStep=1, bool thresh=false);
     virtual ~rhoDCCA();
-    bool computeRho();
+    QString getAlgorithmStr() override;
+    bool executeAlgorithm() override;
     void computeThresholds();
-    void confLevels(std::vector<double> rhos);
-    int getRhoLength();
     bool threshCompute();
     std::string getFileName1();
     std::string getFileName2();
-    std::string outFileStr();
-    void saveFile(std::string pathTot);
-    void plot(BasePlot *plt);
+    int getMinWin() override;
+    int getMaxWin() override;
+    std::string outFileStr() override;
+    void saveFile(std::string pathTot) override;
+    void plot(BasePlot *plt) override;
 private:
-	std::string fileName;
-    std::vector<double> ts;
-    int tsLen;
+    void confLevels(std::vector<double> rhos);
+    int getRhoLength();
+
+    std::string fileName;
 	std::string fileName2;
-    std::vector<double> ts2;
+    std::vector<double> ts2 = std::vector<double>();
     int tsLen2;
-	int minWin;
-	int maxWin;
 	int ord;
 	int winStep;
     bool thresh;
-    std::vector<double> rho;
-    std::vector<double> confDown;
-    std::vector<double> confUp;
+    std::vector<double> rho = std::vector<double>();
+    std::vector<double> confDown = std::vector<double>();
+    std::vector<double> confUp = std::vector<double>();
     int L;
     int N;
 

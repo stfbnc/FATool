@@ -6,27 +6,27 @@ HTsingleScale::HTsingleScale(std::string fileName, std::vector<double> ts, int t
     this->fileName = fileName;
     this->scale = scale;
     N = setTsLength(ts, tsLen);
-    allocateMemory();
 }
 
 HTsingleScale::~HTsingleScale(){}
 
-void HTsingleScale::allocateMemory(){
-    t.reserve(N);
-    y.reserve(N);
-    F.reserve(getRangeLength(scale, N));
-    Ht.reserve(getRangeLength(scale, N));
+QString HTsingleScale::getAlgorithmStr()
+{
+    return strHT;
 }
 
-int HTsingleScale::getTsLength(){
+int HTsingleScale::getTsLength()
+{
 	return N;
 }
 
-std::string HTsingleScale::getFileName(){
+std::string HTsingleScale::getFileName()
+{
     return fileName;
 }
     
-bool HTsingleScale::computeFlucVec(){
+bool HTsingleScale::executeAlgorithm()
+{
     bool execStop = false;
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
@@ -40,25 +40,27 @@ bool HTsingleScale::computeFlucVec(){
     progress.setMinimumDuration(0);
     progress.setFixedSize(xPG, yPG);
 
-    for(int v = 0; v < range; v++){
+    for(int v = 0; v < range; v++)
+    {
         progress.setValue(v);
-        if(progress.wasCanceled()){
+        if(progress.wasCanceled())
+        {
             execStop = true;
             break;
         }
+
         int startLim = v;
         int endLim = v + scale - 1;
-        std::vector<double> tFit, yFit, diffVec;
-        tFit.reserve(scale);
-        yFit.reserve(scale);
-        diffVec.reserve(scale);
+        std::vector<double> tFit = std::vector<double>();
+        std::vector<double> yFit = std::vector<double>();
+        std::vector<double> diffVec = std::vector<double>();
 		ao.sliceVec(t, tFit, startLim, endLim);
 		ao.sliceVec(y, yFit, startLim, endLim);
         double angCoeff, intercept;
 		mo.linFit(scale, tFit, yFit, &angCoeff, &intercept);
 		for(int j = 0; j < scale; j++)
-            diffVec.at(j) = pow((yFit.at(j) - (intercept + angCoeff * tFit.at(j))), 2.0);
-        F.at(v) = sqrt(mo.mean(diffVec, scale));
+            diffVec.push_back(pow((yFit.at(j) - (intercept + angCoeff * tFit.at(j))), 2.0));
+        F.push_back(sqrt(mo.mean(diffVec, scale)));
 	}
 
     progress.setValue(range);
@@ -71,14 +73,14 @@ void HTsingleScale::setMFDFAstep(int mfdfaStep)
     step = mfdfaStep;
 }
 
-void HTsingleScale::fitFlucVec(int start, int end)
+void HTsingleScale::executeFit(int start, int end)
 {
     if(step == 0)
         step = 1;
     MFDFAsingleQ dfaQ0 = MFDFAsingleQ(fileName, ts, tsLen, start, end, 1, 0.0, step);
-    dfaQ0.setFlucVectors();
-    dfaQ0.computeFlucVec();
-    dfaQ0.fitFlucVec(start, end);
+    dfaQ0.setVectors();
+    dfaQ0.executeAlgorithm();
+    dfaQ0.executeFit(start, end);
     double Hq0 = dfaQ0.getH();
     double Hq0Intercept = dfaQ0.getHintercept();
 
@@ -87,16 +89,23 @@ void HTsingleScale::fitFlucVec(int start, int end)
     double regfit, logscale;
     regfit = Hq0Intercept + Hq0 * log(scale);
     logscale = log(range) - log(scale);
-    for(int i = 0; i < range; i++){
-        Ht.at(i) = (regfit - log(F.at(i))) / static_cast<double>(logscale) + Hq0;
-    }
+    for(int i = 0; i < range; i++)
+        Ht.push_back((regfit - log(F.at(i))) / static_cast<double>(logscale) + Hq0);
 }
 
-std::string HTsingleScale::outFileStr(){
-    return "/"+HTsSfnStart+"_"+std::to_string(scale)+"_"+fileName.substr(fileName.find_last_of("/")+1);
+bool HTsingleScale::isFittable()
+{
+    return false;
 }
 
-void HTsingleScale::saveFile(std::string pathTot){
+std::string HTsingleScale::outFileStr()
+{
+    return "/" + HTsSfnStart + "_" + std::to_string(scale) + "_" +
+            fileName.substr(fileName.find_last_of("/") + 1);
+}
+
+void HTsingleScale::saveFile(std::string pathTot)
+{
     FileOps fo = FileOps();
 	int range = getRangeLength(scale, N);
 	FILE *f;
@@ -111,7 +120,8 @@ void HTsingleScale::plot(BasePlot *plt)
 {
     int len = getRangeLength(scale, N);
     QVector<double> pltVec(len), w(len);
-    for(int i = 0; i < len; i++){
+    for(int i = 0; i < len; i++)
+    {
         w[i] = i + 1;
         pltVec[i] = Ht.at(i);
     }
@@ -126,7 +136,7 @@ void HTsingleScale::plot(BasePlot *plt)
     QString fn = QString::fromStdString(fileName).split("/").last();
     fn.truncate(fn.lastIndexOf("."));
     MathOps mo;
-    plt->graph(0)->setName(fn+" - <Ht> = "+QString::number(mo.mean(Ht, len)));
+    plt->graph(0)->setName(fn + " - <Ht> = " + QString::number(mo.mean(Ht, len)));
     plt->graph(0)->rescaleAxes();
     plt->legend->setVisible(true);
     plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignLeft);

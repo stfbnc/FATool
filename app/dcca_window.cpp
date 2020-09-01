@@ -32,7 +32,7 @@ void DCCAWindow::plotData()
 
 void DCCAWindow::refitData(int start, int end, double *hSlope, double *hIntcpt)
 {
-    dcca->fitFlucVec(start, end);
+    dcca->executeFit(start, end);
     *hIntcpt = dcca->getHintercept();
     *hSlope = dcca->getH();
 }

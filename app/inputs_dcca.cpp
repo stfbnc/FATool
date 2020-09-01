@@ -1,10 +1,11 @@
 #include "inputs_dcca.h"
 
-InputsDCCA::InputsDCCA(QStringList fileNames, QStringList columns, QWidget *parent) :
+InputsDCCA::InputsDCCA(QStringList fileNames, QStringList columns, FilesData *dataMap, QWidget *parent) :
     AbstractInputsWindow(strDCCA + " inputs", parent)
 {
     this->fileNames = fileNames;
     this->columns = columns;
+    this->dataMap = dataMap;
     MathOps mo;
     combs = mo.binCoeff(fileNames.size(), 2);
 
@@ -107,8 +108,7 @@ void InputsDCCA::onOkClick()
 {
     if(checkInputs())
     {
-        FilesData *fd = new FilesData();
-        std::map<QString, DataFile*> map = fd->getDataMap();
+        std::map<QString, DataFile*> map = dataMap->getDataMap();
         for(int i = 0; i < combs; i++)
         {
             std::vector<double> vec = map.at(fileCouples.at(i).at(0))->getDataOfColumn(colsCouples.at(i).at(0).toInt());
@@ -141,7 +141,7 @@ void InputsDCCA::onOkClick()
                 mw.at(i) = po.at(i) + 2;
             if(Mw.at(i) > val)
                 Mw.at(i) = val;
-            FA *fa = new DCCA(fileCouples.at(i).at(0).toStdString(), vec, vec.size(),
+            DCCA *fa = new DCCA(fileCouples.at(i).at(0).toStdString(), vec, vec.size(),
                               fileCouples.at(i).at(1).toStdString(), vec2, vec2.size(),
                               mw.at(i), Mw.at(i), po.at(i), al.at(i).toStdString(), ws.at(i));
             dcca.push_back(fa);
