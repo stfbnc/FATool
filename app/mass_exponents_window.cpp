@@ -1,18 +1,15 @@
 #include "mass_exponents_window.h"
 
-MassExponentsWindow::MassExponentsWindow(MFDFA *mfdfa_, QString fileName_, QWidget *parent) :
+MassExponentsWindow::MassExponentsWindow(MFDFA *mfdfa, QString fileName, QWidget *parent) :
     PlotWindow(parent)
 {
-    mfdfa = mfdfa_;
-    fileName = fileName_;
-    //set title
-    QString winTitle = "Mass exponents - "+fileName;
+    this->mfdfa = mfdfa;
+
+    QString winTitle = "Mass exponents - " + fileName;
     setTitle(winTitle);
-    //plot
+
     plotData();
-    //plot fields
     setPlotLimits();
-    //legend
     addLegend();
 }
 

@@ -11,13 +11,14 @@ public:
     QString getAlgorithmStr() override;
     int getTsLength() override;
     bool executeAlgorithm() override;
-    std::string getFileName();
+    std::string getFileName() override;
     int getMinWin() override;
     int getMaxWin() override;
-	double getH();
-    double getHintercept();
+    double getH() override;
+    double getHintercept() override;
     void executeFit(int start, int end) override;
     bool isFittable() override;
+    int getLogType() override;
     std::string outFileStr() override;
     void saveFile(std::string pathTot) override;
     void plot(BasePlot *plt) override;
@@ -26,8 +27,6 @@ private:
 	int revSeg;
 	int winStep;
     std::vector<int> s = std::vector<int>();
-	double H;
-	double Hintercept;
 };
 
 #endif

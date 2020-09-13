@@ -2,7 +2,6 @@
 #define ABSTRACT_INPUTS_WINDOW_H
 
 #include <QtWidgets>
-//#include "constants.h"
 
 namespace Ui{
     class AbstractInputsWindow;

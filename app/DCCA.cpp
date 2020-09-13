@@ -35,7 +35,8 @@ void DCCA::getEqualLength()
 		N = N1;
 }
 
-int DCCA::getTsLength(){
+int DCCA::getTsLength()
+{
 	return N;
 }
 
@@ -60,7 +61,6 @@ bool DCCA::executeAlgorithm()
     ArrayOps ao = ArrayOps();
 	int range = getRangeLength(minWin, maxWin, winStep);
     ao.intRange(s, range, minWin, winStep);
-    std::vector<double> Fnu = std::vector<double>();
 
     QProgressDialog progress(strDCCA+"\n"+QString::fromStdString(fileName.substr(fileName.find_last_of("/")+1))+
                              " vs "+QString::fromStdString(fileName2.substr(fileName2.find_last_of("/")+1)), "Stop", 0, range);
@@ -84,6 +84,7 @@ bool DCCA::executeAlgorithm()
             }
         }
 
+        std::vector<double> Fnu = std::vector<double>();
         int currWinSize = s.at(i);
         int Ns = N - currWinSize;
 
@@ -142,7 +143,7 @@ bool DCCA::executeAlgorithm()
     return execStop;
 }
 
-std::string DCCA::getFileName1()
+std::string DCCA::getFileName()
 {
     return fileName;
 }
@@ -196,6 +197,11 @@ bool DCCA::isFittable()
     return true;
 }
 
+int DCCA::getLogType()
+{
+    return BasePlot::XY;
+}
+
 std::string DCCA::outFileStr()
 {
     size_t a = fileName.find_last_of("/");
@@ -212,6 +218,7 @@ void DCCA::saveFile(std::string pathTot)
 	int range = getRangeLength(minWin, maxWin, winStep);
 	FILE *f;
     f = fo.openFile(pathTot+outFileStr(), "w");
+    fprintf(f, "# scale F\n");
     for(int i = 0; i < range; i++)
         fprintf(f, "%d %lf\n", s.at(i), F.at(i));
     fclose(f);

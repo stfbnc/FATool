@@ -30,8 +30,7 @@ bool HTsingleScale::executeAlgorithm()
     bool execStop = false;
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
-	int range = getRangeLength(scale, N);
-    ao.zeroVec(F, range);
+    int range = getRangeLength(scale, N);
 
     QProgressDialog progress(strHT+"\n"+"scale = "+QString::number(scale)+" -> "+
                              QString::fromStdString(fileName.substr(fileName.find_last_of("/")+1)),
@@ -84,6 +83,7 @@ void HTsingleScale::executeFit(int start, int end)
     double Hq0 = dfaQ0.getH();
     double Hq0Intercept = dfaQ0.getHintercept();
 
+    Ht.clear();
     MathOps mo = MathOps();
     int range = getRangeLength(scale, N);
     double regfit, logscale;
@@ -96,6 +96,11 @@ void HTsingleScale::executeFit(int start, int end)
 bool HTsingleScale::isFittable()
 {
     return false;
+}
+
+int HTsingleScale::getLogType()
+{
+    return BasePlot::NO_AX;
 }
 
 std::string HTsingleScale::outFileStr()

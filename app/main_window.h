@@ -12,11 +12,7 @@
 #include "inputs_mfdfa.h"
 #include "inputs_rhodcca.h"
 #include "inputs_ht.h"
-#include "dfa_window.h"
-#include "dcca_window.h"
-#include "mfdfa_window.h"
-#include "rhodcca_window.h"
-#include "ht_window.h"
+#include "results_window.h"
 #include "starting_window.h"
 #include "abstract_inputs_window.h"
 #include "load_files_window.h"
@@ -54,11 +50,6 @@ private slots:
     void onTableModified(QStringList, QStringList, QStringList);
     void fillList();
     void onGoClick();
-    //void onCloseDFAInputWin(DFA **dfa);
-    //void onCloseDCCAInputWin(DCCA **dcca);
-    //void onCloseMFDFAInputWin(MFDFA **mfdfa);
-    //void onCloseRHODCCAInputWin(rhoDCCA **rhodcca);
-    //void onCloseHTInputWin(HT **ht);
     void onCloseInputWin(std::vector<FA*> fa);
     void onClearClick();
 signals:

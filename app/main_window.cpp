@@ -231,8 +231,8 @@ void MainWindow::singlePlot()
         }
         else if(types.at(0) == flucVec)
         {
-            // TODO: altra finestra con più opzioni se voglio modificare i fit, fit multipli,
-            // scale log (anche su più fluttuazioni nello stesso grafico)
+            // TODO: window with more options to modify fit, multiple fits,
+            // log scales (even more fluctuations vectors in the same plot)
         }
     }
 }
@@ -257,8 +257,8 @@ void MainWindow::multiplePlots()
         }
         else if(type == flucVec)
         {
-            // TODO: altra finestra con più opzioni se voglio modificare i fit, fit multipli,
-            // scale log (anche su più fluttuazioni nello stesso grafico)
+            // TODO: window with more options to modify fit, multiple fits,
+            // log scales (even more fluctuations vectors in the same plot)
         }
     }
 }
@@ -355,35 +355,37 @@ void MainWindow::onGoClick()
 
     if(ok && (analysisType != "-"))
     {
+        qRegisterMetaType<std::vector<FA*>>("std::vector<FA*>");
+
         if(analysisType == strDFA)
         {
             InputsDFA *dfaInptWin = new InputsDFA(files, cols, dataMap);
             dfaInptWin->show();
-            connect(dfaInptWin, SIGNAL(inputsInserted(std::vector<FA*>)), this, SLOT(onCloseInputWin(std::vector<FA*>)));//, Qt::QueuedConnection);
+            connect(dfaInptWin, SIGNAL(inputsInserted(std::vector<FA*>)), this, SLOT(onCloseInputWin(std::vector<FA*>)), Qt::QueuedConnection);
         }
         else if(analysisType == strDCCA)
         {
             InputsDCCA *dccaInptWin = new InputsDCCA(files, cols, dataMap);
             dccaInptWin->show();
-            connect(dccaInptWin, SIGNAL(inputsInserted(std::vector<FA*>)), this, SLOT(onCloseInputWin(std::vector<FA*>))); //, Qt::QueuedConnection);
+            connect(dccaInptWin, SIGNAL(inputsInserted(std::vector<FA*>)), this, SLOT(onCloseInputWin(std::vector<FA*>)), Qt::QueuedConnection);
         }
         else if(analysisType == strMFDFA)
         {
             InputsMFDFA *mfdfaInptWin = new InputsMFDFA(files, cols, dataMap);
             mfdfaInptWin->show();
-            connect(mfdfaInptWin, SIGNAL(inputsInserted(std::vector<FA*>)), this, SLOT(onCloseInputWin(std::vector<FA*>))); //, Qt::QueuedConnection);
+            connect(mfdfaInptWin, SIGNAL(inputsInserted(std::vector<FA*>)), this, SLOT(onCloseInputWin(std::vector<FA*>)), Qt::QueuedConnection);
         }
         else if(analysisType == strRHODCCA)
         {
             InputsrhoDCCA *rhodccaInptWin = new InputsrhoDCCA(files, cols, dataMap);
             rhodccaInptWin->show();
-            connect(rhodccaInptWin, SIGNAL(inputsInserted(std::vector<FA*>)), this, SLOT(onCloseInputWin(std::vector<FA*>))); //, Qt::QueuedConnection);
+            connect(rhodccaInptWin, SIGNAL(inputsInserted(std::vector<FA*>)), this, SLOT(onCloseInputWin(std::vector<FA*>)), Qt::QueuedConnection);
         }
         else if(analysisType == strHT)
         {
             InputsHT *htInptWin = new InputsHT(files, cols, dataMap);
             htInptWin->show();
-            connect(htInptWin, SIGNAL(inputsInserted(std::vector<FA*>)), this, SLOT(onCloseInputWin(std::vector<FA*>))); //, Qt::QueuedConnection);
+            connect(htInptWin, SIGNAL(inputsInserted(std::vector<FA*>)), this, SLOT(onCloseInputWin(std::vector<FA*>)), Qt::QueuedConnection);
         }
     }
 }
@@ -409,82 +411,11 @@ void MainWindow::onCloseInputWin(std::vector<FA*> fa)
                     obj->computeThresholds();
             }
 
-            //DFAWindow *plotWin = new DFAWindow(obj);
-            //plotWin->setAttribute(Qt::WA_DeleteOnClose);
-            //plotWin->show();
+            ResultsWindow *plotWin = new ResultsWindow(fa.at(i));
+            plotWin->show();
         }
     }
 }
-
-/*void MainWindow::onCloseDCCAInputWin(std::vector<FA*> dcca)
-{
-    MathOps mo;
-    long long int combs = mo.binCoeff(fileNames.size(), 2);
-    for(int i = 0;  i < combs; i++)
-    {
-        DCCA *obj = (DCCA *)dcca[i];
-        obj->setVectors();
-        bool execStop = obj->computeFlucVec();
-        if(!execStop)
-        {
-            obj->fitFlucVec(obj->getMinWin(), obj->getMaxWin());
-            DCCAWindow *plotWin = new DCCAWindow(obj);
-            plotWin->setAttribute(Qt::WA_DeleteOnClose);
-            plotWin->show();
-        }
-    }
-}*/
-
-/*void MainWindow::onCloseMFDFAInputWin(std::vector<FA*> mfdfa)
-{
-    for(int i = 0;  i < fileNames.size(); i++)
-    {
-        MFDFA *obj = (MFDFA *)mfdfa[i];
-        obj->setVectors();
-        bool execStop = obj->computeFlucVec();
-        if(!execStop)
-        {
-            MFDFAWindow *plotWin = new MFDFAWindow(obj);
-            plotWin->setAttribute(Qt::WA_DeleteOnClose);
-            plotWin->show();
-        }
-    }
-}*/
-
-/*void MainWindow::onCloseRHODCCAInputWin(std::vector<FA*> rhodcca)
-{
-    MathOps mo;
-    long long int combs = mo.binCoeff(fileNames.size(), 2);
-    for(int i = 0;  i < combs; i++)
-    {
-        rhoDCCA *obj = (rhoDCCA *)rhodcca[i];
-        bool execStop = obj->computeRho();
-        if(!execStop)
-        {
-            if(obj->threshCompute())
-                obj->computeThresholds();
-            rhoDCCAWindow *plotWin = new rhoDCCAWindow(obj);
-            plotWin->setAttribute(Qt::WA_DeleteOnClose);
-            plotWin->show();
-        }
-    }
-}*/
-
-/*void MainWindow::onCloseHTInputWin(std::vector<FA*> ht)
-{
-    for(int i = 0;  i < fileNames.size(); i++)
-    {
-        HT *obj = (HT *)ht[i];
-        obj->setVectors();
-        bool execStop = obj->computeFlucVec();
-        if(!execStop)
-        {
-            HTWindow *plotWin = new HTWindow(obj);
-            plotWin->setAttribute(Qt::WA_DeleteOnClose);
-            plotWin->show();
-        }
-    }
-}*/
 
 void MainWindow::onClearClick()
 {

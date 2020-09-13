@@ -34,7 +34,7 @@ bool MFDFA::executeAlgorithm()
         if(!execStop)
         {
             for(int j = 0; j < Lq; j++)
-                flucMtx.at(j).at(i) = F.at(j);
+                flucMtx.at(j).at(i) = getF().at(j);
             executeFit(minWin, maxWin);
             Hq.push_back(getH());
             Hinterceptq.push_back(getHintercept());
@@ -77,10 +77,11 @@ void MFDFA::saveFile(std::string pathTot)
 	int Lq = getRangeLength(minWin, maxWin, winStep);
 	FILE *f;
     f = fo.openFile(pathTot+outFileStr(), "w");
-	fprintf(f, "#q ");
+    fprintf(f, "# q ");
     for(int i = 0; i < Nq; i++)
         i == Nq - 1 ? fprintf(f, "%lf\n", qRange.at(i)) : fprintf(f, "%lf ", qRange.at(i));
 
+    fprintf(f, "# scale F_q\n");
     for(int i = 0; i < Lq; i++)
     {
         fprintf(f, "%d ", s.at(i));
@@ -88,6 +89,8 @@ void MFDFA::saveFile(std::string pathTot)
             j == Nq - 1 ? fprintf(f, "%lf\n", flucMtx.at(i).at(j)) : fprintf(f, "%lf ", flucMtx.at(i).at(j));
 	}
     fclose(f);
+
+    qsaveFile(pathTot);
 }
 
 std::string MFDFA::qoutFileStr()
@@ -102,6 +105,7 @@ void MFDFA::qsaveFile(std::string pathTot)
 	FileOps fo = FileOps();
 	FILE *f;
     f = fo.openFile(pathTot+qoutFileStr(), "w");
+    fprintf(f, "# q hq hq_intercept\n");
     for(int i = 0; i < Nq; i++)
         fprintf(f, "%lf %lf %lf\n", qRange.at(i), Hq.at(i), Hinterceptq.at(i));
     fclose(f);
@@ -119,6 +123,7 @@ void MFDFA::tauSaveFile(std::string pathTot)
     FileOps fo = FileOps();
     FILE *f;
     f = fo.openFile(pathTot+tauOutFileStr(), "w");
+    fprintf(f, "# q tau\n");
     for(int i = 0; i < Nq; i++)
         fprintf(f, "%lf %lf\n", qRange.at(i), tau.at(i));
     fclose(f);
@@ -136,6 +141,7 @@ void MFDFA::spectrumSaveFile(std::string pathTot)
     FileOps fo = FileOps();
     FILE *f;
     f = fo.openFile(pathTot+spectrumOutFileStr(), "w");
+    fprintf(f, "# alpha spectrum\n");
     for(int i = 0; i < Nq - 1; i++)
         fprintf(f, "%lf %lf\n", alpha.at(i), spectrum.at(i));
     fclose(f);

@@ -220,19 +220,6 @@ void InputsHT::onOkClick()
         for(int i = 0; i < fileNames.size(); i++)
         {
             std::vector<double> vec = map.at(fileNames.at(i))->getDataOfColumn(columns.at(i).toInt());
-
-            /*FileOps fo;
-            std::string fn = fileNames[i].toStdString();
-            int N = fo.rowsNumber(fn);
-            FILE *f;
-            std::vector<double> vec(N);
-            f = fo.openFile(fn, "r");
-            for(int j = 0; j < N; j++){
-                double tmpVal;
-                fscanf(f, "%lf", &tmpVal);
-                vec.at(j) = tmpVal;
-            }
-            fclose(f);*/
             if(ms.at(i) != 0)
             {
                 if(ms.at(i) > int(vec.size()))

@@ -40,9 +40,7 @@ private slots:
     void onSavePlotClick();
     virtual void onSaveTxtClick();
     void newFitPlot(int start, int end, int keep, int clear);
-    void enableButtons();
 private:
-    void disableButtons();
     virtual void refitData(int start, int end, double *hSlope, double *hIntcpt);
     virtual void plotData() = 0;
 

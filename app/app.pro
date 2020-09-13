@@ -30,6 +30,7 @@ SOURCES +=  \
     qcustomplot.cpp \
     main_window.cpp \
     file_ops.cpp \
+    results_window.cpp \
     save_window.cpp \
     base_plot.cpp \
     inputs_dfa.cpp \
@@ -37,11 +38,6 @@ SOURCES +=  \
     inputs_ht.cpp \
     inputs_mfdfa.cpp \
     inputs_rhodcca.cpp \
-    dfa_window.cpp \
-    mfdfa_window.cpp \
-    dcca_window.cpp \
-    rhodcca_window.cpp \
-    ht_window.cpp \
     DFA.cpp \
     array_ops.cpp \
     math_ops.cpp \
@@ -70,6 +66,7 @@ HEADERS += \
     qcustomplot.h \
     main_window.h \
     file_ops.h \
+    results_window.h \
     save_window.h \
     base_plot.h \
     inputs_dfa.h \
@@ -77,11 +74,6 @@ HEADERS += \
     inputs_ht.h \
     inputs_mfdfa.h \
     inputs_rhodcca.h \
-    dfa_window.h \
-    mfdfa_window.h \
-    dcca_window.h \
-    rhodcca_window.h \
-    ht_window.h \
     DFA.h \
     array_ops.h \
     math_ops.h \
@@ -98,8 +90,8 @@ HEADERS += \
     legend_position_window.h \
     update_table_widget.h
 
-DISTFILES += \
-    prefs.txt
+#DISTFILES += \
+#    prefs.txt
 
 FORMS += \
     abstract_inputs_window.ui \
@@ -109,3 +101,6 @@ FORMS += \
     move_legend_window.ui \
     plot_window.ui \
     refit_dialog.ui
+
+RESOURCES += \
+    starting_message.qrc

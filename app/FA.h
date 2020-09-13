@@ -53,12 +53,30 @@ public:
     {
         return maxWin;
     }
-    
-    virtual void allocateMemory(){}
+
+    virtual double getH()
+    {
+        return H;
+    }
+
+    virtual double getHintercept()
+    {
+        return Hintercept;
+    }
 
     virtual QString getAlgorithmStr()
     {
         return "";
+    }
+
+    virtual std::string getFileName()
+    {
+        return fileName;
+    }
+
+    virtual std::string getFileName2()
+    {
+        return fileName2;
     }
 
     virtual void setVectors()
@@ -91,6 +109,11 @@ public:
         return false;
     }
 
+    virtual int getLogType()
+    {
+        return BasePlot::NO_AX;
+    }
+
     virtual std::string outFileStr()
     {
         return "";
@@ -106,7 +129,8 @@ public:
         plt = nullptr;
     }
 protected:
-    std::string fileName;
+    std::string fileName = "";
+    std::string fileName2 = "";
     std::vector<double> ts;
     int tsLen;
     int N;
@@ -115,6 +139,8 @@ protected:
     std::vector<double> F = std::vector<double>();
     int minWin = 0;
     int maxWin = 0;
+    double H = 0.0;
+    double Hintercept = 0.0;
 };
 
 #endif

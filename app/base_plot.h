@@ -13,6 +13,7 @@ public:
     void setBasePlot();
     void setLogAxes(int logAx);
 
+    static const int NO_AX = -1;
     static const int X = 0;
     static const int Y = 1;
     static const int XY = 2;

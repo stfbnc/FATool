@@ -21,7 +21,7 @@ const int xPG = 300;
 const int yPG = 120;
 const int ERROR_BOX_SIZE = 200;
 //preferences file
-const QString prefsFile = "prefs.txt";
+const QString prefsFile = ":/prj_files/prefs.txt";
 const QString showStartWin = "Y";
 const QString hideStartWin = "N";
 //strings

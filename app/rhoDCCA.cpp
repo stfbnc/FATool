@@ -64,7 +64,7 @@ void rhoDCCA::computeThresholds()
     std::vector<double> rhoMtx = std::vector<double>();
     ao.zeroVec(rhoMtx, getRhoLength() * nSim);
 
-    QProgressDialog progress("Coumputing confidence intervals", "Stop", 0, nSim * 3);
+    QProgressDialog progress("Computing confidence intervals", "Stop", 0, nSim * 3);
     progress.setWindowModality(Qt::WindowModal);
     progress.setAttribute(Qt::WA_DeleteOnClose, true);
     progress.setMinimumDuration(0);
@@ -139,7 +139,7 @@ bool rhoDCCA::threshCompute()
     return thresh;
 }
 
-std::string rhoDCCA::getFileName1()
+std::string rhoDCCA::getFileName()
 {
     return fileName;
 }
@@ -159,6 +159,16 @@ int rhoDCCA::getMaxWin()
     return maxWin;
 }
 
+bool rhoDCCA::isFittable()
+{
+    return false;
+}
+
+int rhoDCCA::getLogType()
+{
+    return BasePlot::NO_AX;
+}
+
 std::string rhoDCCA::outFileStr()
 {
     size_t a = fileName.find_last_of("/");
@@ -173,8 +183,17 @@ void rhoDCCA::saveFile(std::string pathTot)
     FileOps fo = FileOps();
     FILE *f;
     f = fo.openFile(pathTot+outFileStr(), "w");
+    if(thresh)
+        fprintf(f, "# scale rho lower_conf upper_conf\n");
+    else
+        fprintf(f, "# scale rho\n");
     for(int i = 0; i < getRhoLength(); i++)
-        fprintf(f, "%d %lf\n", (i * winStep) + minWin, rho.at(i));
+    {
+        if(thresh)
+            fprintf(f, "%d %lf %lf %lf\n", (i * winStep) + minWin, rho.at(i), confDown.at(i), confUp.at(i));
+        else
+            fprintf(f, "%d %lf\n", (i * winStep) + minWin, rho.at(i));
+    }
     fclose(f);
 }
 

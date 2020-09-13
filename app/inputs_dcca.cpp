@@ -113,28 +113,6 @@ void InputsDCCA::onOkClick()
         {
             std::vector<double> vec = map.at(fileCouples.at(i).at(0))->getDataOfColumn(colsCouples.at(i).at(0).toInt());
             std::vector<double> vec2 = map.at(fileCouples.at(i).at(1))->getDataOfColumn(colsCouples.at(i).at(1).toInt());
-
-            /*FileOps fo;
-            std::string fn = fileCouples[i][0].toStdString();
-            int N = fo.rowsNumber(fn);
-            std::string fn2 = fileCouples[i][1].toStdString();
-            int N2 = fo.rowsNumber(fn2);
-            FILE *f;
-            std::vector<double> vec(N), vec2(N);
-            f = fo.openFile(fn, "r");
-            for(int j = 0; j < N; j++){
-                double tmpVal;
-                fscanf(f, "%lf", &tmpVal);
-                vec.at(j) = tmpVal;
-            }
-            fclose(f);
-            f = fo.openFile(fn2, "r");
-            for(int j = 0; j < N2; j++){
-                double tmpVal;
-                fscanf(f, "%lf", &tmpVal);
-                vec2.at(j) = tmpVal;
-            }
-            fclose(f);*/
             MathOps mo;
             int val = mo.minVal(vec.size(), vec2.size());
             if(mw.at(i) > val)

@@ -1,17 +1,15 @@
 #include "spectrum_window.h"
 
-SpectrumWindow::SpectrumWindow(MFDFA *mfdfa_, QString fileName_, QWidget *parent) : PlotWindow(parent)
+SpectrumWindow::SpectrumWindow(MFDFA *mfdfa, QString fileName, QWidget *parent) :
+    PlotWindow(parent)
 {
-    mfdfa = mfdfa_;
-    fileName = fileName_;
-    //set title
-    QString winTitle = "Multifractal spectrum - "+fileName;
+    this->mfdfa = mfdfa;
+
+    QString winTitle = "Multifractal spectrum - " + fileName;
     setTitle(winTitle);
-    //plot
+
     plotData();
-    //plot fields
     setPlotLimits();
-    //legend
     addLegend();
 }
 

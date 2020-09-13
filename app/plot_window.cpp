@@ -78,40 +78,6 @@ void PlotWindow::addLegend()
 
 void PlotWindow::plotData(){}
 
-void PlotWindow::disableButtons()
-{
-    ui->moveLegendBtn->setEnabled(false);
-    ui->replotBtn->setEnabled(false);
-    ui->savePlotBtn->setEnabled(false);
-    ui->saveTxtBtn->setEnabled(false);
-    ui->closeBtn->setEnabled(false);
-    if(!ui->refitBtn->isHidden())
-        ui->refitBtn->setEnabled(false);
-    if(!ui->fitLogBtn->isHidden())
-        ui->fitLogBtn->setEnabled(false);
-    if(!ui->spectBtn->isHidden())
-        ui->spectBtn->setEnabled(false);
-    if(!ui->massExpBtn->isHidden())
-        ui->massExpBtn->setEnabled(false);
-}
-
-void PlotWindow::enableButtons()
-{
-    ui->moveLegendBtn->setEnabled(true);
-    ui->replotBtn->setEnabled(true);
-    ui->savePlotBtn->setEnabled(true);
-    ui->saveTxtBtn->setEnabled(true);
-    ui->closeBtn->setEnabled(true);
-    if(!ui->refitBtn->isHidden())
-        ui->refitBtn->setEnabled(true);
-    if(!ui->fitLogBtn->isHidden())
-        ui->fitLogBtn->setEnabled(true);
-    if(!ui->spectBtn->isHidden())
-        ui->spectBtn->setEnabled(true);
-    if(!ui->massExpBtn->isHidden())
-        ui->massExpBtn->setEnabled(true);
-}
-
 void PlotWindow::onSpectrumClick(){}
 
 void PlotWindow::onMassExponentsClick(){}

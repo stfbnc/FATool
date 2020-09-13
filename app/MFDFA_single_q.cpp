@@ -26,13 +26,12 @@ int MFDFAsingleQ::getTsLength()
 }
     
 bool MFDFAsingleQ::executeAlgorithm(){
+    F.clear();
     bool execStop = false;
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
 	int range = getRangeLength(minWin, maxWin, winStep);
     ao.intRange(s, range, minWin, winStep);
-    std::vector<double> Fnu1 = std::vector<double>();
-    std::vector<double> Fnu2 = std::vector<double>();
 
     QProgressDialog progress(strMFDFA+"\n"+"q = "+QString::number(q)+" -> "+
                              QString::fromStdString(fileName.substr(fileName.find_last_of("/")+1)),
@@ -50,6 +49,8 @@ bool MFDFAsingleQ::executeAlgorithm(){
             break;
         }
 
+        std::vector<double> Fnu1 = std::vector<double>();
+        std::vector<double> Fnu2 = std::vector<double>();
         int currWinSize = s.at(i);
         int Ns = N / currWinSize;
         for(int v = 0; v < Ns; v++){
@@ -69,6 +70,7 @@ bool MFDFAsingleQ::executeAlgorithm(){
                     diffVec.at(j) += coeffs.at(k) * pow(tFit.at(j), k);
                 diffVec.at(j) = pow((yFit.at(j) - diffVec.at(j)), 2.0);
             }
+
             if(q == 0.0)
                 Fnu1.push_back(log(mo.mean(diffVec, currWinSize)));
             else
@@ -145,6 +147,11 @@ double MFDFAsingleQ::getHintercept()
 	return Hintercept;
 }
 
+std::vector<double> MFDFAsingleQ::getF()
+{
+    return F;
+}
+
 void MFDFAsingleQ::executeFit(int start, int end)
 {
     MathOps mo = MathOps();
@@ -164,6 +171,11 @@ bool MFDFAsingleQ::isFittable()
     return false;
 }
 
+int MFDFAsingleQ::getLogType()
+{
+    return BasePlot::NO_AX;
+}
+
 std::string MFDFAsingleQ::outFileStr()
 {
     return "/" + MFDFAsQfnStart + "_" + std::to_string(minWin) + "_" +
@@ -177,6 +189,7 @@ void MFDFAsingleQ::saveFile(std::string pathTot)
 	int range = getRangeLength(minWin, maxWin, winStep);
 	FILE *f;
     f = fo.openFile(pathTot+outFileStr(), "w");
+    fprintf(f, "# scale F\n");
     for(int i = 0; i < range; i++)
         fprintf(f, "%d %lf\n", s.at(i), F.at(i));
     fclose(f);

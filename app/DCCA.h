@@ -12,22 +12,22 @@ public:
     int getTsLength() override;
     void setVectors() override;
     bool executeAlgorithm() override;
-    std::string getFileName1();
-    std::string getFileName2();
+    std::string getFileName() override;
+    std::string getFileName2() override;
     std::vector<double> getF();
     int getMinWin() override;
     int getMaxWin() override;
-	double getH();
-    double getHintercept();
+    double getH() override;
+    double getHintercept() override;
     void executeFit(int start, int end) override;
     bool isFittable() override;
+    int getLogType() override;
     std::string outFileStr() override;
     void saveFile(std::string pathTot) override;
     void plot(BasePlot *plt) override;
 private:
     void getEqualLength();
 
-	std::string fileName2;
     std::vector<double> ts2 = std::vector<double>();
     int tsLen2;
 	int ord;
@@ -35,8 +35,6 @@ private:
     int winStep;
     std::vector<double> y2 = std::vector<double>();
     std::vector<int> s = std::vector<int>();
-	double H;
-	double Hintercept;
     bool showProgBar;
 };
 

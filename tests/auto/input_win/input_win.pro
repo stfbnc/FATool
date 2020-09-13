@@ -21,7 +21,6 @@ CONFIG += c++17
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 SOURCES +=  \
-#    $$files($$APPDIR/*.cpp, true) \
     $$APPDIR/log_window.cpp \
     $$APPDIR/mass_exponents_window.cpp \
     $$APPDIR/plot_window.cpp \
@@ -35,11 +34,6 @@ SOURCES +=  \
     $$APPDIR/inputs_ht.cpp \
     $$APPDIR/inputs_mfdfa.cpp \
     $$APPDIR/inputs_rhodcca.cpp \
-    $$APPDIR/dfa_window.cpp \
-    $$APPDIR/mfdfa_window.cpp \
-    $$APPDIR/dcca_window.cpp \
-    $$APPDIR/rhodcca_window.cpp \
-    $$APPDIR/ht_window.cpp \
     $$APPDIR/DFA.cpp \
     $$APPDIR/array_ops.cpp \
     $$APPDIR/math_ops.cpp \
@@ -59,10 +53,10 @@ SOURCES +=  \
     $$APPDIR/data_plot_window.cpp \
     $$APPDIR/files_data.cpp \
     $$APPDIR/update_table_widget.cpp \
+    $$APPDIR/results_window.cpp \
     TestInputWin.cpp
 
 HEADERS += \
-#    $$files($$APPDIR/*.h, true) \
     $$APPDIR/constants.h \
     $$APPDIR/log_window.h \
     $$APPDIR/mass_exponents_window.h \
@@ -77,11 +71,6 @@ HEADERS += \
     $$APPDIR/inputs_ht.h \
     $$APPDIR/inputs_mfdfa.h \
     $$APPDIR/inputs_rhodcca.h \
-    $$APPDIR/dfa_window.h \
-    $$APPDIR/mfdfa_window.h \
-    $$APPDIR/dcca_window.h \
-    $$APPDIR/rhodcca_window.h \
-    $$APPDIR/ht_window.h \
     $$APPDIR/DFA.h \
     $$APPDIR/array_ops.h \
     $$APPDIR/math_ops.h \
@@ -101,7 +90,8 @@ HEADERS += \
     $$APPDIR/data_file.h \
     $$APPDIR/data_plot_window.h \
     $$APPDIR/files_data.h \
-    $$APPDIR/update_table_widget.h
+    $$APPDIR/update_table_widget.h \
+    $$APPDIR/results_window.h
 
 FORMS += \
     $$APPDIR/abstract_inputs_window.ui \

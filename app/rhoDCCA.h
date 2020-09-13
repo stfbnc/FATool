@@ -12,10 +12,12 @@ public:
     bool executeAlgorithm() override;
     void computeThresholds();
     bool threshCompute();
-    std::string getFileName1();
-    std::string getFileName2();
+    std::string getFileName() override;
+    std::string getFileName2() override;
     int getMinWin() override;
     int getMaxWin() override;
+    bool isFittable() override;
+    int getLogType() override;
     std::string outFileStr() override;
     void saveFile(std::string pathTot) override;
     void plot(BasePlot *plt) override;

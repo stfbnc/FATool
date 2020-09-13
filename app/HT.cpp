@@ -106,8 +106,7 @@ bool HT::executeAlgorithm(){
     for(int i = 0; i < Nscales; i++)
     {
         scale = scales.at(i);
-		int Lscale = getRangeLength(scale, N);
-        ao.zeroVec(Ht, L);
+        int Lscale = getRangeLength(scale, N);
         execStop = HTsingleScale::executeAlgorithm();
         if(!execStop)
         {
@@ -157,15 +156,14 @@ void HT::plot(BasePlot *plt)
     QVector<double> w(L);
     for(int i = 0; i < L; i++)
         w[i] = i + 1;
-    QVector<double> pltVec(L);
-    std::vector<double> vec;
-    vec.reserve(L);
+    QVector<double> pltVec(L); 
     for(int j = 0; j < Nscales; j++)
     {
+        std::vector<double> vec = std::vector<double>();
         for(int i = 0; i < L; i++)
         {
             pltVec[i] = HTmtx.at(i).at(j);
-            vec[i] = HTmtx.at(i).at(j);
+            vec.push_back(HTmtx.at(i).at(j));
         }
         plt->addGraph();
         plt->graph(j)->setData(w, pltVec);

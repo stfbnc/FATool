@@ -150,6 +150,11 @@ bool DFA::isFittable()
     return true;
 }
 
+int DFA::getLogType()
+{
+    return BasePlot::XY;
+}
+
 std::string DFA::outFileStr()
 {
     return "/" + DFAfnStart + "_" + std::to_string(minWin) + "_" +
@@ -163,8 +168,9 @@ void DFA::saveFile(std::string pathTot)
 	int range = getRangeLength(minWin, maxWin, winStep);
 	FILE *f;
     f = fo.openFile(pathTot + outFileStr(), "w");
+    fprintf(f, "# scale F\n");
     for(int i = 0; i < range; i++)
-        fprintf(f, "%d %lf\n", s[i], F[i]);
+        fprintf(f, "%d %lf\n", s.at(i), F.at(i));
     fclose(f);
 }
 
