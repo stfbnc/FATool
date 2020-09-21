@@ -1,11 +1,11 @@
 #include "inputs_rhodcca.h"
 
-InputsrhoDCCA::InputsrhoDCCA(QStringList fileNames, QStringList columns, FilesData *dataMap, QWidget *parent) :
+InputsrhoDCCA::InputsrhoDCCA(QStringList fileNames, QStringList columns, QWidget *parent) :
     AbstractInputsWindow(strRHODCCA + " inputs", parent)
 {
     this->fileNames = fileNames;
     this->columns = columns;
-    this->dataMap = dataMap;
+    this->dataMap = this->dataMap->getInstance();
     MathOps mo;
     combs = mo.binCoeff(fileNames.size(), 2);
 

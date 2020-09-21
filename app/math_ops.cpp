@@ -4,7 +4,8 @@ MathOps::MathOps() {}
 
 MathOps::~MathOps() {}
 
-double MathOps::mean(std::vector<double> vec, int L){
+double MathOps::mean(std::vector<double> vec, int L)
+{
     double avg = 0.0;
     for(int i = 0; i < L; i++)
         avg += vec.at(i);
@@ -12,7 +13,8 @@ double MathOps::mean(std::vector<double> vec, int L){
     return avg;
 }
 
-double MathOps::nanMean(std::vector<double> vec, int L){
+double MathOps::nanMean(std::vector<double> vec, int L)
+{
     double avg = 0.0;
 	int cnt = 0;
     for(int i = 0; i < L; i++){
@@ -26,7 +28,8 @@ double MathOps::nanMean(std::vector<double> vec, int L){
     return avg;
 }
 
-double MathOps::customMean(std::vector<double> vec, int vecL, int L){
+double MathOps::customMean(std::vector<double> vec, int vecL, int L)
+{
     double avg = 0.0;
     for(int i = 0; i < vecL; i++)
         avg += vec.at(i);
@@ -34,33 +37,26 @@ double MathOps::customMean(std::vector<double> vec, int vecL, int L){
     return avg;
 }
 
-void MathOps::subtractMean(std::vector<double> vec, int L, std::vector<double> &vecNomean){
+void MathOps::subtractMean(std::vector<double> vec, int L, std::vector<double> &vecNomean)
+{
 	double avg = mean(vec, L);
 	for(int i = 0; i < L; i++)
         vecNomean.push_back(vec.at(i) - avg);
 }
 
-int MathOps::minVal(int a, int b){
+int MathOps::minVal(int a, int b)
+{
     if(a <= b)
         return a;
     else
         return b;
 }
 	
-void MathOps::cumsum(std::vector<double> vec, std::vector<double> &sumVec, int L){
+void MathOps::cumsum(std::vector<double> vec, std::vector<double> &sumVec, int L)
+{
     sumVec.push_back(vec.at(0));
     for(int i = 1; i < L; i++)
         sumVec.push_back(sumVec.at(i-1) + vec.at(i));
-}
-
-void MathOps::nanCumsum(std::vector<double> vec, std::vector<double> &sumVec, int L){
-    sumVec.push_back(vec.at(0));
-    for(int i = 1; i < L; i++){
-        if(std::isnan(vec.at(i)))
-            sumVec.push_back(sumVec.at(i-1));
-        else
-            sumVec.push_back(sumVec.at(i-1) + vec.at(i));
-	}
 }
 
 void MathOps::linFit(int L, const std::vector<double> x, const std::vector<double> y, double *m, double *q){

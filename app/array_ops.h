@@ -11,8 +11,6 @@ public:
     explicit ArrayOps();
     virtual ~ArrayOps();
     void sliceVec(std::vector<double> allVec, std::vector<double> &slicedVec, int start, int end);
-    void concatenate(std::vector<double> &vecTo, std::vector<double> vecFrom1, std::vector<double> vecFrom2, int L);
-    void vecCopy(std::vector<double> &vecTo, std::vector<double> vecFrom, int L);
     void zeroVec(std::vector<double> &vec, int L);
     void doubleRange(std::vector<double> &vec, int L, double start, double step=1.0);
     void intRange(std::vector<int> &vec, int L, int start, int step=1);

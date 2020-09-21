@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/prj_files">
-        <file>prefs.txt</file>
-    </qresource>
-</RCC>

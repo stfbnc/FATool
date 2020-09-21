@@ -1,11 +1,11 @@
 #include "inputs_ht.h"
 
-InputsHT::InputsHT(QStringList fileNames, QStringList columns, FilesData *dataMap, QWidget *parent) :
+InputsHT::InputsHT(QStringList fileNames, QStringList columns, QWidget *parent) :
     AbstractInputsWindow(strHT + " inputs", parent)
 {
     this->fileNames = fileNames;
     this->columns = columns;
-    this->dataMap = dataMap;
+    this->dataMap = this->dataMap->getInstance();
 
     addWidgets();
 }

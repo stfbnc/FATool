@@ -9,18 +9,6 @@ void ArrayOps::sliceVec(std::vector<double> allVec, std::vector<double> &slicedV
         slicedVec.push_back(allVec.at(start + i));
 }
 
-void ArrayOps::concatenate(std::vector<double> &vecTo, std::vector<double> vecFrom1, std::vector<double> vecFrom2, int L){
-    for(int i = 0; i < L; i++)
-        vecTo.push_back(vecFrom1.at(i));
-    for(int i = 0; i < L; i++)
-        vecTo.push_back(vecFrom2.at(i));
-}
-
-void ArrayOps::vecCopy(std::vector<double> &vecTo, std::vector<double> vecFrom, int L){
-    for(int i = 0; i < L; i++)
-        vecTo.push_back(vecFrom.at(i));
-}
-
 void ArrayOps::zeroVec(std::vector<double> &vec, int L){
     for(int i = 0; i < L; i++)
         vec.push_back(0.0);

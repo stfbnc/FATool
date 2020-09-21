@@ -1,5 +1,7 @@
 #include "files_data.h"
 
+FilesData* FilesData::instance = nullptr;
+
 FilesData::FilesData()
 {
     dataMutex = new std::mutex();
@@ -11,6 +13,14 @@ FilesData::~FilesData()
         delete dataMap.at(key);
 
     delete dataMutex;
+}
+
+FilesData* FilesData::getInstance()
+{
+    if(!instance)
+        instance = new FilesData();
+
+    return instance;
 }
 
 void FilesData::lock()

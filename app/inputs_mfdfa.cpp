@@ -1,11 +1,11 @@
 #include "inputs_mfdfa.h"
 
-InputsMFDFA::InputsMFDFA(QStringList fileNames, QStringList columns, FilesData *dataMap, QWidget *parent) :
+InputsMFDFA::InputsMFDFA(QStringList fileNames, QStringList columns, QWidget *parent) :
     AbstractInputsWindow(strMFDFA + " inputs", parent)
 {
     this->fileNames = fileNames;
     this->columns = columns;
-    this->dataMap = dataMap;
+    this->dataMap = this->dataMap->getInstance();
 
     addWidgets();
 }

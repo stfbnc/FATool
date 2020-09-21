@@ -62,8 +62,6 @@ private:
     QStringList fileNames;
     FilesData *dataMap = nullptr;
 
-    StartingWindow *startWin = nullptr;
-
     Ui::MainWindow *ui;
 };
 

@@ -2,7 +2,7 @@
 #define BASE_PLOT_H
 
 #include <QWidget>
-#include "qcustomplot.h"
+#include "3rdparty_src/qcustomplot.h"
 #include "constants.h"
 
 class BasePlot : public QCustomPlot

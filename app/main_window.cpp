@@ -25,12 +25,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     instrWindow();
 
-    dataMap = new FilesData();
+    dataMap = dataMap->getInstance();
 }
 
 MainWindow::~MainWindow()
 {
-    delete dataMap;
     delete ui;
 }
 
@@ -42,15 +41,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::instrWindow()
 {
-    QFile f(prefsFile);
-    QTextStream in(&f);
-    QString str = hideStartWin;
-    if(f.open(QFile::ReadWrite)){
-        str = in.readLine();
-        f.close();
-    }
+    QSettings settings;
+    QString str = settings.value(startWinStr, showStartWin).toString();
     if(str == showStartWin)
-        startWin = new StartingWindow();
+        StartingWindow *startWin = new StartingWindow();
 }
 
 void MainWindow::onLoadClick()
@@ -359,31 +353,31 @@ void MainWindow::onGoClick()
 
         if(analysisType == strDFA)
         {
-            InputsDFA *dfaInptWin = new InputsDFA(files, cols, dataMap);
+            InputsDFA *dfaInptWin = new InputsDFA(files, cols);
             dfaInptWin->show();
             connect(dfaInptWin, SIGNAL(inputsInserted(std::vector<FA*>)), this, SLOT(onCloseInputWin(std::vector<FA*>)), Qt::QueuedConnection);
         }
         else if(analysisType == strDCCA)
         {
-            InputsDCCA *dccaInptWin = new InputsDCCA(files, cols, dataMap);
+            InputsDCCA *dccaInptWin = new InputsDCCA(files, cols);
             dccaInptWin->show();
             connect(dccaInptWin, SIGNAL(inputsInserted(std::vector<FA*>)), this, SLOT(onCloseInputWin(std::vector<FA*>)), Qt::QueuedConnection);
         }
         else if(analysisType == strMFDFA)
         {
-            InputsMFDFA *mfdfaInptWin = new InputsMFDFA(files, cols, dataMap);
+            InputsMFDFA *mfdfaInptWin = new InputsMFDFA(files, cols);
             mfdfaInptWin->show();
             connect(mfdfaInptWin, SIGNAL(inputsInserted(std::vector<FA*>)), this, SLOT(onCloseInputWin(std::vector<FA*>)), Qt::QueuedConnection);
         }
         else if(analysisType == strRHODCCA)
         {
-            InputsrhoDCCA *rhodccaInptWin = new InputsrhoDCCA(files, cols, dataMap);
+            InputsrhoDCCA *rhodccaInptWin = new InputsrhoDCCA(files, cols);
             rhodccaInptWin->show();
             connect(rhodccaInptWin, SIGNAL(inputsInserted(std::vector<FA*>)), this, SLOT(onCloseInputWin(std::vector<FA*>)), Qt::QueuedConnection);
         }
         else if(analysisType == strHT)
         {
-            InputsHT *htInptWin = new InputsHT(files, cols, dataMap);
+            InputsHT *htInptWin = new InputsHT(files, cols);
             htInptWin->show();
             connect(htInptWin, SIGNAL(inputsInserted(std::vector<FA*>)), this, SLOT(onCloseInputWin(std::vector<FA*>)), Qt::QueuedConnection);
         }

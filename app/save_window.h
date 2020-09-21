@@ -3,7 +3,7 @@
 
 #include <QtWidgets>
 #include "constants.h"
-#include "qcustomplot.h"
+#include "3rdparty_src/qcustomplot.h"
 
 class SaveWindow : public QWidget
 {

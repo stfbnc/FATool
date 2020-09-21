@@ -1,11 +1,11 @@
 #include "inputs_dcca.h"
 
-InputsDCCA::InputsDCCA(QStringList fileNames, QStringList columns, FilesData *dataMap, QWidget *parent) :
+InputsDCCA::InputsDCCA(QStringList fileNames, QStringList columns, QWidget *parent) :
     AbstractInputsWindow(strDCCA + " inputs", parent)
 {
     this->fileNames = fileNames;
     this->columns = columns;
-    this->dataMap = dataMap;
+    this->dataMap = this->dataMap->getInstance();
     MathOps mo;
     combs = mo.binCoeff(fileNames.size(), 2);
 

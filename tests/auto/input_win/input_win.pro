@@ -21,10 +21,10 @@ CONFIG += c++17
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 SOURCES +=  \
+    $$APPDIR/3rdparty_src/qcustomplot.cpp \
     $$APPDIR/log_window.cpp \
     $$APPDIR/mass_exponents_window.cpp \
     $$APPDIR/plot_window.cpp \
-    $$APPDIR/qcustomplot.cpp \
     $$APPDIR/main_window.cpp \
     $$APPDIR/file_ops.cpp \
     $$APPDIR/save_window.cpp \
@@ -57,11 +57,11 @@ SOURCES +=  \
     TestInputWin.cpp
 
 HEADERS += \
+    $$APPDIR/3rdparty_src/qcustomplot.h \
     $$APPDIR/constants.h \
     $$APPDIR/log_window.h \
     $$APPDIR/mass_exponents_window.h \
     $$APPDIR/plot_window.h \
-    $$APPDIR/qcustomplot.h \
     $$APPDIR/main_window.h \
     $$APPDIR/file_ops.h \
     $$APPDIR/save_window.h \

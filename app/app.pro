@@ -18,6 +18,7 @@ CONFIG += c++17
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 SOURCES +=  \
+    3rdparty_src/qcustomplot.cpp \
     abstract_inputs_window.cpp \
     data_file.cpp \
     data_plot_window.cpp \
@@ -27,7 +28,6 @@ SOURCES +=  \
     log_window.cpp \
     mass_exponents_window.cpp \
     plot_window.cpp \
-    qcustomplot.cpp \
     main_window.cpp \
     file_ops.cpp \
     results_window.cpp \
@@ -54,6 +54,7 @@ SOURCES +=  \
     update_table_widget.cpp
 
 HEADERS += \
+    3rdparty_src/qcustomplot.h \
     abstract_inputs_window.h \
     constants.h \
     data_file.h \
@@ -63,7 +64,6 @@ HEADERS += \
     log_window.h \
     mass_exponents_window.h \
     plot_window.h \
-    qcustomplot.h \
     main_window.h \
     file_ops.h \
     results_window.h \
@@ -90,9 +90,6 @@ HEADERS += \
     legend_position_window.h \
     update_table_widget.h
 
-#DISTFILES += \
-#    prefs.txt
-
 FORMS += \
     abstract_inputs_window.ui \
     fit_log.ui \
@@ -101,6 +98,3 @@ FORMS += \
     move_legend_window.ui \
     plot_window.ui \
     refit_dialog.ui
-
-RESOURCES += \
-    starting_message.qrc

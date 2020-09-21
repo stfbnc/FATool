@@ -10,7 +10,7 @@ class InputsDCCA : public AbstractInputsWindow
 {
 Q_OBJECT
 public:
-    explicit InputsDCCA(QStringList fileNames, QStringList columns, FilesData *dataMap, QWidget *parent=nullptr);
+    explicit InputsDCCA(QStringList fileNames, QStringList columns, QWidget *parent=nullptr);
     virtual ~InputsDCCA();
 signals:
     void inputsInserted(std::vector<FA*>);

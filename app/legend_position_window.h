@@ -2,7 +2,7 @@
 #define LEGEND_POSITION_WINDOW_H
 
 #include <QtWidgets>
-#include "qcustomplot.h"
+#include "3rdparty_src/qcustomplot.h"
 #include "constants.h"
 
 namespace Ui{

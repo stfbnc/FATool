@@ -12,7 +12,7 @@ class InputsDFA : public AbstractInputsWindow
 Q_OBJECT
     friend class TestInputWin;
 public:
-    explicit InputsDFA(QStringList fileNames, QStringList columns, FilesData *dataMap, QWidget *parent=nullptr);
+    explicit InputsDFA(QStringList fileNames, QStringList columns, QWidget *parent=nullptr);
     virtual ~InputsDFA();
 signals:
     void inputsInserted(std::vector<FA*>);
