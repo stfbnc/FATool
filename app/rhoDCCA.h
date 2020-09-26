@@ -5,11 +5,11 @@
 
 class rhoDCCA : public FA
 {
+Q_OBJECT
 public:
     explicit rhoDCCA(std::string fileName, std::vector<double> ts, int tsLen, std::string fileName2, std::vector<double> ts2, int tsLen2, int minWin, int maxWin, int ord, int winStep=1, bool thresh=false);
     virtual ~rhoDCCA();
     QString getAlgorithmStr() override;
-    bool executeAlgorithm() override;
     void computeThresholds();
     bool threshCompute();
     std::string getFileName() override;
@@ -21,6 +21,8 @@ public:
     std::string outFileStr() override;
     void saveFile(std::string pathTot) override;
     void plot(BasePlot *plt) override;
+public slots:
+    void executeAlgorithm() override;
 private:
     void confLevels(std::vector<double> rhos);
     int getRhoLength();

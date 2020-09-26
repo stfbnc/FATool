@@ -392,8 +392,29 @@ void MainWindow::onCloseInputWin(std::vector<FA*> fa)
     {
         if(algo != strRHODCCA)
             fa.at(i)->setVectors();
-        bool execStop = fa.at(i)->executeAlgorithm();
-        if(!execStop)
+
+        QProgressDialog *progressBar = new QProgressDialog(algo + "\n" +QString::fromStdString(fa.at(i)->getFileName().substr(fa.at(i)->getFileName().find_last_of("/")+1)),
+                                    "Stop", 0, fa.at(i)->getRangeLength(fa.at(i)->getMinWin(), fa.at(i)->getMaxWin()));
+        //progressBar->setWindowModality(Qt::WindowModal);
+        progressBar->setMinimumDuration(0);
+        progressBar->setFixedSize(xPG, yPG);
+
+        QThread* thread = new QThread();
+        fa.at(i)->moveToThread(thread);
+
+        qRegisterMetaType<FA*>("FA*");
+        connect(thread, SIGNAL(started()), fa.at(i), SLOT(executeAlgorithm()));
+        connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater())); // TODO: check if the thread actually finishes
+        connect(fa.at(i), SIGNAL(progress(int)), progressBar, SLOT(setValue(int)));
+        connect(fa.at(i), SIGNAL(executionEnded(FA*)), this, SLOT(showResults(FA*)));
+
+        thread->start();
+
+        //bool execStop = fa.at(i)->executeAlgorithm();
+
+        //if(!execStop)
+        /*if(!progressBar.wasCanceled() &&
+           (progressBar.maximum() == fa.at(i)->getRangeLength(fa.at(i)->getMinWin(), fa.at(i)->getMaxWin())))
         {
             if((algo == strDFA) || (algo == strDCCA))
                 fa.at(i)->executeFit(fa.at(i)->getMinWin(), fa.at(i)->getMaxWin());
@@ -407,8 +428,26 @@ void MainWindow::onCloseInputWin(std::vector<FA*> fa)
 
             ResultsWindow *plotWin = new ResultsWindow(fa.at(i));
             plotWin->show();
-        }
+        }*/
     }
+}
+
+void MainWindow::showResults(FA *fa)
+{
+    QString algo = fa->getAlgorithmStr();
+
+    if((algo == strDFA) || (algo == strDCCA))
+        fa->executeFit(fa->getMinWin(), fa->getMaxWin());
+
+    if(algo == strRHODCCA)
+    {
+        rhoDCCA *obj = (rhoDCCA *)fa;
+        if(obj->threshCompute())
+            obj->computeThresholds();
+    }
+
+    ResultsWindow *plotWin = new ResultsWindow(fa);
+    plotWin->show();
 }
 
 void MainWindow::onClearClick()

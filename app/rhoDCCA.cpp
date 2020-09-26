@@ -24,36 +24,36 @@ QString rhoDCCA::getAlgorithmStr()
     return strRHODCCA;
 }
 
-bool rhoDCCA::executeAlgorithm()
+void rhoDCCA::executeAlgorithm()
 {
-    bool execStop = false;
     DCCA dccaXX = DCCA(fileName, ts, tsLen, fileName, ts, tsLen, minWin, maxWin, ord, defaultDCCA.toStdString(), winStep);
     dccaXX.setVectors();
-    execStop = dccaXX.executeAlgorithm();
-    if(!execStop)
-    {
+    //execStop =
+    dccaXX.executeAlgorithm();
+    //if(!execStop)
+    //{
         std::vector<double> Fxx = dccaXX.getF();
         DCCA dccaYY = DCCA(fileName2, ts2, tsLen2, fileName2, ts2, tsLen2, minWin, maxWin, ord, defaultDCCA.toStdString(), winStep);
         dccaYY.setVectors();
-        execStop = dccaYY.executeAlgorithm();
-        if(!execStop)
-        {
+        //execStop =
+        dccaYY.executeAlgorithm();
+        //if(!execStop)
+        //{
             std::vector<double> Fyy = dccaYY.getF();
             DCCA dccaXY = DCCA(fileName, ts, tsLen, fileName2, ts2, tsLen2, minWin, maxWin, ord, corrDCCA.toStdString(), winStep);
             dccaXY.setVectors();
-            execStop = dccaXY.executeAlgorithm();
-            if(!execStop)
-            {
+            //execStop =
+            dccaXY.executeAlgorithm();
+            //if(!execStop)
+            //{
                 std::vector<double> Fxy = dccaXY.getF();
                 L = dccaXY.getRangeLength(minWin, maxWin, winStep);
                 N = dccaXY.getTsLength();
                 for(int i = 0; i < L; i++)
                     rho.push_back(Fxy.at(i) / static_cast<double>(Fxx.at(i) * Fyy.at(i)));
-            }
-        }
-    }
-
-    return execStop;
+            //}
+        //}
+    //}
 }
 
 void rhoDCCA::computeThresholds()

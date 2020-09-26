@@ -51,6 +51,7 @@ private slots:
     void fillList();
     void onGoClick();
     void onCloseInputWin(std::vector<FA*> fa);
+    void showResults(FA* fa);
     void onClearClick();
 signals:
     void allFilesLoaded();
@@ -59,10 +60,10 @@ private:
     void instrWindow();
     void clearFilesTable();
 
+    Ui::MainWindow *ui;
+
     QStringList fileNames;
     FilesData *dataMap = nullptr;
-
-    Ui::MainWindow *ui;
 };
 
 #endif // MAIN_WINDOW_H

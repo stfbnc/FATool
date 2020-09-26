@@ -111,7 +111,8 @@ QList<QLineEdit *> AbstractInputsWindow::addLabeledLineEdits(QStringList text, b
     hl->setContentsMargins(10, 0, 0, 0);
 
     QList<QLineEdit *> lineEdits;
-    for(QString str : text){
+    for(QString str : text)
+    {
         QLabel *label = new QLabel(str);
         if(isBold)
             label->setStyleSheet("font-weight: bold");

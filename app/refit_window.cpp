@@ -27,13 +27,16 @@ void RefitWindow::onOKClick()
     QString win2 = ui->maxWinTxt->text().trimmed();
     QRegExp rgx("^[0-9]+$");
     if((!win1.isEmpty() && win1.contains(rgx)) &&
-       (!win2.isEmpty() && win2.contains(rgx))){
+       (!win2.isEmpty() && win2.contains(rgx)))
+    {
         int k, c;
         ui->keepFits->isChecked() ? k = 1 : k = 0;
         ui->clearFits->isChecked() ? c = 1 : c = 0;
         emit inputsInserted(win1.toInt(), win2.toInt(), k, c);
         close();
-    }else{
+    }
+    else
+    {
         QMessageBox messageBox;
         QString errToShow = "Inputs must be numeric and not null!";
         messageBox.critical(nullptr, "Error", errToShow);

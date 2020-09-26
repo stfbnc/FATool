@@ -25,35 +25,37 @@ int MFDFAsingleQ::getTsLength()
 	return N;
 }
     
-bool MFDFAsingleQ::executeAlgorithm(){
+void MFDFAsingleQ::executeAlgorithm(){
     F.clear();
-    bool execStop = false;
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
 	int range = getRangeLength(minWin, maxWin, winStep);
     ao.intRange(s, range, minWin, winStep);
 
-    QProgressDialog progress(strMFDFA+"\n"+"q = "+QString::number(q)+" -> "+
+    /*QProgressDialog progress(strMFDFA+"\n"+"q = "+QString::number(q)+" -> "+
                              QString::fromStdString(fileName.substr(fileName.find_last_of("/")+1)),
                              "Stop", 0, range);
     progress.setWindowModality(Qt::WindowModal);
     progress.setMinimumDuration(0);
-    progress.setFixedSize(xPG, yPG);
+    progress.setFixedSize(xPG, yPG);*/
 
     for(int i = 0; i < range; i++)
     {
-        progress.setValue(i);
+        emit progress(i);
+        std::cout << "Signal emitted: " << i << std::endl;
+        /*progress.setValue(i);
         if(progress.wasCanceled())
         {
             execStop = true;
             break;
-        }
+        }*/
 
         std::vector<double> Fnu1 = std::vector<double>();
         std::vector<double> Fnu2 = std::vector<double>();
         int currWinSize = s.at(i);
         int Ns = N / currWinSize;
-        for(int v = 0; v < Ns; v++){
+        for(int v = 0; v < Ns; v++)
+        {
             int startLim = v * currWinSize;
             int endLim = (v + 1) * currWinSize - 1;
             std::vector<double> tFit = std::vector<double>();
@@ -117,9 +119,7 @@ bool MFDFAsingleQ::executeAlgorithm(){
         }
     }
 
-    progress.setValue(range);
-
-    return execStop;
+    //progress.setValue(range);
 }
 
 std::string MFDFAsingleQ::getFileName()

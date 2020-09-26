@@ -26,9 +26,7 @@ private:
     QList<QComboBox*> absList;
     QList<QStringList> fileCouples;
     QList<QStringList> colsCouples;
-
     std::vector<FA*> dcca = std::vector<FA*>();
-
     QStringList fileNames;
     QStringList columns;
     FilesData *dataMap;

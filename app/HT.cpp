@@ -91,8 +91,8 @@ void HT::getScales(std::string str)
     scales.push_back(stoi(str));
 }
 
-bool HT::executeAlgorithm(){
-    bool execStop = false;
+void HT::executeAlgorithm()
+{
 	int L = getRangeLength(minScale, N);
 	ArrayOps ao = ArrayOps();
     for(int i = 0; i < L; i++)
@@ -107,22 +107,28 @@ bool HT::executeAlgorithm(){
     {
         scale = scales.at(i);
         int Lscale = getRangeLength(scale, N);
-        execStop = HTsingleScale::executeAlgorithm();
-        if(!execStop)
-        {
+        //execStop =
+        connect(this, &HTsingleScale::progress, [&](int val){ updateProgress(val); });
+        HTsingleScale::executeAlgorithm();
+        //if(!execStop)
+        //{
             executeFit(mfdfaMinWin, mfdfaMaxWin);
             for(int j = 0; j < Lscale; j++)
                 HTmtx.at(j).at(i) = Ht.at(j);
             for(int j = Lscale; j < L; j++)
                 HTmtx.at(j).at(i) = std::numeric_limits<double>::quiet_NaN();
-        }
+        /*}
         else
         {
             break;
-        }
-	}
+        }*/
+    }
+}
 
-    return execStop;
+void HT::updateProgress(int val)
+{
+    std::cout << "ZAO: " << val << std::endl;
+    emit progress(val);
 }
 
 std::string HT::outFileStr()

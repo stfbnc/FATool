@@ -5,13 +5,13 @@
 
 class DCCA : public FA
 {
+Q_OBJECT
 public:
     explicit DCCA(std::string fileName, std::vector<double> ts, int tsLen, std::string fileName2, std::vector<double> ts2, int tsLen2, int minWin, int maxWin, int ord, std::string isAbs, int winStep, bool showProgBar=true);
     virtual ~DCCA();
     QString getAlgorithmStr() override;
     int getTsLength() override;
     void setVectors() override;
-    bool executeAlgorithm() override;
     std::string getFileName() override;
     std::string getFileName2() override;
     std::vector<double> getF();
@@ -25,6 +25,8 @@ public:
     std::string outFileStr() override;
     void saveFile(std::string pathTot) override;
     void plot(BasePlot *plt) override;
+public slots:
+    void executeAlgorithm() override;
 private:
     void getEqualLength();
 

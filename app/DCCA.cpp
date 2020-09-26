@@ -54,15 +54,14 @@ void DCCA::setVectors()
     mo.cumsum(pn2Nomean, y2, N);
 }
     
-bool DCCA::executeAlgorithm()
+void DCCA::executeAlgorithm()
 {
-    bool execStop = false;
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
 	int range = getRangeLength(minWin, maxWin, winStep);
     ao.intRange(s, range, minWin, winStep);
 
-    QProgressDialog progress(strDCCA+"\n"+QString::fromStdString(fileName.substr(fileName.find_last_of("/")+1))+
+    /*QProgressDialog progress(strDCCA+"\n"+QString::fromStdString(fileName.substr(fileName.find_last_of("/")+1))+
                              " vs "+QString::fromStdString(fileName2.substr(fileName2.find_last_of("/")+1)), "Stop", 0, range);
     progress.setAttribute(Qt::WA_DeleteOnClose, true);
     if(showProgBar)
@@ -70,18 +69,20 @@ bool DCCA::executeAlgorithm()
         progress.setWindowModality(Qt::WindowModal);
         progress.setMinimumDuration(0);
         progress.setFixedSize(xPG, yPG);
-    }
+    }*/
 
     for(int i = 0; i < range; i++)
     {
         if(showProgBar)
         {
-            progress.setValue(i);
+            emit progress(i);
+            std::cout << "Signal emitted: " << i << std::endl;
+            /*progress.setValue(i);
             if(progress.wasCanceled())
             {
                 execStop = true;
                 break;
-            }
+            }*/
         }
 
         std::vector<double> Fnu = std::vector<double>();
@@ -138,9 +139,11 @@ bool DCCA::executeAlgorithm()
     }
 
     if(showProgBar)
-        progress.setValue(range);
-
-    return execStop;
+    {
+        emit progress(range);
+        emit executionEnded(this);
+        //progress.setValue(range);
+    }
 }
 
 std::string DCCA::getFileName()

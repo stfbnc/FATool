@@ -28,9 +28,7 @@ private:
     QList<QCheckBox*> rangeBox;
     QList<QCheckBox*> stringBox;
     QList<QList<QLineEdit*>> winsAndStep;
-
     std::vector<FA*> ht = std::vector<FA*>();
-
     QStringList fileNames;
     QStringList columns;
     FilesData *dataMap;

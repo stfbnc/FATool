@@ -25,28 +25,29 @@ std::string HTsingleScale::getFileName()
     return fileName;
 }
     
-bool HTsingleScale::executeAlgorithm()
+void HTsingleScale::executeAlgorithm()
 {
-    bool execStop = false;
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
     int range = getRangeLength(scale, N);
 
-    QProgressDialog progress(strHT+"\n"+"scale = "+QString::number(scale)+" -> "+
+    /*QProgressDialog progress(strHT+"\n"+"scale = "+QString::number(scale)+" -> "+
                              QString::fromStdString(fileName.substr(fileName.find_last_of("/")+1)),
                              "Stop", 0, range);
     progress.setWindowModality(Qt::WindowModal);
     progress.setMinimumDuration(0);
-    progress.setFixedSize(xPG, yPG);
+    progress.setFixedSize(xPG, yPG);*/
 
     for(int v = 0; v < range; v++)
     {
-        progress.setValue(v);
+        emit progress(v);
+        std::cout << "Signal emitted: " << v << std::endl;
+        /*progress.setValue(v);
         if(progress.wasCanceled())
         {
             execStop = true;
             break;
-        }
+        }*/
 
         int startLim = v;
         int endLim = v + scale - 1;
@@ -62,9 +63,7 @@ bool HTsingleScale::executeAlgorithm()
         F.push_back(sqrt(mo.mean(diffVec, scale)));
 	}
 
-    progress.setValue(range);
-
-    return execStop;
+    //progress.setValue(range);
 }
 
 void HTsingleScale::setMFDFAstep(int mfdfaStep)

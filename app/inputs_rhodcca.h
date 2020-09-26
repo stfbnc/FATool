@@ -26,9 +26,7 @@ private:
     QList<QStringList> fileCouples;
     QList<QStringList> colsCouples;
     QList<QCheckBox*> compThresh;
-
     std::vector<FA*> rhodcca = std::vector<FA*>();
-
     QStringList fileNames;
     QStringList columns;
     FilesData *dataMap;

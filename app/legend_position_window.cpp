@@ -103,7 +103,8 @@ void MoveLegendWindow::onCustomCoordsCheckboxClick()
 
 void MoveLegendWindow::refreshLegend(QCustomPlot *plt)
 {
-    switch(cbSelected){
+    switch(cbSelected)
+    {
         case topLeft:
             plt->axisRect()->insetLayout()->setInsetPlacement(0, QCPLayoutInset::ipBorderAligned);
             plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignLeft|Qt::AlignTop);

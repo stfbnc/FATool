@@ -15,9 +15,8 @@ void MFDFA::setQrange(double start, int len, double step)
     ao.doubleRange(qRange, len, start, step);
 }
 
-bool MFDFA::executeAlgorithm()
+void MFDFA::executeAlgorithm()
 {
-    bool execStop = false;
 	setQrange(q, Nq, stepq);
 	int Lq = getRangeLength(minWin, maxWin, winStep);
     for(int i = 0; i < Lq; i++)
@@ -28,24 +27,24 @@ bool MFDFA::executeAlgorithm()
         flucMtx.push_back(vec);
     }
 
-	for(int i = 0; i < Nq; i++){
+    for(int i = 0; i < Nq; i++)
+    {
         q = qRange.at(i);
-        execStop = MFDFAsingleQ::executeAlgorithm();
-        if(!execStop)
-        {
+        //execStop =
+        MFDFAsingleQ::executeAlgorithm();
+        //if(!execStop)
+        //{
             for(int j = 0; j < Lq; j++)
                 flucMtx.at(j).at(i) = getF().at(j);
             executeFit(minWin, maxWin);
             Hq.push_back(getH());
             Hinterceptq.push_back(getHintercept());
-        }
+        /*}
         else
         {
             break;
-        }
-	}
-
-    return execStop;
+        }*/
+    }
 }
 
 void MFDFA::computeMassExponents()

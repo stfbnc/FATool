@@ -5,18 +5,23 @@
 
 class HT : public HTsingleScale
 {
+Q_OBJECT
 public:
     explicit HT(std::string fileName, std::vector<double> ts, int tsLen, int scale, int Nscales, int stepScale, int mfdfaMinWin, int mfdfaMaxWin, int mfdfaStep);
     explicit HT(std::string fileName, std::vector<double> ts, int tsLen, std::string strScales, int mfdfaMinWin, int mfdfaMaxWin, int mfdfaStep);
     virtual ~HT();
-    bool executeAlgorithm() override;
 	std::string outFileStr() override;
 	void saveFile(std::string pathTot) override;
     void plot(BasePlot *plt) override;
+public slots:
+    void executeAlgorithm() override;
+signals:
+    void progress(int) override;
 private:
     void getScales(std::string str);
     int getNumScales(std::string str);
     int getMinScale(std::string str);
+    void updateProgress(int val);
 
     int mfdfaMinWin;
     int mfdfaMaxWin;

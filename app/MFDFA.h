@@ -5,10 +5,10 @@
 
 class MFDFA : public MFDFAsingleQ
 {
+Q_OBJECT
 public:
     explicit MFDFA(std::string fileName, std::vector<double> ts, int tsLen, int minWin, int maxWin, int ord, double qIn, int Nq, int winStep=1, double stepq=1.0, int revSeg=1);
     virtual ~MFDFA();
-    bool executeAlgorithm() override;
     void computeMassExponents();
     void computeSpectrum();
 	std::string outFileStr() override;
@@ -18,6 +18,11 @@ public:
     void plot(BasePlot *plt) override;
     void plotMassExponents(BasePlot *plt);
     void plotSpectrum(BasePlot *plt);
+public slots:
+    void executeAlgorithm() override;
+signals:
+    void progress(int);
+    void executionEnded(FA*);
 private:
     void setQrange(double, int, double);
     std::string qoutFileStr();

@@ -15,7 +15,6 @@ class DataFile
 public:
     explicit DataFile(QString name, QString del, int headers);
     virtual ~DataFile();
-
     std::vector<double> getDataOfColumn(int col);
     QString getNameOfColumn(int col);
     void setNameOfColumn(int col, QString colName);

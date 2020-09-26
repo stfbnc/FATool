@@ -7,8 +7,9 @@
 #include "array_ops.h"
 #include "math_ops.h"
 
-class FA
+class FA : public QObject
 {
+Q_OBJECT
 public:
     explicit FA(std::vector<double> ts, int tsLen)
     {
@@ -93,11 +94,6 @@ public:
 	    mo.cumsum(pnNomean, y, N);
 	}
 
-    virtual bool executeAlgorithm()
-    {
-        return false;
-    }
-
     virtual void executeFit(int start, int end)
     {
         start = 0;
@@ -128,6 +124,21 @@ public:
     {
         plt = nullptr;
     }
+
+    virtual int getAlgorithmTotalSteps()
+    {
+        return 0;
+    }
+
+    virtual std::string getCurrentIdentifier()
+    {
+        return fileName;
+    }
+public slots:
+    virtual void executeAlgorithm(){}
+signals:
+    virtual void progress(int);
+    virtual void executionEnded(FA*);
 protected:
     std::string fileName = "";
     std::string fileName2 = "";

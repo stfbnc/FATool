@@ -25,9 +25,7 @@ private:
     QList<QLineEdit*> polOrd;
     QList<QCheckBox*> revSeg;
     QList<QList<QLineEdit*>> qsAndStep;
-
     std::vector<FA*> mfdfa = std::vector<FA*>();
-
     QStringList fileNames;
     QStringList columns;
     FilesData *dataMap;

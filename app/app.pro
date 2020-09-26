@@ -31,7 +31,6 @@ SOURCES +=  \
     main_window.cpp \
     file_ops.cpp \
     results_window.cpp \
-    save_window.cpp \
     base_plot.cpp \
     inputs_dfa.cpp \
     inputs_dcca.cpp \
@@ -67,7 +66,6 @@ HEADERS += \
     main_window.h \
     file_ops.h \
     results_window.h \
-    save_window.h \
     base_plot.h \
     inputs_dfa.h \
     inputs_dcca.h \

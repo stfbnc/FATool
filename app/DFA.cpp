@@ -24,27 +24,28 @@ int DFA::getTsLength()
 	return N;
 }
     
-bool DFA::executeAlgorithm()
+void DFA::executeAlgorithm()
 {
-    bool execStop = false;
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
 	int range = getRangeLength(minWin, maxWin, winStep);
     ao.intRange(s, range, minWin, winStep);
 
-    QProgressDialog progress(strDFA+"\n"+QString::fromStdString(fileName.substr(fileName.find_last_of("/")+1)), "Stop", 0, range);
-    progress.setWindowModality(Qt::WindowModal);
-    progress.setMinimumDuration(0);
-    progress.setFixedSize(xPG, yPG);
+    //QProgressDialog progress(strDFA+"\n"+QString::fromStdString(fileName.substr(fileName.find_last_of("/")+1)), "Stop", 0, range);
+    //progress.setWindowModality(Qt::WindowModal);
+    //progress.setMinimumDuration(0);
+    //progress.setFixedSize(xPG, yPG);
 
     for(int i = 0; i < range; i++)
     {
-        progress.setValue(i);
+        emit progress(i);
+        std::cout << "Signal emitted: " << i << std::endl;
+        /*progress.setValue(i);
         if(progress.wasCanceled())
         {
             execStop = true;
             break;
-        }
+        }*/
 
         std::vector<double> Fnu1 = std::vector<double>();
         std::vector<double> Fnu2 = std::vector<double>();
@@ -101,9 +102,9 @@ bool DFA::executeAlgorithm()
         }
     }
 
-    progress.setValue(range);
-
-    return execStop;
+    emit progress(range);
+    emit executionEnded(this);
+    //progress.setValue(range);
 }
 
 std::string DFA::getFileName()
