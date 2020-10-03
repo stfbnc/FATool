@@ -103,15 +103,17 @@ void HT::executeAlgorithm()
         HTmtx.push_back(vec);
     }
 
+    //emit progress(i);
     for(int i = 0; i < Nscales; i++)
     {
         scale = scales.at(i);
         int Lscale = getRangeLength(scale, N);
         //execStop =
-        connect(this, &HTsingleScale::progress, [&](int val){ updateProgress(val); });
+        connect(this, &HTsingleScale::progressSingle, [&](int val){ updateProgress(val, i, false); });
         HTsingleScale::executeAlgorithm();
         //if(!execStop)
         //{
+            connect(getMFDFAobj(), &MFDFAsingleQ::progressSingle, [&](int val){ updateProgress(val, i, true); });
             executeFit(mfdfaMinWin, mfdfaMaxWin);
             for(int j = 0; j < Lscale; j++)
                 HTmtx.at(j).at(i) = Ht.at(j);
@@ -123,12 +125,27 @@ void HT::executeAlgorithm()
             break;
         }*/
     }
+    emit progress(getAlgorithmTotalSteps());
+    emit executionEnded(this);
 }
 
-void HT::updateProgress(int val)
+void HT::updateProgress(int val, int n, bool isMfdfa)
 {
     std::cout << "ZAO: " << val << std::endl;
-    emit progress(val);
+    if(n == 0)
+    {
+        if(isMfdfa)
+            emit progress(getRangeLength(scales.at(0), N) + val);
+        else
+            emit progress(val);
+    }
+    else
+    {
+        if(isMfdfa)
+            emit progress(n * (getRangeLength(scales.at(n - 1), N) + getRangeLength(mfdfaMinWin, mfdfaMaxWin)) + getRangeLength(scales.at(n), N) + val);
+        else
+            emit progress(n * (getRangeLength(scales.at(n - 1), N) + getRangeLength(mfdfaMinWin, mfdfaMaxWin)) + val);
+    }
 }
 
 std::string HT::outFileStr()
@@ -185,4 +202,18 @@ void HT::plot(BasePlot *plt)
     plt->yAxis->setLabel("Ht");
     plt->legend->setVisible(true);
     plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignLeft);
+}
+
+int HT::getAlgorithmTotalSteps()
+{
+    int totLen = 0;
+    for(int s : scales)
+        totLen += (getRangeLength(s, N) + getRangeLength(mfdfaMinWin, mfdfaMaxWin));
+
+    return totLen;
+}
+
+std::string HT::getCurrentIdentifier()
+{
+    return fileName.substr(fileName.find_last_of("/") + 1);
 }

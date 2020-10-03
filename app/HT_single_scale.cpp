@@ -8,7 +8,11 @@ HTsingleScale::HTsingleScale(std::string fileName, std::vector<double> ts, int t
     N = setTsLength(ts, tsLen);
 }
 
-HTsingleScale::~HTsingleScale(){}
+HTsingleScale::~HTsingleScale()
+{
+    delete dfaQ0;
+    dfaQ0 = nullptr;
+}
 
 QString HTsingleScale::getAlgorithmStr()
 {
@@ -40,7 +44,7 @@ void HTsingleScale::executeAlgorithm()
 
     for(int v = 0; v < range; v++)
     {
-        emit progress(v);
+        emit progressSingle(v);
         std::cout << "Signal emitted: " << v << std::endl;
         /*progress.setValue(v);
         if(progress.wasCanceled())
@@ -71,16 +75,21 @@ void HTsingleScale::setMFDFAstep(int mfdfaStep)
     step = mfdfaStep;
 }
 
+MFDFAsingleQ* HTsingleScale::getMFDFAobj()
+{
+    return dfaQ0;
+}
+
 void HTsingleScale::executeFit(int start, int end)
 {
     if(step == 0)
         step = 1;
-    MFDFAsingleQ dfaQ0 = MFDFAsingleQ(fileName, ts, tsLen, start, end, 1, 0.0, step);
-    dfaQ0.setVectors();
-    dfaQ0.executeAlgorithm();
-    dfaQ0.executeFit(start, end);
-    double Hq0 = dfaQ0.getH();
-    double Hq0Intercept = dfaQ0.getHintercept();
+    dfaQ0 = new MFDFAsingleQ(fileName, ts, tsLen, start, end, 1, 0.0, step);
+    dfaQ0->setVectors();
+    dfaQ0->executeAlgorithm();
+    dfaQ0->executeFit(start, end);
+    double Hq0 = dfaQ0->getH();
+    double Hq0Intercept = dfaQ0->getHintercept();
 
     Ht.clear();
     MathOps mo = MathOps();

@@ -243,3 +243,19 @@ void rhoDCCA::plot(BasePlot *plt)
     plt->legend->setVisible(true);
     plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignLeft);
 }
+
+int rhoDCCA::getAlgorithmTotalSteps()
+{
+    int totLen = getRangeLength(minWin, maxWin, winStep) * 4;
+    if(thresh)
+        totLen += nSim * 3;
+
+    return totLen;
+}
+
+std::string rhoDCCA::getCurrentIdentifier()
+{
+    return fileName.substr(fileName.find_last_of("/") + 1) +
+           " VS " +
+           fileName2.substr(fileName2.find_last_of("/") + 1);
+}

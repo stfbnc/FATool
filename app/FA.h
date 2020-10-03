@@ -137,8 +137,8 @@ public:
 public slots:
     virtual void executeAlgorithm(){}
 signals:
-    virtual void progress(int);
-    virtual void executionEnded(FA*);
+    void progress(int);
+    void executionEnded(FA*);
 protected:
     std::string fileName = "";
     std::string fileName2 = "";

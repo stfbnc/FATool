@@ -5,7 +5,7 @@ InputsDFA::InputsDFA(QStringList fileNames, QStringList columns, QWidget *parent
 {
     this->fileNames = fileNames;
     this->columns = columns;
-    this->dataMap = this->dataMap->getInstance();
+    this->dataMap = FilesData::getInstance();
 
     addWidgets();
 }
@@ -105,7 +105,7 @@ void InputsDFA::onOkClick()
                 mw.at(i) = po.at(i) + 2;
             if(Mw.at(i) > int(vec.size()))
                 Mw.at(i) = vec.size();
-            DFA *fa = new DFA(fileNames.at(i).toStdString(), vec, vec.size(), mw.at(i), Mw.at(i), po.at(i), ws.at(i), rs.at(i));
+            FA *fa = new DFA(fileNames.at(i).toStdString(), vec, vec.size(), mw.at(i), Mw.at(i), po.at(i), ws.at(i), rs.at(i));
             dfa.push_back(fa);
         }
 

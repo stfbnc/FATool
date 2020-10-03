@@ -5,7 +5,7 @@ InputsDCCA::InputsDCCA(QStringList fileNames, QStringList columns, QWidget *pare
 {
     this->fileNames = fileNames;
     this->columns = columns;
-    this->dataMap = this->dataMap->getInstance();
+    this->dataMap = FilesData::getInstance();
     MathOps mo;
     combs = mo.binCoeff(fileNames.size(), 2);
 
@@ -119,7 +119,7 @@ void InputsDCCA::onOkClick()
                 mw.at(i) = po.at(i) + 2;
             if(Mw.at(i) > val)
                 Mw.at(i) = val;
-            DCCA *fa = new DCCA(fileCouples.at(i).at(0).toStdString(), vec, vec.size(),
+            FA *fa = new DCCA(fileCouples.at(i).at(0).toStdString(), vec, vec.size(),
                               fileCouples.at(i).at(1).toStdString(), vec2, vec2.size(),
                               mw.at(i), Mw.at(i), po.at(i), al.at(i).toStdString(), ws.at(i));
             dcca.push_back(fa);

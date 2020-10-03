@@ -5,7 +5,7 @@ InputsHT::InputsHT(QStringList fileNames, QStringList columns, QWidget *parent) 
 {
     this->fileNames = fileNames;
     this->columns = columns;
-    this->dataMap = this->dataMap->getInstance();
+    this->dataMap = FilesData::getInstance();
 
     addWidgets();
 }
@@ -235,7 +235,7 @@ void InputsHT::onOkClick()
             }
             else
             {
-                HT *fa = new HT(fileNames.at(i).toStdString(), vec, vec.size(),
+                FA *fa = new HT(fileNames.at(i).toStdString(), vec, vec.size(),
                                 cs.at(i).toStdString(), mmw.at(i), mMw.at(i), mws.at(i));
                 ht.push_back(fa);
             }

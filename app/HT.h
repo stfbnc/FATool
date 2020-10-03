@@ -13,15 +13,15 @@ public:
 	std::string outFileStr() override;
 	void saveFile(std::string pathTot) override;
     void plot(BasePlot *plt) override;
+    int getAlgorithmTotalSteps() override;
+    std::string getCurrentIdentifier() override;
 public slots:
     void executeAlgorithm() override;
-signals:
-    void progress(int) override;
 private:
     void getScales(std::string str);
     int getNumScales(std::string str);
     int getMinScale(std::string str);
-    void updateProgress(int val);
+    void updateProgress(int val, int n, bool isMfdfa);
 
     int mfdfaMinWin;
     int mfdfaMaxWin;

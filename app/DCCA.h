@@ -25,6 +25,8 @@ public:
     std::string outFileStr() override;
     void saveFile(std::string pathTot) override;
     void plot(BasePlot *plt) override;
+    int getAlgorithmTotalSteps() override;
+    std::string getCurrentIdentifier() override;
 public slots:
     void executeAlgorithm() override;
 private:

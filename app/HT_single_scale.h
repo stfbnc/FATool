@@ -22,10 +22,12 @@ public:
 public slots:
     void executeAlgorithm() override;
 signals:
-    void progress(int) override;
-    void executionEnded(FA*) override;
+    void progressSingle(int);
 protected:
     void setMFDFAstep(int mfdfaStep);
+    MFDFAsingleQ* getMFDFAobj();
+
+    MFDFAsingleQ *dfaQ0 = nullptr;
 
 	int scale;
 	int step;

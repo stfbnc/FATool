@@ -18,11 +18,10 @@ public:
     void plot(BasePlot *plt) override;
     void plotMassExponents(BasePlot *plt);
     void plotSpectrum(BasePlot *plt);
+    int getAlgorithmTotalSteps() override;
+    std::string getCurrentIdentifier() override;
 public slots:
     void executeAlgorithm() override;
-signals:
-    void progress(int);
-    void executionEnded(FA*);
 private:
     void setQrange(double, int, double);
     std::string qoutFileStr();

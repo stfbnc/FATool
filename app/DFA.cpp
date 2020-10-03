@@ -205,3 +205,13 @@ void DFA::plot(BasePlot *plt)
     plt->legend->setVisible(true);
     plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignLeft);
 }
+
+int DFA::getAlgorithmTotalSteps()
+{
+    return getRangeLength(minWin, maxWin, winStep);
+}
+
+std::string DFA::getCurrentIdentifier()
+{
+    return fileName.substr(fileName.find_last_of("/") + 1);
+}

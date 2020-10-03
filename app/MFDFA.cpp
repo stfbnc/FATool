@@ -223,3 +223,13 @@ void MFDFA::plotSpectrum(BasePlot *plt)
     plt->legend->setVisible(true);
     plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignLeft);
 }
+
+int MFDFA::getAlgorithmTotalSteps()
+{
+    return getRangeLength(minWin, maxWin, winStep) * qRange.size();
+}
+
+std::string MFDFA::getCurrentIdentifier()
+{
+    return fileName.substr(fileName.find_last_of("/") + 1);
+}

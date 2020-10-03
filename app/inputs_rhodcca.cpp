@@ -5,7 +5,7 @@ InputsrhoDCCA::InputsrhoDCCA(QStringList fileNames, QStringList columns, QWidget
 {
     this->fileNames = fileNames;
     this->columns = columns;
-    this->dataMap = this->dataMap->getInstance();
+    this->dataMap = FilesData::getInstance();
     MathOps mo;
     combs = mo.binCoeff(fileNames.size(), 2);
 
@@ -119,7 +119,7 @@ void InputsrhoDCCA::onOkClick()
                 mw.at(i) = po.at(i) + 2;
             if(Mw.at(i) > val)
                 Mw.at(i) = val;
-            rhoDCCA *fa = new rhoDCCA(fileCouples.at(i).at(0).toStdString(), vec, vec.size(),
+            FA *fa = new rhoDCCA(fileCouples.at(i).at(0).toStdString(), vec, vec.size(),
                                  fileCouples.at(i).at(1).toStdString(), vec2, vec2.size(),
                                  mw.at(i), Mw.at(i), po.at(i), ws.at(i), ct.at(i));
             rhodcca.push_back(fa);

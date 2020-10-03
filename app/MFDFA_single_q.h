@@ -25,6 +25,8 @@ public:
     void plot(BasePlot *plt) override;
 public slots:
     void executeAlgorithm() override;
+signals:
+    void progressSingle(int);
 protected:
 	int ord;
     double q;

@@ -5,7 +5,7 @@ InputsMFDFA::InputsMFDFA(QStringList fileNames, QStringList columns, QWidget *pa
 {
     this->fileNames = fileNames;
     this->columns = columns;
-    this->dataMap = this->dataMap->getInstance();
+    this->dataMap = FilesData::getInstance();
 
     addWidgets();
 }
@@ -123,7 +123,7 @@ void InputsMFDFA::onOkClick()
                 mw.at(i) = po.at(i) + 2;
             if(Mw.at(i) > int(vec.size()))
                 Mw.at(i) = vec.size();
-            MFDFA *fa = new MFDFA(fileNames.at(i).toStdString(), vec, vec.size(),
+            FA *fa = new MFDFA(fileNames.at(i).toStdString(), vec, vec.size(),
                                mw.at(i), Mw.at(i), po.at(i), qi.at(i), nq.at(i),
                                ws.at(i), qs.at(i), rs.at(i));
             mfdfa.push_back(fa);

@@ -41,7 +41,7 @@ void MFDFAsingleQ::executeAlgorithm(){
 
     for(int i = 0; i < range; i++)
     {
-        emit progress(i);
+        emit progressSingle(i);
         std::cout << "Signal emitted: " << i << std::endl;
         /*progress.setValue(i);
         if(progress.wasCanceled())

@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     instrWindow();
 
-    dataMap = dataMap->getInstance();
+    dataMap = FilesData::getInstance();
 }
 
 MainWindow::~MainWindow()
@@ -393,8 +393,8 @@ void MainWindow::onCloseInputWin(std::vector<FA*> fa)
         if(algo != strRHODCCA)
             fa.at(i)->setVectors();
 
-        QProgressDialog *progressBar = new QProgressDialog(algo + "\n" +QString::fromStdString(fa.at(i)->getFileName().substr(fa.at(i)->getFileName().find_last_of("/")+1)),
-                                    "Stop", 0, fa.at(i)->getRangeLength(fa.at(i)->getMinWin(), fa.at(i)->getMaxWin()));
+        QProgressDialog *progressBar = new QProgressDialog(algo + "\n" + QString::fromStdString(fa.at(i)->getCurrentIdentifier()),
+                                                           "Stop", 0, fa.at(i)->getAlgorithmTotalSteps());
         //progressBar->setWindowModality(Qt::WindowModal);
         progressBar->setMinimumDuration(0);
         progressBar->setFixedSize(xPG, yPG);
@@ -436,7 +436,8 @@ void MainWindow::showResults(FA *fa)
 {
     QString algo = fa->getAlgorithmStr();
 
-    if((algo == strDFA) || (algo == strDCCA))
+    //if((algo == strDFA) || (algo == strDCCA))
+    if(fa->isFittable())
         fa->executeFit(fa->getMinWin(), fa->getMaxWin());
 
     if(algo == strRHODCCA)

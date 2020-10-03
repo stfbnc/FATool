@@ -259,3 +259,15 @@ void DCCA::plot(BasePlot *plt)
     plt->legend->setVisible(true);
     plt->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignLeft);
 }
+
+int DCCA::getAlgorithmTotalSteps()
+{
+    return getRangeLength(minWin, maxWin, winStep);
+}
+
+std::string DCCA::getCurrentIdentifier()
+{
+    return fileName.substr(fileName.find_last_of("/") + 1) +
+           " VS " +
+           fileName2.substr(fileName2.find_last_of("/") + 1);
+}
