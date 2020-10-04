@@ -5,6 +5,7 @@ MFDFA::MFDFA(std::string fileName, std::vector<double> ts, int tsLen, int minWin
 {
     this->Nq = Nq;
     this->stepq = stepq;
+    setQrange(q, Nq, stepq);
 }
 
 MFDFA::~MFDFA(){}
@@ -17,7 +18,6 @@ void MFDFA::setQrange(double start, int len, double step)
 
 void MFDFA::executeAlgorithm()
 {
-	setQrange(q, Nq, stepq);
 	int Lq = getRangeLength(minWin, maxWin, winStep);
     for(int i = 0; i < Lq; i++)
     {
@@ -27,24 +27,25 @@ void MFDFA::executeAlgorithm()
         flucMtx.push_back(vec);
     }
 
-    for(int i = 0; i < Nq; i++)
+    int i = 0;
+    connect(this, &MFDFAsingleQ::progressSingle, [&](int val){ updateProgress(val, i); });
+    for(i = 0; i < Nq; i++)
     {
         q = qRange.at(i);
-        //execStop =
         MFDFAsingleQ::executeAlgorithm();
-        //if(!execStop)
-        //{
-            for(int j = 0; j < Lq; j++)
-                flucMtx.at(j).at(i) = getF().at(j);
-            executeFit(minWin, maxWin);
-            Hq.push_back(getH());
-            Hinterceptq.push_back(getHintercept());
-        /*}
-        else
-        {
-            break;
-        }*/
+        for(int j = 0; j < Lq; j++)
+            flucMtx.at(j).at(i) = getF().at(j);
+        executeFit(minWin, maxWin);
+        Hq.push_back(getH());
+        Hinterceptq.push_back(getHintercept());
     }
+    emit progress(getAlgorithmTotalSteps());
+    emit executionEnded(this);
+}
+
+void MFDFA::updateProgress(int val, int n)
+{
+    emit progress(n * getRangeLength(minWin, maxWin, winStep) + val);
 }
 
 void MFDFA::computeMassExponents()

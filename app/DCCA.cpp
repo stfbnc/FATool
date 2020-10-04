@@ -61,29 +61,12 @@ void DCCA::executeAlgorithm()
 	int range = getRangeLength(minWin, maxWin, winStep);
     ao.intRange(s, range, minWin, winStep);
 
-    /*QProgressDialog progress(strDCCA+"\n"+QString::fromStdString(fileName.substr(fileName.find_last_of("/")+1))+
-                             " vs "+QString::fromStdString(fileName2.substr(fileName2.find_last_of("/")+1)), "Stop", 0, range);
-    progress.setAttribute(Qt::WA_DeleteOnClose, true);
-    if(showProgBar)
-    {
-        progress.setWindowModality(Qt::WindowModal);
-        progress.setMinimumDuration(0);
-        progress.setFixedSize(xPG, yPG);
-    }*/
-
     for(int i = 0; i < range; i++)
     {
         if(showProgBar)
-        {
             emit progress(i);
-            std::cout << "Signal emitted: " << i << std::endl;
-            /*progress.setValue(i);
-            if(progress.wasCanceled())
-            {
-                execStop = true;
-                break;
-            }*/
-        }
+        else
+            emit progressSingle(i);
 
         std::vector<double> Fnu = std::vector<double>();
         int currWinSize = s.at(i);
@@ -142,7 +125,6 @@ void DCCA::executeAlgorithm()
     {
         emit progress(range);
         emit executionEnded(this);
-        //progress.setValue(range);
     }
 }
 
@@ -268,6 +250,6 @@ int DCCA::getAlgorithmTotalSteps()
 std::string DCCA::getCurrentIdentifier()
 {
     return fileName.substr(fileName.find_last_of("/") + 1) +
-           " VS " +
+           "\nVS\n" +
            fileName2.substr(fileName2.find_last_of("/") + 1);
 }

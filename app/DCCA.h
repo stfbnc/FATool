@@ -29,6 +29,8 @@ public:
     std::string getCurrentIdentifier() override;
 public slots:
     void executeAlgorithm() override;
+signals:
+    void progressSingle(int);
 private:
     void getEqualLength();
 

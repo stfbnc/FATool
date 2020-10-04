@@ -23,7 +23,10 @@ ResultsWindow::ResultsWindow(FA *fa, QWidget *parent) :
     addLegend();
 }
 
-ResultsWindow::~ResultsWindow(){}
+ResultsWindow::~ResultsWindow()
+{
+    delete fa;
+}
 
 void ResultsWindow::plotData()
 {

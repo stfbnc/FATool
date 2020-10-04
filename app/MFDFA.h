@@ -28,6 +28,7 @@ private:
     void qsaveFile(std::string pathTot);
     std::string tauOutFileStr();
     std::string spectrumOutFileStr();
+    void updateProgress(int val, int n);
 
     int Nq;
     double stepq;

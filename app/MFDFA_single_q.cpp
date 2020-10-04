@@ -32,23 +32,9 @@ void MFDFAsingleQ::executeAlgorithm(){
 	int range = getRangeLength(minWin, maxWin, winStep);
     ao.intRange(s, range, minWin, winStep);
 
-    /*QProgressDialog progress(strMFDFA+"\n"+"q = "+QString::number(q)+" -> "+
-                             QString::fromStdString(fileName.substr(fileName.find_last_of("/")+1)),
-                             "Stop", 0, range);
-    progress.setWindowModality(Qt::WindowModal);
-    progress.setMinimumDuration(0);
-    progress.setFixedSize(xPG, yPG);*/
-
     for(int i = 0; i < range; i++)
     {
         emit progressSingle(i);
-        std::cout << "Signal emitted: " << i << std::endl;
-        /*progress.setValue(i);
-        if(progress.wasCanceled())
-        {
-            execStop = true;
-            break;
-        }*/
 
         std::vector<double> Fnu1 = std::vector<double>();
         std::vector<double> Fnu2 = std::vector<double>();
@@ -118,8 +104,6 @@ void MFDFAsingleQ::executeAlgorithm(){
                 F.push_back(pow(mo.mean(Fnu1, Ns), 1/static_cast<double>(q)));
         }
     }
-
-    //progress.setValue(range);
 }
 
 std::string MFDFAsingleQ::getFileName()

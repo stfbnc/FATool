@@ -21,7 +21,7 @@ private:
     void getScales(std::string str);
     int getNumScales(std::string str);
     int getMinScale(std::string str);
-    void updateProgress(int val, int n, bool isMfdfa);
+    void updateProgress(int val, int n);
 
     int mfdfaMinWin;
     int mfdfaMaxWin;

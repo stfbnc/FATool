@@ -25,9 +25,6 @@ signals:
     void progressSingle(int);
 protected:
     void setMFDFAstep(int mfdfaStep);
-    MFDFAsingleQ* getMFDFAobj();
-
-    MFDFAsingleQ *dfaQ0 = nullptr;
 
 	int scale;
 	int step;

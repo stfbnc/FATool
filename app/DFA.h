@@ -11,7 +11,6 @@ public:
     virtual ~DFA();
     QString getAlgorithmStr() override;
     int getTsLength() override;
-    //bool executeAlgorithm() override;
     std::string getFileName() override;
     int getMinWin() override;
     int getMaxWin() override;

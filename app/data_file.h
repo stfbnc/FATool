@@ -7,7 +7,6 @@
 #include "constants.h"
 #include <QFile>
 #include <QTextStream>
-#include <QDebug>
 #include <QRegularExpression>
 
 class DataFile

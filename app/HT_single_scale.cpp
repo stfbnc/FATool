@@ -8,11 +8,7 @@ HTsingleScale::HTsingleScale(std::string fileName, std::vector<double> ts, int t
     N = setTsLength(ts, tsLen);
 }
 
-HTsingleScale::~HTsingleScale()
-{
-    delete dfaQ0;
-    dfaQ0 = nullptr;
-}
+HTsingleScale::~HTsingleScale(){}
 
 QString HTsingleScale::getAlgorithmStr()
 {
@@ -35,23 +31,9 @@ void HTsingleScale::executeAlgorithm()
     ArrayOps ao = ArrayOps();
     int range = getRangeLength(scale, N);
 
-    /*QProgressDialog progress(strHT+"\n"+"scale = "+QString::number(scale)+" -> "+
-                             QString::fromStdString(fileName.substr(fileName.find_last_of("/")+1)),
-                             "Stop", 0, range);
-    progress.setWindowModality(Qt::WindowModal);
-    progress.setMinimumDuration(0);
-    progress.setFixedSize(xPG, yPG);*/
-
     for(int v = 0; v < range; v++)
     {
         emit progressSingle(v);
-        std::cout << "Signal emitted: " << v << std::endl;
-        /*progress.setValue(v);
-        if(progress.wasCanceled())
-        {
-            execStop = true;
-            break;
-        }*/
 
         int startLim = v;
         int endLim = v + scale - 1;
@@ -66,8 +48,6 @@ void HTsingleScale::executeAlgorithm()
             diffVec.push_back(pow((yFit.at(j) - (intercept + angCoeff * tFit.at(j))), 2.0));
         F.push_back(sqrt(mo.mean(diffVec, scale)));
 	}
-
-    //progress.setValue(range);
 }
 
 void HTsingleScale::setMFDFAstep(int mfdfaStep)
@@ -75,21 +55,16 @@ void HTsingleScale::setMFDFAstep(int mfdfaStep)
     step = mfdfaStep;
 }
 
-MFDFAsingleQ* HTsingleScale::getMFDFAobj()
-{
-    return dfaQ0;
-}
-
 void HTsingleScale::executeFit(int start, int end)
 {
     if(step == 0)
         step = 1;
-    dfaQ0 = new MFDFAsingleQ(fileName, ts, tsLen, start, end, 1, 0.0, step);
-    dfaQ0->setVectors();
-    dfaQ0->executeAlgorithm();
-    dfaQ0->executeFit(start, end);
-    double Hq0 = dfaQ0->getH();
-    double Hq0Intercept = dfaQ0->getHintercept();
+    MFDFAsingleQ dfaQ0 = MFDFAsingleQ(fileName, ts, tsLen, start, end, 1, 0.0, step);
+    dfaQ0.setVectors();
+    dfaQ0.executeAlgorithm();
+    dfaQ0.executeFit(start, end);
+    double Hq0 = dfaQ0.getH();
+    double Hq0Intercept = dfaQ0.getHintercept();
 
     Ht.clear();
     MathOps mo = MathOps();

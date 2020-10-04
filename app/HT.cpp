@@ -103,49 +103,29 @@ void HT::executeAlgorithm()
         HTmtx.push_back(vec);
     }
 
-    //emit progress(i);
-    for(int i = 0; i < Nscales; i++)
+    int i = 0;
+    connect(this, &HTsingleScale::progressSingle, [&](int val){ updateProgress(val, i); });
+    for(i = 0; i < Nscales; i++)
     {
         scale = scales.at(i);
         int Lscale = getRangeLength(scale, N);
-        //execStop =
-        connect(this, &HTsingleScale::progressSingle, [&](int val){ updateProgress(val, i, false); });
         HTsingleScale::executeAlgorithm();
-        //if(!execStop)
-        //{
-            connect(getMFDFAobj(), &MFDFAsingleQ::progressSingle, [&](int val){ updateProgress(val, i, true); });
-            executeFit(mfdfaMinWin, mfdfaMaxWin);
-            for(int j = 0; j < Lscale; j++)
-                HTmtx.at(j).at(i) = Ht.at(j);
-            for(int j = Lscale; j < L; j++)
-                HTmtx.at(j).at(i) = std::numeric_limits<double>::quiet_NaN();
-        /*}
-        else
-        {
-            break;
-        }*/
+        executeFit(mfdfaMinWin, mfdfaMaxWin);
+        for(int j = 0; j < Lscale; j++)
+            HTmtx.at(j).at(i) = Ht.at(j);
+        for(int j = Lscale; j < L; j++)
+            HTmtx.at(j).at(i) = std::numeric_limits<double>::quiet_NaN();
     }
     emit progress(getAlgorithmTotalSteps());
     emit executionEnded(this);
 }
 
-void HT::updateProgress(int val, int n, bool isMfdfa)
+void HT::updateProgress(int val, int n)
 {
-    std::cout << "ZAO: " << val << std::endl;
     if(n == 0)
-    {
-        if(isMfdfa)
-            emit progress(getRangeLength(scales.at(0), N) + val);
-        else
-            emit progress(val);
-    }
+        emit progress(val);
     else
-    {
-        if(isMfdfa)
-            emit progress(n * (getRangeLength(scales.at(n - 1), N) + getRangeLength(mfdfaMinWin, mfdfaMaxWin)) + getRangeLength(scales.at(n), N) + val);
-        else
-            emit progress(n * (getRangeLength(scales.at(n - 1), N) + getRangeLength(mfdfaMinWin, mfdfaMaxWin)) + val);
-    }
+        emit progress(n * (getRangeLength(scales.at(n - 1), N) + getRangeLength(mfdfaMinWin, mfdfaMaxWin)) + val);
 }
 
 std::string HT::outFileStr()

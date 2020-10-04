@@ -4,7 +4,6 @@
 #include <future>
 #include <thread>
 #include <chrono>
-#include <QDebug>
 #include "file_ops.h"
 #include "save_window.h"
 #include "inputs_dfa.h"
