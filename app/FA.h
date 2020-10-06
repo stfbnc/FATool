@@ -136,6 +136,11 @@ public:
     }
 public slots:
     virtual void executeAlgorithm(){}
+
+    virtual void cancelAnalysis()
+    {
+        running = false;
+    }
 signals:
     void progress(int);
     void executionEnded(FA*);
@@ -152,6 +157,7 @@ protected:
     int maxWin = 0;
     double H = 0.0;
     double Hintercept = 0.0;
+    bool running = false;
 };
 
 #endif

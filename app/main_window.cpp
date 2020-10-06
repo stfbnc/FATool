@@ -395,6 +395,7 @@ void MainWindow::onCloseInputWin(std::vector<FA*> fa)
 
         QProgressDialog *progressBar = new QProgressDialog(QString::fromStdString(fa.at(i)->getCurrentIdentifier()),
                                                            "Stop", 0, fa.at(i)->getAlgorithmTotalSteps());
+        progressBar->setAttribute(Qt::WA_DeleteOnClose);
         progressBar->setMinimumDuration(0);
         progressBar->setWindowTitle(algo);
         progressBar->setMinimumWidth(xPG);
@@ -408,6 +409,7 @@ void MainWindow::onCloseInputWin(std::vector<FA*> fa)
         connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
         connect(fa.at(i), SIGNAL(progress(int)), progressBar, SLOT(setValue(int)));
         connect(fa.at(i), SIGNAL(executionEnded(FA*)), this, SLOT(showResults(FA*)));
+        connect(progressBar, SIGNAL(canceled()), fa.at(i), SLOT(cancelAnalysis()));
 
         thread->start();
     }

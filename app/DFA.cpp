@@ -26,6 +26,7 @@ int DFA::getTsLength()
     
 void DFA::executeAlgorithm()
 {
+    running = true;
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
 	int range = getRangeLength(minWin, maxWin, winStep);
@@ -33,7 +34,14 @@ void DFA::executeAlgorithm()
 
     for(int i = 0; i < range; i++)
     {
+        if(!running)
+        {
+            std::cout << "STOP " << i << std::endl;
+            break;
+        }
+
         emit progress(i);
+        std::cout << "Signal emitted: " << i << std::endl;
 
         std::vector<double> Fnu1 = std::vector<double>();
         std::vector<double> Fnu2 = std::vector<double>();
@@ -92,7 +100,6 @@ void DFA::executeAlgorithm()
 
     emit progress(range);
     emit executionEnded(this);
-    //progress.setValue(range);
 }
 
 std::string DFA::getFileName()
