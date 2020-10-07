@@ -18,6 +18,7 @@ void MFDFA::setQrange(double start, int len, double step)
 
 void MFDFA::executeAlgorithm()
 {
+    running = true;
 	int Lq = getRangeLength(minWin, maxWin, winStep);
     for(int i = 0; i < Lq; i++)
     {
@@ -33,18 +34,30 @@ void MFDFA::executeAlgorithm()
     {
         q = qRange.at(i);
         MFDFAsingleQ::executeAlgorithm();
-        for(int j = 0; j < Lq; j++)
-            flucMtx.at(j).at(i) = getF().at(j);
-        executeFit(minWin, maxWin);
-        Hq.push_back(getH());
-        Hinterceptq.push_back(getHintercept());
+        if(running)
+        {
+            for(int j = 0; j < Lq; j++)
+                flucMtx.at(j).at(i) = getF().at(j);
+            executeFit(minWin, maxWin);
+            Hq.push_back(getH());
+            Hinterceptq.push_back(getHintercept());
+        }
+        else
+        {
+            break;
+        }
     }
-    emit progress(getAlgorithmTotalSteps());
-    emit executionEnded(this);
+
+    if(running)
+    {
+        emit progress(getAlgorithmTotalSteps());
+        emit executionEnded(this);
+    }
 }
 
 void MFDFA::updateProgress(int val, int n)
 {
+    std::cout << "MFDFA: " << val << std::endl;
     emit progress(n * getRangeLength(minWin, maxWin, winStep) + val);
 }
 

@@ -56,6 +56,7 @@ void DCCA::setVectors()
     
 void DCCA::executeAlgorithm()
 {
+    running = true;
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
 	int range = getRangeLength(minWin, maxWin, winStep);
@@ -63,10 +64,16 @@ void DCCA::executeAlgorithm()
 
     for(int i = 0; i < range; i++)
     {
+        QApplication::processEvents();
+        if(!running)
+            break;
+
         if(showProgBar)
             emit progress(i);
         else
             emit progressSingle(i);
+
+        std::cout << "SIGNAL: " << i << std::endl;
 
         std::vector<double> Fnu = std::vector<double>();
         int currWinSize = s.at(i);
@@ -121,7 +128,7 @@ void DCCA::executeAlgorithm()
             F.push_back(sqrt(mo.mean(Fnu, Ns)));
     }
 
-    if(showProgBar)
+    if(showProgBar && running)
     {
         emit progress(range);
         emit executionEnded(this);

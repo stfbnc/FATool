@@ -34,14 +34,11 @@ void DFA::executeAlgorithm()
 
     for(int i = 0; i < range; i++)
     {
+        QApplication::processEvents();
         if(!running)
-        {
-            std::cout << "STOP " << i << std::endl;
             break;
-        }
 
         emit progress(i);
-        std::cout << "Signal emitted: " << i << std::endl;
 
         std::vector<double> Fnu1 = std::vector<double>();
         std::vector<double> Fnu2 = std::vector<double>();
@@ -98,8 +95,11 @@ void DFA::executeAlgorithm()
         }
     }
 
-    emit progress(range);
-    emit executionEnded(this);
+    if(running)
+    {
+        emit progress(range);
+        emit executionEnded(this);
+    }
 }
 
 std::string DFA::getFileName()

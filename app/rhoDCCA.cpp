@@ -26,36 +26,50 @@ QString rhoDCCA::getAlgorithmStr()
 
 void rhoDCCA::executeAlgorithm()
 {
+    running = true;
+
     DCCA dccaXX = DCCA(fileName, ts, tsLen, fileName, ts, tsLen, minWin, maxWin, ord, defaultDCCA.toStdString(), winStep, false);
     dccaXX.setVectors();
     connect(&dccaXX, &DCCA::progressSingle, [&](int val){ emit progress(val); });
     dccaXX.executeAlgorithm();
-    std::vector<double> Fxx = dccaXX.getF();
+    if(running)
+    {
+        std::vector<double> Fxx = dccaXX.getF();
 
-    DCCA dccaYY = DCCA(fileName2, ts2, tsLen2, fileName2, ts2, tsLen2, minWin, maxWin, ord, defaultDCCA.toStdString(), winStep, false);
-    dccaYY.setVectors();
-    connect(&dccaYY, &DCCA::progressSingle, [&](int val){ emit progress(val + getRangeLength(minWin, maxWin, winStep)); });
-    dccaYY.executeAlgorithm();
-    std::vector<double> Fyy = dccaYY.getF();
+        DCCA dccaYY = DCCA(fileName2, ts2, tsLen2, fileName2, ts2, tsLen2, minWin, maxWin, ord, defaultDCCA.toStdString(), winStep, false);
+        dccaYY.setVectors();
+        connect(&dccaYY, &DCCA::progressSingle, [&](int val){ emit progress(val + getRangeLength(minWin, maxWin, winStep)); });
+        dccaYY.executeAlgorithm();
+        if(running)
+        {
+            std::vector<double> Fyy = dccaYY.getF();
 
-    DCCA dccaXY = DCCA(fileName, ts, tsLen, fileName2, ts2, tsLen2, minWin, maxWin, ord, corrDCCA.toStdString(), winStep, false);
-    dccaXY.setVectors();
-    connect(&dccaXY, &DCCA::progressSingle, [&](int val){ emit progress(val + 2 * getRangeLength(minWin, maxWin, winStep)); });
-    dccaXY.executeAlgorithm();
-    std::vector<double> Fxy = dccaXY.getF();
+            DCCA dccaXY = DCCA(fileName, ts, tsLen, fileName2, ts2, tsLen2, minWin, maxWin, ord, corrDCCA.toStdString(), winStep, false);
+            dccaXY.setVectors();
+            connect(&dccaXY, &DCCA::progressSingle, [&](int val){ emit progress(val + 2 * getRangeLength(minWin, maxWin, winStep)); });
+            dccaXY.executeAlgorithm();
+            if(running)
+            {
+                std::vector<double> Fxy = dccaXY.getF();
 
-    L = dccaXY.getRangeLength(minWin, maxWin, winStep);
-    N = dccaXY.getTsLength();
-    for(int i = 0; i < L; i++)
-        rho.push_back(Fxy.at(i) / static_cast<double>(Fxx.at(i) * Fyy.at(i)));
+                L = dccaXY.getRangeLength(minWin, maxWin, winStep);
+                N = dccaXY.getTsLength();
+                for(int i = 0; i < L; i++)
+                    rho.push_back(Fxy.at(i) / static_cast<double>(Fxx.at(i) * Fyy.at(i)));
 
-    emit progress(1 + 3 * getRangeLength(minWin, maxWin, winStep));
+                emit progress(1 + 3 * getRangeLength(minWin, maxWin, winStep));
+            }
+        }
+    }
 
-    if(thresh)
+    if(thresh && running)
         computeThresholds();
 
-    emit progress(getAlgorithmTotalSteps());
-    emit executionEnded(this);
+    if(running)
+    {
+        emit progress(getAlgorithmTotalSteps());
+        emit executionEnded(this);
+    }
 }
 
 void rhoDCCA::computeThresholds()
@@ -80,26 +94,39 @@ void rhoDCCA::computeThresholds()
         DCCA dcca11 = DCCA("", grand1, N, "", grand1, N, minWin, maxWin, ord, defaultDCCA.toStdString(), winStep, false);
         dcca11.setVectors();
         dcca11.executeAlgorithm();
-        std::vector<double> F11 = dcca11.getF();
-        emit progress(1 + 3 * getRangeLength(minWin, maxWin, winStep) + i * 3);
+        if(running)
+        {
+            std::vector<double> F11 = dcca11.getF();
+            emit progress(1 + 3 * getRangeLength(minWin, maxWin, winStep) + i * 3);
 
-        DCCA dcca22 = DCCA("", grand2, N, "", grand2, N, minWin, maxWin, ord, defaultDCCA.toStdString(), winStep, false);
-        dcca22.setVectors();
-        dcca22.executeAlgorithm();
-        std::vector<double> F22 = dcca22.getF();
-        emit progress(1 + 3 * getRangeLength(minWin, maxWin, winStep) + i * 3 + 1);
+            DCCA dcca22 = DCCA("", grand2, N, "", grand2, N, minWin, maxWin, ord, defaultDCCA.toStdString(), winStep, false);
+            dcca22.setVectors();
+            dcca22.executeAlgorithm();
+            if(running)
+            {
+                std::vector<double> F22 = dcca22.getF();
+                emit progress(1 + 3 * getRangeLength(minWin, maxWin, winStep) + i * 3 + 1);
 
-        DCCA dcca12 = DCCA("", grand1, N, "", grand2, N, minWin, maxWin, ord, corrDCCA.toStdString(), winStep, false);
-        dcca12.setVectors();
-        dcca12.executeAlgorithm();
-        std::vector<double> F12 = dcca12.getF();
-        emit progress(1 + 3 * getRangeLength(minWin, maxWin, winStep) + i * 3 + 2);
+                DCCA dcca12 = DCCA("", grand1, N, "", grand2, N, minWin, maxWin, ord, corrDCCA.toStdString(), winStep, false);
+                dcca12.setVectors();
+                dcca12.executeAlgorithm();
+                if(running)
+                {
+                    std::vector<double> F12 = dcca12.getF();
+                    emit progress(1 + 3 * getRangeLength(minWin, maxWin, winStep) + i * 3 + 2);
 
-        for(int j = 0; j < getRhoLength(); j++)
-            rhoMtx.at(i*getRhoLength()+j) = F12.at(j) / static_cast<double>(F11.at(j) * F22.at(j));
+                    for(int j = 0; j < getRhoLength(); j++)
+                        rhoMtx.at(i*getRhoLength()+j) = F12.at(j) / static_cast<double>(F11.at(j) * F22.at(j));
+                }
+            }
+        }
+
+        if(!running)
+            break;
     }
 
-    confLevels(rhoMtx);
+    if(running)
+        confLevels(rhoMtx);
 }
 
 void rhoDCCA::confLevels(std::vector<double> rhos)

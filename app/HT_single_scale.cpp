@@ -27,13 +27,20 @@ std::string HTsingleScale::getFileName()
     
 void HTsingleScale::executeAlgorithm()
 {
+    running = true;
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
     int range = getRangeLength(scale, N);
 
     for(int v = 0; v < range; v++)
     {
+        QApplication::processEvents();
+        if(!running)
+            break;
+
         emit progressSingle(v);
+
+        std::cout << "SIGNAL: " << v << std::endl;
 
         int startLim = v;
         int endLim = v + scale - 1;
@@ -62,18 +69,21 @@ void HTsingleScale::executeFit(int start, int end)
     MFDFAsingleQ dfaQ0 = MFDFAsingleQ(fileName, ts, tsLen, start, end, 1, 0.0, step);
     dfaQ0.setVectors();
     dfaQ0.executeAlgorithm();
-    dfaQ0.executeFit(start, end);
-    double Hq0 = dfaQ0.getH();
-    double Hq0Intercept = dfaQ0.getHintercept();
+    if(running)
+    {
+        dfaQ0.executeFit(start, end);
+        double Hq0 = dfaQ0.getH();
+        double Hq0Intercept = dfaQ0.getHintercept();
 
-    Ht.clear();
-    MathOps mo = MathOps();
-    int range = getRangeLength(scale, N);
-    double regfit, logscale;
-    regfit = Hq0Intercept + Hq0 * log(scale);
-    logscale = log(range) - log(scale);
-    for(int i = 0; i < range; i++)
-        Ht.push_back((regfit - log(F.at(i))) / static_cast<double>(logscale) + Hq0);
+        Ht.clear();
+        MathOps mo = MathOps();
+        int range = getRangeLength(scale, N);
+        double regfit, logscale;
+        regfit = Hq0Intercept + Hq0 * log(scale);
+        logscale = log(range) - log(scale);
+        for(int i = 0; i < range; i++)
+            Ht.push_back((regfit - log(F.at(i))) / static_cast<double>(logscale) + Hq0);
+    }
 }
 
 bool HTsingleScale::isFittable()

@@ -93,6 +93,7 @@ void HT::getScales(std::string str)
 
 void HT::executeAlgorithm()
 {
+    running = true;
 	int L = getRangeLength(minScale, N);
 	ArrayOps ao = ArrayOps();
     for(int i = 0; i < L; i++)
@@ -104,24 +105,38 @@ void HT::executeAlgorithm()
     }
 
     int i = 0;
-    connect(this, &HTsingleScale::progressSingle, [&](int val){ updateProgress(val, i); });
+    connect(this, &HTsingleScale::progressSingle, this, [this, i](int val){ updateProgress(val, i); });
     for(i = 0; i < Nscales; i++)
     {
         scale = scales.at(i);
         int Lscale = getRangeLength(scale, N);
         HTsingleScale::executeAlgorithm();
-        executeFit(mfdfaMinWin, mfdfaMaxWin);
-        for(int j = 0; j < Lscale; j++)
-            HTmtx.at(j).at(i) = Ht.at(j);
-        for(int j = Lscale; j < L; j++)
-            HTmtx.at(j).at(i) = std::numeric_limits<double>::quiet_NaN();
+        if(running)
+        {
+            executeFit(mfdfaMinWin, mfdfaMaxWin);
+            if(running)
+            {
+                for(int j = 0; j < Lscale; j++)
+                    HTmtx.at(j).at(i) = Ht.at(j);
+                for(int j = Lscale; j < L; j++)
+                    HTmtx.at(j).at(i) = std::numeric_limits<double>::quiet_NaN();
+            }
+        }
+
+        if(!running)
+            break;
     }
-    emit progress(getAlgorithmTotalSteps());
-    emit executionEnded(this);
+
+    if(running)
+    {
+        emit progress(getAlgorithmTotalSteps());
+        emit executionEnded(this);
+    }
 }
 
 void HT::updateProgress(int val, int n)
 {
+    std::cout << "HT: " << val << std::endl;
     if(n == 0)
         emit progress(val);
     else

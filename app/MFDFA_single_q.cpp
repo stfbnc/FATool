@@ -25,7 +25,9 @@ int MFDFAsingleQ::getTsLength()
 	return N;
 }
     
-void MFDFAsingleQ::executeAlgorithm(){
+void MFDFAsingleQ::executeAlgorithm()
+{
+    running = true;
     F.clear();
     MathOps mo = MathOps();
     ArrayOps ao = ArrayOps();
@@ -34,7 +36,13 @@ void MFDFAsingleQ::executeAlgorithm(){
 
     for(int i = 0; i < range; i++)
     {
+        QApplication::processEvents();
+        if(!running)
+            break;
+
         emit progressSingle(i);
+
+        std::cout << "SIGNAL: " << i << std::endl;
 
         std::vector<double> Fnu1 = std::vector<double>();
         std::vector<double> Fnu2 = std::vector<double>();
