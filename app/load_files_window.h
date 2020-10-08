@@ -10,7 +10,8 @@ namespace Ui{
 
 class LoadFilesWindow : public QWidget
 {
-    Q_OBJECT
+Q_OBJECT
+    friend class GUITest;
 public:
     explicit LoadFilesWindow(QString title="", QWidget *parent=nullptr);
     virtual ~LoadFilesWindow();

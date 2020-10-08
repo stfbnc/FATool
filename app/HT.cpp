@@ -160,9 +160,10 @@ void HT::saveFile(std::string pathTot)
         i == Nscales - 1 ? fprintf(f, "%d\n", scales.at(i)) : fprintf(f, "%d ", scales.at(i));
 
     for(int i = 0; i < L; i++)
+    {
         for(int j = 0; j < Nscales; j++)
             j == Nscales - 1 ? fprintf(f, "%lf\n", HTmtx.at(i).at(j)) : fprintf(f, "%lf ", HTmtx.at(i).at(j));
-
+    }
 	fclose(f);
 }
 

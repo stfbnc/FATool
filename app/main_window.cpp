@@ -77,16 +77,19 @@ void MainWindow::onLoadClick()
     }
 
     if(fileNames.size() > 0)
-    {
-        LoadFilesWindow *fWin;
-        if(fileNames.size() > 1)
-            fWin = new LoadFilesWindow(QString::number(fileNames.size()) + " files");
-        else
-            fWin = new LoadFilesWindow(fileNames.at(0));
-        connect(fWin, SIGNAL(filesSpecsInserted(QString, QString, std::map<QString, std::pair<QString, QString>>)),
-                this, SLOT(onFilesSpecsInserted(QString, QString, std::map<QString, std::pair<QString, QString>>)));
-        fWin->show();
-    }
+        loadFiles();
+}
+
+void MainWindow::loadFiles()
+{
+    LoadFilesWindow *fWin;
+    if(fileNames.size() > 1)
+        fWin = new LoadFilesWindow(QString::number(fileNames.size()) + " files");
+    else
+        fWin = new LoadFilesWindow(fileNames.at(0));
+    connect(fWin, SIGNAL(filesSpecsInserted(QString, QString, std::map<QString, std::pair<QString, QString>>)),
+            this, SLOT(onFilesSpecsInserted(QString, QString, std::map<QString, std::pair<QString, QString>>)));
+    fWin->show();
 }
 
 void MainWindow::onFilesSpecsInserted(QString del, QString header, std::map<QString, std::pair<QString, QString>> map)

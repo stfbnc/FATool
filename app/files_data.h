@@ -8,6 +8,7 @@
 
 class FilesData
 {
+    friend class GUITest;
 public:
     static FilesData* getInstance();
     void lock();

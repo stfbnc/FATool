@@ -41,7 +41,7 @@ void LoadFilesWindow::onOkClick()
 
     bool xVectorFound = false;
     bool xError = false;
-    for(int i = 0; i < vLayout->count(); i+=2)
+    for(int i = 0; i < vLayout->count(); i += 2)
     {
         QString col = qobject_cast<QLabel*>(vLayout->itemAt(i)->widget())->text();
         QHBoxLayout *hLayout = qobject_cast<QHBoxLayout*>(vLayout->itemAt(i+1)->widget()->layout());

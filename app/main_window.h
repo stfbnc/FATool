@@ -27,11 +27,7 @@ namespace Ui{
 class MainWindow : public QWidget
 {
 Q_OBJECT
-    friend class TestClearAll;
-    friend class TestInputWin;
-    friend class TestLoading;
-    friend class TestWidgetExistence;
-    friend class TestWinDim;
+    friend class GUITest;
 public:
     explicit MainWindow(QWidget *parent=nullptr);
     virtual ~MainWindow();
@@ -57,6 +53,7 @@ signals:
 private:
     void closeEvent(QCloseEvent *event);
     void instrWindow();
+    void loadFiles();
     void clearFilesTable();
 
     Ui::MainWindow *ui;

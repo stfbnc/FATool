@@ -76,16 +76,15 @@ void BasePlot::onMouseMove(QMouseEvent *event)
         x = exp(x);
     if(isLogY)
         y = exp(y);
-    QString xStr, yStr;
-    xStr.sprintf("%.3f", x);
-    yStr.sprintf("%.3f", y);
+    QString xStr = QString("%1").arg(x, 5, 'f', 3);
+    QString yStr = QString("%1").arg(y, 5, 'f', 3);
     QString text = QString("(%1, %2)").arg(xStr).arg(yStr);
     textItem->setText(text);
     int leftPxl = axisRect()->outerRect().left();
     int bottomPxl = axisRect()->outerRect().bottom();
     int pad = 2;
     QFontMetrics fm(qFont);
-    int pixelsWide = fm.width(text);
+    int pixelsWide = fm.horizontalAdvance(text);
     int pixelsHigh = fm.height();
     textItem->setGeometry(leftPxl+pad, bottomPxl-pad-pixelsHigh, pixelsWide+2*pad, pixelsHigh);
 }

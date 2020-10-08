@@ -10,6 +10,7 @@ namespace Ui{
 class AbstractInputsWindow : public QWidget
 {
 Q_OBJECT
+    friend class GUITest;
 public:
     explicit AbstractInputsWindow(QString title="", QWidget *parent=nullptr);
     virtual ~AbstractInputsWindow();
