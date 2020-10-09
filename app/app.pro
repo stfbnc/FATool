@@ -96,3 +96,9 @@ FORMS += \
     move_legend_window.ui \
     plot_window.ui \
     refit_dialog.ui
+
+release:DESTDIR = release
+release:OBJECTS_DIR = release/.obj
+release:MOC_DIR = release/.moc
+release:RCC_DIR = release/.rcc
+release:UI_DIR = release/.ui

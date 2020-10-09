@@ -59,7 +59,7 @@ bool InputsDCCA::checkInputs()
             Mw.push_back(MwStr.toInt());
             ws.push_back(wsStr.toInt());
             po.push_back(poStr.toInt());
-            absList.at(i)->currentText()=="absolute" ? al.append(defaultDCCA) : al.append(corrDCCA);
+            absList.at(i)->currentText() == "absolute" ? al.append(defaultDCCA) : al.append(corrDCCA);
         }
         else
         {

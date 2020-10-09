@@ -1,4 +1,4 @@
-TARGET = InputWinTest
+TARGET = FaTest
 
 CONFIG += qt warn_on depend_includepath testcase
 
@@ -52,7 +52,8 @@ SOURCES +=  \
     $$APPDIR/data_plot_window.cpp \
     $$APPDIR/files_data.cpp \
     $$APPDIR/update_table_widget.cpp \
-    $$APPDIR/results_window.cpp
+    $$APPDIR/results_window.cpp \
+    fa_test.cpp
 
 HEADERS += \
     $$APPDIR/3rdparty_src/qcustomplot.h \
@@ -98,3 +99,12 @@ FORMS += \
     $$APPDIR/move_legend_window.ui \
     $$APPDIR/refit_dialog.ui \
     $$APPDIR/fit_log.ui
+
+RESOURCES += \
+    test_data.qrc
+
+release:DESTDIR = release
+release:OBJECTS_DIR = release/.obj
+release:MOC_DIR = release/.moc
+release:RCC_DIR = release/.rcc
+release:UI_DIR = release/.ui
