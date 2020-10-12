@@ -57,7 +57,6 @@ void MFDFA::executeAlgorithm()
 
 void MFDFA::updateProgress(int val, int n)
 {
-    std::cout << "MFDFA: " << val << std::endl;
     emit progress(n * getRangeLength(minWin, maxWin, winStep) + val);
 }
 

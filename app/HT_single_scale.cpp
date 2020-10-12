@@ -40,8 +40,6 @@ void HTsingleScale::executeAlgorithm()
 
         emit progressSingle(v);
 
-        std::cout << "SIGNAL: " << v << std::endl;
-
         int startLim = v;
         int endLim = v + scale - 1;
         std::vector<double> tFit = std::vector<double>();

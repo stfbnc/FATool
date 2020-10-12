@@ -136,7 +136,6 @@ void HT::executeAlgorithm()
 
 void HT::updateProgress(int val, int n)
 {
-    std::cout << "HT: " << val << std::endl;
     if(n == 0)
         emit progress(val);
     else

@@ -6,6 +6,7 @@
 class HT : public HTsingleScale
 {
 Q_OBJECT
+    friend class FaTest;
 public:
     explicit HT(std::string fileName, std::vector<double> ts, int tsLen, int scale, int Nscales, int stepScale, int mfdfaMinWin, int mfdfaMaxWin, int mfdfaStep);
     explicit HT(std::string fileName, std::vector<double> ts, int tsLen, std::string strScales, int mfdfaMinWin, int mfdfaMaxWin, int mfdfaStep);

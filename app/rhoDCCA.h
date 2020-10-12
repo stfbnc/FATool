@@ -6,6 +6,7 @@
 class rhoDCCA : public FA
 {
 Q_OBJECT
+    friend class FaTest;
 public:
     explicit rhoDCCA(std::string fileName, std::vector<double> ts, int tsLen, std::string fileName2, std::vector<double> ts2, int tsLen2, int minWin, int maxWin, int ord, int winStep=1, bool thresh=false);
     virtual ~rhoDCCA();

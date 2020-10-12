@@ -42,8 +42,6 @@ void MFDFAsingleQ::executeAlgorithm()
 
         emit progressSingle(i);
 
-        std::cout << "SIGNAL: " << i << std::endl;
-
         std::vector<double> Fnu1 = std::vector<double>();
         std::vector<double> Fnu2 = std::vector<double>();
         int currWinSize = s.at(i);

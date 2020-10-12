@@ -1,10 +1,17 @@
 TEMPLATE = app
 TARGET = FATool
-ICON = logo.icns
+macx: {
+    ICON = icons/logo.icns
+}
+
+#unix:!macx {
+#    INCLUDEPATH += usr/include
+#    LIBS += -L/lib/x86_64-linux-gnu -lgsl -lgslcblas -lm
+#}
 
 unix:!macx {
-    INCLUDEPATH += usr/include
-    LIBS += -L/lib/x86_64-linux-gnu -lgsl -lgslcblas -lm
+    INCLUDEPATH += includes
+    LIBS += -Llibs/ -lgsl -lgslcblas -lm
 }
 
 macx: {

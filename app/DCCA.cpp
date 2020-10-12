@@ -73,8 +73,6 @@ void DCCA::executeAlgorithm()
         else
             emit progressSingle(i);
 
-        std::cout << "SIGNAL: " << i << std::endl;
-
         std::vector<double> Fnu = std::vector<double>();
         int currWinSize = s.at(i);
         int Ns = N - currWinSize;

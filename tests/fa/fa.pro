@@ -6,8 +6,8 @@ APPDIR = ../../app
 INCLUDEPATH += $$APPDIR
 
 unix:!macx {
-    INCLUDEPATH += usr/include
-    LIBS += -L/lib/x86_64-linux-gnu -lgsl -lgslcblas -lm
+    INCLUDEPATH += $$APPDIR/includes
+    LIBS += -L$$APPDIR/libs/ -lgsl -lgslcblas -lm
 }
 
 macx: {
