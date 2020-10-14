@@ -1,17 +1,13 @@
 TEMPLATE = app
 TARGET = FATool
 macx: {
-    ICON = icons/logo.icns
+    ICON = ../icons/logo.icns
 }
 
-#unix:!macx {
-#    INCLUDEPATH += usr/include
-#    LIBS += -L/lib/x86_64-linux-gnu -lgsl -lgslcblas -lm
-#}
-
 unix:!macx {
-    INCLUDEPATH += includes
-    LIBS += -Llibs/ -lgsl -lgslcblas -lm
+    INCLUDEPATH += ../3rd_party/includes
+    LIBS += -L../3rd_party/ubuntu/libs/ -lgsl -lgslcblas -lm
+    QMAKE_RPATHDIR += ../lib/fatool
 }
 
 macx: {
