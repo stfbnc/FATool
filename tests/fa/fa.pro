@@ -11,8 +11,8 @@ unix:!macx {
 }
 
 macx: {
-    INCLUDEPATH += /opt/local/include/
-    LIBS += -L/opt/local/lib/ -lgsl -lgslcblas -lm
+    INCLUDEPATH += ../3rd_party/includes
+    LIBS += -L../3rd_party/macos/libs/ -lgsl -lgslcblas -lm
 }
 
 QT = core testlib

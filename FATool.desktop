@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Exec=~/.local/bin/FATool
+Name=FATool
+GenericName=Fluctuations analysis application
+Icon=fatool
+Terminal=false
+Name[en_US]=FATool
