@@ -6,13 +6,13 @@ APPDIR = ../../app
 INCLUDEPATH += $$APPDIR
 
 unix:!macx {
-    INCLUDEPATH += ../../includes
-    LIBS += -L../../libs/ -lgsl -lgslcblas -lm
+    INCLUDEPATH += ../../3rd_party/includes
+    LIBS += -L../../3rd_party/ubuntu/libs/ -lgsl -lgslcblas -lm
 }
 
 macx: {
-    INCLUDEPATH += ../3rd_party/includes
-    LIBS += -L../3rd_party/macos/libs/ -lgsl -lgslcblas -lm
+    INCLUDEPATH += ../../3rd_party/includes
+    LIBS += -L$$PWD/../../3rd_party/macos/libs/ -lgsl -lgslcblas -lm
 }
 
 QT = core testlib

@@ -12,7 +12,7 @@ unix:!macx {
 
 macx: {
     INCLUDEPATH += ../3rd_party/includes
-    LIBS += -L../3rd_party/macos/libs/ -lgsl -lgslcblas -lm
+    LIBS += -L$$PWD/../3rd_party/macos/libs/ -lgsl -lgslcblas -lm
 }
 
 QT = core gui
