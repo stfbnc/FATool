@@ -1,0 +1,812 @@
+@startuml
+skinparam titleBorderRoundCorner 15
+skinparam titleBorderThickness 2
+skinparam titleBorderColor red
+title FATool
+
+
+
+
+/' Objects '/
+
+abstract class AbstractInputsWindow {
+	+AbstractInputsWindow(QString, QWidget)
+	+~AbstractInputsWindow()
+	#addBottomCheckbox(QString, bool) : QCheckBox
+	#addCheckbox(QString, bool) : QCheckBox
+	#addComboBox(QStringList, QString, bool) : QComboBox
+	#addLabeledLineEdit(QString, bool) : QLineEdit
+	#addLabeledLineEdits(QStringList, bool) : QList<QLineEdit>
+	#addThirdButton(QString) : QPushButton
+	#getCancelButton() : QPushButton
+	#getOkButton() : QPushButton
+	-vLayout : QVBoxLayout
+	-mainWidget : QWidget
+	#ui : Ui::AbstractInputsWindow
+	#checkInputs() : bool
+	#isCorrectFormat(QString) : bool
+	#addLabel(QString, bool) : void
+	#{abstract} addWidgets() : void
+        #onOkClick() : slot : void
+	#onBottomCheck() : slot : void
+	#onCancelClick() : slot : void
+	#onThirdButtonClick() : slot : void
+}
+
+
+class ArrayOps {
+	+ArrayOps()
+	+~ArrayOps()
+	+doubleRange(std::vector<double>, int, double, double) : void
+	+extractColumn(std::vector<double>, int, int, int, std::vector<double>) : void
+	+intRange(std::vector<int>, int, int, int) : void
+	+noNan(std::vector<double>, int, std::vector<double>) : void
+	+sliceVec(std::vector<double>, std::vector<double>, int, int) : void
+	+zeroVec(std::vector<double>, int) : void
+}
+
+
+class BasePlot {
+	+BasePlot(QWidget)
+	+~BasePlot()
+	-qFont : QFont
+	-textItem : QLineEdit
+	-isLogX : bool
+	-isLogY : bool
+	+{static} NO_AX : static const int
+	+{static} X : static const int
+	+{static} XY : static const int
+	+{static} Y : static const int
+	+setBasePlot() : void
+	+setLogAxes(int) : void
+	-onMouseMove(QMouseEvent) : slot : void
+}
+
+
+class DCCA {
+	+DCCA(std::string, std::vector<double>, int, std::string, std::vector<double>, int, int, int, int, std::string, int, bool)
+	+~DCCA()
+	+getAlgorithmStr() : QString
+	+isFittable() : bool
+	-showProgBar : bool
+	+getH() : double
+	+getHintercept() : double
+	+getAlgorithmTotalSteps() : int
+	+getLogType() : int
+	+getMaxWin() : int
+	+getMinWin() : int
+	+getTsLength() : int
+	-ord : int
+	-tsLen2 : int
+	-winStep : int
+	+getCurrentIdentifier() : std::string
+	+getFileName() : std::string
+	+getFileName2() : std::string
+	-isAbs : std::string
+	+outFileStr() : std::string
+	+getF() : std::vector<double>
+	-ts2 : std::vector<double>
+	-y2 : std::vector<double>
+	-s : std::vector<int>
+	+executeFit(int, int) : void
+	-getEqualLength() : void
+	+plot(BasePlot) : void
+	+saveFile(std::string) : void
+	+setVectors() : void
+	#progressSingle(int) : signal : void
+	+executeAlgorithm() : slot : void
+}
+
+
+class DFA {
+	+DFA(std::string, std::vector<double>, int, int, int, int, int, int)
+	+~DFA()
+	+getAlgorithmStr() : QString
+	+isFittable() : bool
+	+getH() : double
+	+getHintercept() : double
+	+getAlgorithmTotalSteps() : int
+	+getLogType() : int
+	+getMaxWin() : int
+	+getMinWin() : int
+	+getTsLength() : int
+	-ord : int
+	-revSeg : int
+	-winStep : int
+	+getCurrentIdentifier() : std::string
+	+getFileName() : std::string
+	+outFileStr() : std::string
+	-s : std::vector<int>
+	+executeFit(int, int) : void
+	+plot(BasePlot) : void
+	+saveFile(std::string) : void
+	+executeAlgorithm() : slot : void
+}
+
+
+class DataFile {
+	+DataFile(QString, QString, int)
+	+~DataFile()
+	-del : QString
+	+getFileName() : QString
+	+getNameOfColumn(int) : QString
+	+getTypeOfColumn(int) : QString
+	-name : QString
+	-columns : QStringList
+	-N : int
+	+getDataLength() : int
+	+getXAxisColumn() : int
+	-headers : int
+	-xCol : int
+	-namesMap : std::map<int, QString>
+	-typesMap : std::map<int, QString>
+	-fileMap : std::map<int, std::vector<double>>
+	+getDataOfColumn(int) : std::vector<double>
+	+getColumns() : std::vector<int>
+	+removeColumn(int) : void
+	+setData() : void
+	+setNameOfColumn(int, QString) : void
+	+setNamesAndTypes(std::map<QString, std::pair<QString, QString>>) : void
+	+setTypeOfColumn(int, QString) : void
+}
+
+
+class DataPlotWindow {
+	+DataPlotWindow(std::vector<DataFile>, std::vector<int>, QWidget)
+	+~DataPlotWindow()
+	-dataFile : std::vector<DataFile>
+	-cols : std::vector<int>
+	-plotData() : void
+}
+
+
+class FA {
+	+FA(std::vector<double>, int)
+	+~FA()
+	+getAlgorithmStr() : QString
+	+isFittable() : bool
+	#H : double
+	#Hintercept : double
+	+getH() : double
+	+getHintercept() : double
+	#{static} running : inline bool
+	#N : int
+	+getAlgorithmTotalSteps() : int
+	+getLogType() : int
+	+getMaxWin() : int
+	+getMinWin() : int
+	+getNansNumber(std::vector<double>, int) : int
+	+getRangeLength(int, int, int) : int
+	+getTsLength() : int
+	#maxWin : int
+	#minWin : int
+	+setTsLength(std::vector<double>, int) : int
+	#tsLen : int
+	#fileName : std::string
+	#fileName2 : std::string
+	+getCurrentIdentifier() : std::string
+	+getFileName() : std::string
+	+getFileName2() : std::string
+	+outFileStr() : std::string
+	#F : std::vector<double>
+	#t : std::vector<double>
+	#ts : std::vector<double>
+	#y : std::vector<double>
+	+executeFit(int, int) : void
+	+plot(BasePlot) : void
+	+saveFile(std::string) : void
+	+setVectors() : void
+	#progress(int) : signal : void
+	#executionEnded(FA) : signal : void
+	+executeAlgorithm() : slot : void
+	+cancelAnalysis() : slot : void
+}
+
+
+class FileOps {
+	+FileOps()
+	+~FileOps()
+	+openFile(std::string, const char) : FILE
+}
+
+
+class FilesData {
+	-FilesData()
+	-~FilesData()
+	+{static} getInstance() : FilesData
+	+getKeys() : QStringList
+	-{static} instance : static FilesData
+	+getDataMap() : std::map<QString , DataFile>
+	-dataMap : std::map<QString, DataFile>
+	-dataMutex : std::mutex
+	+clearMap() : void
+	+deleteFromMap(std::vector<std::pair<QString, int>>) : void
+	+lock() : void
+	+setDataMap(QStringList, QString, QString, std::map<QString, std::pair<QString, QString>>) : void
+	+unlock() : void
+}
+
+
+class HT {
+	+HT(std::string, std::vector<double>, int, int, int, int, int, int, int)
+	+HT(std::string, std::vector<double>, int, std::string, int, int, int)
+	+~HT()
+	-Nscales : int
+	+getAlgorithmTotalSteps() : int
+	-getMinScale(std::string) : int
+	-getNumScales(std::string) : int
+	-mfdfaMaxWin : int
+	-mfdfaMinWin : int
+	-minScale : int
+	-stepScale : int
+	+getCurrentIdentifier() : std::string
+	+outFileStr() : std::string
+	-scales : std::vector<int>
+	-HTmtx : std::vector<std::vector<double> >
+	-getScales(std::string) : void
+	+plot(BasePlot) : void
+	+saveFile(std::string) : void
+	-updateProgress(int, int) : void
+	+executeAlgorithm() : slot : void
+}
+
+
+class HTsingleScale {
+	+HTsingleScale(std::string, std::vector<double>, int, int)
+	+~HTsingleScale()
+	+getAlgorithmStr() : QString
+	+isFittable() : bool
+	+getLogType() : int
+	+getTsLength() : int
+	#scale : int
+	#step : int
+	+getFileName() : std::string
+	+outFileStr() : std::string
+	#Ht : std::vector<double>
+	+executeFit(int, int) : void
+	+plot(BasePlot) : void
+	+saveFile(std::string) : void
+	#setMFDFAstep(int) : void
+	#progressSingle(int) : signal : void
+	+executeAlgorithm() : slot : void
+}
+
+
+class InputsDCCA {
+	+InputsDCCA(QStringList, QStringList, QWidget)
+	+~InputsDCCA()
+	-dataMap : FilesData
+	-absList : QList<QComboBox>
+	-polOrd : QList<QLineEdit>
+	-winsAndStep : QList<QList<QLineEdit>>
+	-colsCouples : QList<QStringList>
+	-fileCouples : QList<QStringList>
+	-al : QStringList
+	-columns : QStringList
+	-fileNames : QStringList
+	-checkInputs() : bool
+	-combs : long long int
+	-dcca : std::vector<FA>
+	-Mw : std::vector<int>
+	-mw : std::vector<int>
+	-po : std::vector<int>
+	-ws : std::vector<int>
+	-addWidgets() : void
+	#inputsInserted(std::vector<FA>) : signal : void
+	-onThirdButtonClick() : slot : void
+	-onOkClick() : slot : void
+}
+
+
+class InputsDFA {
+	+InputsDFA(QStringList, QStringList, QWidget)
+	+~InputsDFA()
+	-dataMap : FilesData
+	-revSeg : QList<QCheckBox>
+	-polOrd : QList<QLineEdit>
+	-winsAndStep : QList<QList<QLineEdit>>
+	-columns : QStringList
+	-fileNames : QStringList
+	-checkInputs() : bool
+	-dfa : std::vector<FA>
+	-Mw : std::vector<int>
+	-mw : std::vector<int>
+	-po : std::vector<int>
+	-rs : std::vector<int>
+	-ws : std::vector<int>
+	-addWidgets() : void
+	#inputsInserted(std::vector<FA>) : signal : void
+	-onThirdButtonClick() : slot : void
+	-onOkClick() : slot : void
+}
+
+
+class InputsHT {
+	+InputsHT(QStringList, QStringList, QWidget)
+	+~InputsHT()
+	-dataMap : FilesData
+	-rangeBox : QList<QCheckBox>
+	-stringBox : QList<QCheckBox>
+	-customScales : QList<QLineEdit>
+	-scalesAndStep : QList<QList<QLineEdit>>
+	-winsAndStep : QList<QList<QLineEdit>>
+	-columns : QStringList
+	-cs : QStringList
+	-fileNames : QStringList
+	-checkInputs() : bool
+	-ht : std::vector<FA>
+	-mMw : std::vector<int>
+	-mmw : std::vector<int>
+	-ms : std::vector<int>
+	-mws : std::vector<int>
+	-ns : std::vector<int>
+	-ss : std::vector<int>
+	-addWidgets() : void
+	-onRangeChkBoxClick(int) : void
+	-onStringChkBoxClick(int) : void
+	#inputsInserted(std::vector<FA>) : signal : void
+	-onThirdButtonClick() : slot : void
+	-onOkClick() : slot : void
+}
+
+
+class InputsMFDFA {
+	+InputsMFDFA(QStringList, QStringList, QWidget)
+	+~InputsMFDFA()
+	-dataMap : FilesData
+	-revSeg : QList<QCheckBox>
+	-polOrd : QList<QLineEdit>
+	-qsAndStep : QList<QList<QLineEdit>>
+	-winsAndStep : QList<QList<QLineEdit>>
+	-columns : QStringList
+	-fileNames : QStringList
+	-checkInputs() : bool
+	-mfdfa : std::vector<FA>
+	-qi : std::vector<double>
+	-qs : std::vector<double>
+	-Mw : std::vector<int>
+	-mw : std::vector<int>
+	-nq : std::vector<int>
+	-po : std::vector<int>
+	-rs : std::vector<int>
+	-ws : std::vector<int>
+	-addWidgets() : void
+	#inputsInserted(std::vector<FA>) : signal : void
+	-onThirdButtonClick() : slot : void
+	-onOkClick() : slot : void
+}
+
+
+class InputsrhoDCCA {
+	+InputsrhoDCCA(QStringList, QStringList, QWidget)
+	+~InputsrhoDCCA()
+	-dataMap : FilesData
+	-compThresh : QList<QCheckBox>
+	-polOrd : QList<QLineEdit>
+	-winsAndStep : QList<QList<QLineEdit>>
+	-colsCouples : QList<QStringList>
+	-fileCouples : QList<QStringList>
+	-columns : QStringList
+	-fileNames : QStringList
+	-checkInputs() : bool
+	-combs : long long int
+	-rhodcca : std::vector<FA>
+	-ct : std::vector<bool>
+	-Mw : std::vector<int>
+	-mw : std::vector<int>
+	-po : std::vector<int>
+	-ws : std::vector<int>
+	-addWidgets() : void
+	#inputsInserted(std::vector<FA>) : signal : void
+	-onThirdButtonClick() : slot : void
+	-onOkClick() : slot : void
+}
+
+
+class LoadFilesWindow {
+	+LoadFilesWindow(QString, QWidget)
+	+~LoadFilesWindow()
+	-vLayout : QVBoxLayout
+	-ui : Ui::LoadFiles
+	-widgetHeight : const int
+	#filesSpecsInserted(QString, QString, std::map<QString, std::pair<QString, QString>>) : signal : void
+	+onCancelClick() : slot : void
+	+onOkClick() : slot : void
+	+onTextChanged(QString) : slot : void
+}
+
+
+class LogWindow {
+	+LogWindow(QString, QString, QString, QWidget)
+	+~LogWindow()
+	-fileName : QString
+	-fileName2 : QString
+	-logs : QString
+	-ui : Ui::FitLog
+	-onSave() : slot : void
+}
+
+
+class MFDFA {
+	+MFDFA(std::string, std::vector<double>, int, int, int, int, double, int, int, double, int)
+	+~MFDFA()
+	-stepq : double
+	-Nq : int
+	+getAlgorithmTotalSteps() : int
+	+getCurrentIdentifier() : std::string
+	+outFileStr() : std::string
+	-qoutFileStr() : std::string
+	-spectrumOutFileStr() : std::string
+	-tauOutFileStr() : std::string
+	-Hinterceptq : std::vector<double>
+	-Hq : std::vector<double>
+	-alpha : std::vector<double>
+	-qRange : std::vector<double>
+	-spectrum : std::vector<double>
+	-tau : std::vector<double>
+	-flucMtx : std::vector<std::vector<double>>
+	+computeMassExponents() : void
+	+computeSpectrum() : void
+	+plot(BasePlot) : void
+	+plotMassExponents(BasePlot) : void
+	+plotSpectrum(BasePlot) : void
+	-qsaveFile(std::string) : void
+	+saveFile(std::string) : void
+	-setQrange(double, int, double) : void
+	+spectrumSaveFile(std::string) : void
+	+tauSaveFile(std::string) : void
+	-updateProgress(int, int) : void
+	+executeAlgorithm() : slot : void
+}
+
+
+class MFDFAsingleQ {
+	+MFDFAsingleQ(std::string, std::vector<double>, int, int, int, int, double, int, int)
+	+~MFDFAsingleQ()
+	+getAlgorithmStr() : QString
+	+isFittable() : bool
+	+getH() : double
+	+getHintercept() : double
+	#q : double
+	+getLogType() : int
+	+getMaxWin() : int
+	+getMinWin() : int
+	+getTsLength() : int
+	#ord : int
+	#revSeg : int
+	#winStep : int
+	+getFileName() : std::string
+	+outFileStr() : std::string
+	+getF() : std::vector<double>
+	#s : std::vector<int>
+	+executeFit(int, int) : void
+	+plot(BasePlot) : void
+	+saveFile(std::string) : void
+	#progressSingle(int) : signal : void
+	+executeAlgorithm() : slot : void
+}
+
+
+class MainWindow {
+	+MainWindow(QWidget)
+	+~MainWindow()
+	-dataMap : FilesData
+	-fileNames : QStringList
+	-ui : Ui::MainWindow
+	-clearFilesTable() : void
+	-closeEvent(QCloseEvent) : void
+	-instrWindow() : void
+	-loadFiles() : void
+	#allFilesLoaded() : signal : void
+	-onLoadClick() : slot : void
+	-afterAllFilesLoaded() : slot : void
+	-deleteRows() : slot : void
+	-fillList() : slot : void
+	-multiplePlots() : slot : void
+	-onClearClick() : slot : void
+	-onCloseInputWin(std::vector<FA>) : slot : void
+	-onFilesSpecsInserted(QString, QString, std::map<QString, std::pair<QString, QString>>) : slot : void
+	-onGoClick() : slot : void
+	-onMapReady() : slot : void
+	-onTableModified(QStringList, QStringList, QStringList) : slot : void
+	-openContextMenu(const QPoint) : slot : void
+	-showResults(FA) : slot : void
+	-singlePlot() : slot : void
+	-updateFilesTable() : slot : void
+	-updateRows() : slot : void
+}
+
+
+class MassExponentsWindow {
+	+MassExponentsWindow(MFDFA, QString, QWidget)
+	+~MassExponentsWindow()
+	-mfdfa : MFDFA
+	-plotData() : void
+	-onSaveTxtClick() : slot : void
+}
+
+
+class MathOps {
+	+MathOps()
+	+~MathOps()
+	+customMean(std::vector<double>, int, int) : double
+	+mean(std::vector<double>, int) : double
+	+nanMean(std::vector<double>, int) : double
+	+minVal(int, int) : int
+	+quantile(int, double) : int
+	+binCoeff(int, int) : long long int
+	+factorial(int) : long long int
+	+cumsum(std::vector<double>, std::vector<double>, int) : void
+	+gaussRand(std::vector<double>, int, std::mt19937) : void
+	+linFit(int, const std::vector<double>, const std::vector<double>, double, double) : void
+	+polyFit(int, int, std::vector<double>, std::vector<double>, std::vector<double>) : void
+	+subtractMean(std::vector<double>, int, std::vector<double>) : void
+}
+
+
+class MoveLegendWindow {
+	+MoveLegendWindow(QCustomPlot, QWidget)
+	+~MoveLegendWindow()
+	-ui : Ui::MoveLegendWindow
+	-cbSelected : int
+	-refreshLegend(QCustomPlot) : void
+	-onTopLeftCheckboxClick() : slot : void
+	-onBottomLeftCheckboxClick() : slot : void
+	-onBottomRightCheckboxClick() : slot : void
+	-onCustomCoordsCheckboxClick() : slot : void
+	-onTopRightCheckboxClick() : slot : void
+}
+
+
+abstract class PlotWindow {
+	+PlotWindow(QWidget)
+	+~PlotWindow()
+	#plt : BasePlot
+	#fileName : QString
+	#fileName2 : QString
+	-fitLog : QString
+	#ui : Ui::PlotWindow
+	#addFitButtons() : void
+	#addLegend() : void
+	#addMassExponentsButton() : void
+	#addSpectrumButton() : void
+	-{abstract} plotData() : void
+	-refitData(int, int, double, double) : void
+	#setPlotLimits() : void
+	#setTitle(QString) : void
+	-onMassExponentsClick() : slot : void
+	-newFitPlot(int start, int end, int keep, int clear) : slot : void
+	-onFitLogClick() : slot : void
+	-onIsLegendCheck() : slot : void
+	-onMoveLegendClick() : slot : void
+	-onRefitClick() : slot : void
+	-onReplotClick() : slot : void
+	-onSavePlotClick() : slot : void
+	-onSaveTxtClick() : slot : void
+	-onSpectrumClick() : slot : void
+}
+
+
+class RefitWindow {
+	+RefitWindow(QWidget)
+	+~RefitWindow()
+	-ui : Ui::RefitDialog
+	#inputsInserted(int, int, int, int) : signals : void
+	-onOKClick() : slot : void
+	-onClearFitsClick() : slot : void
+	-onKeepFitsClick() : slot : void
+}
+
+
+class ResultsWindow {
+	+ResultsWindow(FA, QWidget)
+	+~ResultsWindow()
+	-fa : FA
+	-plotData() : void
+	-refitData(int, int, double, double) : void
+	-onSaveTxtClick() : slot : void
+	-onMassExponentsClick() : slot : void
+	-onSpectrumClick() : slot : void
+}
+
+
+class SpectrumWindow {
+	+SpectrumWindow(MFDFA, QString, QWidget)
+	+~SpectrumWindow()
+	-mfdfa : MFDFA
+	-plotData() : void
+	-onSaveTxtClick() : slot : void
+}
+
+
+class StartingWindow {
+	+StartingWindow()
+	+~StartingWindow()
+	-cb : QCheckBox
+	-getInstrText() : QString
+	-onOKClick() : void
+}
+
+
+class UpdateTableWidget {
+	+UpdateTableWidget(QStringList, QStringList, QStringList, QString, QWidget)
+	+~UpdateTableWidget()
+	-inputNames : QList<QLineEdit>
+	-cols : QStringList
+	-files : QStringList
+	-newNames : QStringList
+	-oldNames : QStringList
+	-addWidgets() : void
+	#newTableValues(QStringList, QStringList, QStringList) : signal : void
+	-onOkClick() : slot : void
+}
+
+
+class rhoDCCA {
+	+rhoDCCA(std::string, std::vector<double>, int, std::string, std::vector<double>, int, int, int, int, int, bool)
+	+~rhoDCCA()
+	+getAlgorithmStr() : QString
+	+isFittable() : bool
+	-thresh : bool
+	+threshCompute() : bool
+	-confLev : const double
+	-nSim : const int
+	-L : int
+	-N : int
+	+getAlgorithmTotalSteps() : int
+	+getLogType() : int
+	+getMaxWin() : int
+	+getMinWin() : int
+	-getRhoLength() : int
+	-ord : int
+	-tsLen2 : int
+	-winStep : int
+	-fileName : std::string
+	-fileName2 : std::string
+	+getCurrentIdentifier() : std::string
+	+getFileName() : std::string
+	+getFileName2() : std::string
+	+outFileStr() : std::string
+	-confDown : std::vector<double>
+	-confUp : std::vector<double>
+	-rho : std::vector<double>
+	-ts2 : std::vector<double>
+	+computeThresholds() : void
+	-confLevels(std::vector<double>) : void
+	+plot(BasePlot) : void
+	+saveFile(std::string) : void
+	+executeAlgorithm() : slot : void
+}
+
+
+
+
+
+/' Inheritance relationships '/
+
+AbstractInputsWindow <|-- InputsDCCA
+
+
+AbstractInputsWindow <|-- InputsDFA
+
+
+AbstractInputsWindow <|-- InputsHT
+
+
+AbstractInputsWindow <|-- InputsMFDFA
+
+
+AbstractInputsWindow <|-- InputsrhoDCCA
+
+
+AbstractInputsWindow <|-- UpdateTableWidget
+
+
+FA <|-- DCCA
+
+
+FA <|-- DFA
+
+
+FA <|-- HTsingleScale
+
+
+FA <|-- MFDFAsingleQ
+
+
+FA <|-- rhoDCCA
+
+
+HTsingleScale <|-- HT
+
+
+MFDFAsingleQ <|-- MFDFA
+
+
+PlotWindow <|-- DataPlotWindow
+
+
+PlotWindow <|-- MassExponentsWindow
+
+
+PlotWindow <|-- ResultsWindow
+
+
+PlotWindow <|-- SpectrumWindow
+
+
+
+
+
+/' Aggregation relationships '/
+
+AbstractInputsWindow o-- AbstractInputsWindow
+
+
+DataPlotWindow o-- DataFile
+
+
+FilesData o-- DataFile
+
+
+FilesData o-- FilesData
+
+
+InputsDCCA o-- FA
+
+
+InputsDCCA o-- FilesData
+
+
+InputsDFA o-- FA
+
+
+InputsDFA o-- FilesData
+
+
+InputsHT o-- FA
+
+
+InputsHT o-- FilesData
+
+
+InputsMFDFA o-- FA
+
+
+InputsMFDFA o-- FilesData
+
+
+InputsrhoDCCA o-- FA
+
+
+InputsrhoDCCA o-- FilesData
+
+
+MainWindow o-- FilesData
+
+
+MainWindow o-- MainWindow
+
+
+MassExponentsWindow o-- MFDFA
+
+
+MoveLegendWindow o-- MoveLegendWindow
+
+
+PlotWindow o-- BasePlot
+
+
+PlotWindow o-- PlotWindow
+
+
+ResultsWindow o-- FA
+
+
+SpectrumWindow o-- MFDFA
+
+
+
+
+
+@enduml
